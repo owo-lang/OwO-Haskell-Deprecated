@@ -66,6 +66,8 @@ library
                   , OwO.Syntax.Parser
 
                   , OwO.Syntax.Parser.Lexer
+                  , OwO.Syntax.Parser.NaiveParserC
+                  , OwO.Syntax.Parser.NaiveParser
 
                   , OwO.TypeChecking.Core
                   , OwO.TypeChecking.Match
