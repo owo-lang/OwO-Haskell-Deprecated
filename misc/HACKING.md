@@ -46,7 +46,8 @@ This is because stack is too powerful on Windows.
 
 ### Golden-valued tests
 
-You need perl5 \> v5.10 to run golden-valued tests.
+You need perl5 \> v5.10 and a bash environment to run golden-valued tests.
+For Windows, you can use `git-bash`. It works like a charm.
 
 See [this instruction](../src/test/testData/README.md).
 

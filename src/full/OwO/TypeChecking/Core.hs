@@ -99,7 +99,8 @@ data Definition
 
 -- | Built-in definition: Type0, Type1, etc
 typeUniverseOfLevel :: Int -> Definition
-typeUniverseOfLevel i = SimpleDefinition (TType $ ULevelLit $ succ i) (TType $ ULevelLit i)
+typeUniverseOfLevel i =
+  SimpleDefinition (TType . ULevelLit $ succ i) (TType $ ULevelLit i)
 
 -- | Module name for type universes. Like a placeholder
 typeUniverseModule :: QModuleName
