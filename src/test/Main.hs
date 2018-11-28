@@ -7,12 +7,6 @@ import           Test.Hspec
 -- import           Text.Pretty.Simple (pPrint)
 
 import           System.Exit    (ExitCode (..), exitWith)
-import           System.Process
-    ( CreateProcess (..)
-    , createProcess
-    , proc
-    , waitForProcess
-    )
 
 import           OwO.Syntax.Abstract
 import           OwO.Util.Tools
@@ -26,10 +20,12 @@ main = hspec .
   describe "Simple parsing test" $ do
     it "should not work for errored files" $ do
       let p = parseNaiveSimple
-      p "" `shouldSatisfy` isLeft
-      p "module" `shouldSatisfy` isLeft
-      p "where" `shouldSatisfy` isLeft
+      p ""             `shouldSatisfy` isLeft
+      p "module"       `shouldSatisfy` isLeft
+      p "module where" `shouldSatisfy` isLeft
+      p "where"        `shouldSatisfy` isLeft
     it "should parse module name" $ do
       let p s = moduleNameList . topLevelModuleName <$> parseNaiveSimple s
-      p "module A where\n" `shouldBe` Right [T.pack "A"]
+      p "module A where\n"     `shouldBe` Right [T.pack "A"]
+      p "module A.B where\n"   `shouldBe` Right (T.pack <$> ["A", "B"])
       p "module A.B.C where\n" `shouldBe` Right (T.pack <$> ["A", "B", "C"])
