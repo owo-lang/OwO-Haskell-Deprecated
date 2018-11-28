@@ -4,8 +4,10 @@
 module OwO.Util.Tools
   ( dumpTokens
   , dumpAst
+  , parseNaiveSimple
   ) where
 
+import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
@@ -28,6 +30,9 @@ prettyToken token = simpleToken token ++ " " ++
 
 simpleToken :: PsiToken -> String
 simpleToken = show . tokenType
+
+parseNaiveSimple :: String -> Either String PsiFile
+parseNaiveSimple = parseNaive CodeFileType
 
 dumpTokens :: FilePath -> Bool -> IO ()
 dumpTokens file hideLocation = lex <$> readFile file >>= \case

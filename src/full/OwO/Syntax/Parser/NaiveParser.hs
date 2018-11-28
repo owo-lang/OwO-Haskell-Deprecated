@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-module OwO.Syntax.Parser.NaiveParser where
+module OwO.Syntax.Parser.NaiveParser (parseTokens) where
 
 import           Control.Applicative
     ( Alternative (..)
@@ -17,15 +17,25 @@ import           OwO.Syntax.TokenType
 
 #include <impossible.h>
 
+parseTokens :: PsiFileType -> [PsiToken] -> Either String PsiFile
+parseTokens fType = parseCode $ do
+  (name, decls) <- moduleP
+  let moduleName = QModuleName { moduleNameList = name }
+  return $ PsiFile
+    { fileType           = fType
+    , topLevelModuleName = moduleName
+    , declarations       = decls
+    }
+
 declarationP :: Parser PsiDeclaration
 declarationP = moduleP'
-  <|> return __TODO__
+--  <|> return __TODO__
 
 moduleP' :: Parser PsiDeclaration
 moduleP' = do
   (name, decls) <- moduleP
   let moduleName = QModuleName { moduleNameList = name }
-  PsiSubmodule moduleName decls
+  return $ PsiSubmodule moduleName decls
 
 moduleP :: Parser ([T.Text], [PsiDeclaration])
 moduleP = do

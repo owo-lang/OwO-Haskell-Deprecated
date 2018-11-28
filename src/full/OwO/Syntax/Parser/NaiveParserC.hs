@@ -7,6 +7,7 @@
 module OwO.Syntax.Parser.NaiveParserC
  ( Parser(..)
  , (<~>)
+ , parseCode
 
  -- Unit combinators
  , item
@@ -38,12 +39,12 @@ import           Data.List
 import           OwO.Syntax.TokenType
 
 newtype Parser a = Parser
-  { parse :: [PsiToken] -> [(a, [PsiToken])]
+  { runParser :: [PsiToken] -> [(a, [PsiToken])]
   }
 
 parseCode :: Parser a -> [PsiToken] -> Either String a
-parseCode m (parse m -> [(res, [])]) = Right res
-parseCode _ _                        = Left "Yamete kudasai, senpai!"
+parseCode m (runParser m -> [(res, [])]) = Right res
+parseCode _ _                            = Left "Yamete kudasai, senpai!"
 
 instance Functor Parser where
   fmap f (Parser ps) = Parser $ \p -> [ (f a, b) | (a, b) <- ps p ]
@@ -55,16 +56,16 @@ instance Applicative Parser where
 
 instance Monad Parser where
   return a = Parser $ \s -> [(a, s)]
-  p >>= f  = Parser $ concatMap (\(a, s1) -> f a `parse` s1) . parse p
+  p >>= f  = Parser $ concatMap (\(a, s1) -> f a `runParser` s1) . runParser p
 
 instance MonadPlus Parser where
   mzero     = Parser $ const []
-  mplus p q = Parser $ \s -> parse p s ++ parse q s
+  mplus p q = Parser $ \s -> runParser p s ++ runParser q s
 
 instance Alternative Parser where
   empty   = mzero
-  p <|> q = Parser $ \s -> case parse p s of
-    [] -> parse q s
+  p <|> q = Parser $ \s -> case runParser p s of
+    [] -> runParser q s
     rs -> rs
 
 (<~>) :: Alternative a => a b -> a b -> a b
