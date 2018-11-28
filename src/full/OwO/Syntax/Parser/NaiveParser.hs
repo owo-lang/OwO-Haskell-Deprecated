@@ -2,6 +2,11 @@
 module OwO.Syntax.Parser.NaiveParser where
 
 import           Control.Applicative
+    ( Alternative (..)
+    , Applicative (..)
+    , many
+    , some
+    )
 import           Control.Monad
 import qualified Data.Text                      as T
 
@@ -12,12 +17,23 @@ import           OwO.Syntax.TokenType
 
 #include <impossible.h>
 
-fileP :: Parser ([T.Text], [PsiDeclaration])
-fileP = do
+declarationP :: Parser PsiDeclaration
+declarationP = moduleP'
+  <|> return __TODO__
+
+moduleP' :: Parser PsiDeclaration
+moduleP' = do
+  (name, decls) <- moduleP
+  let moduleName = QModuleName { moduleNameList = name }
+  PsiSubmodule moduleName decls
+
+moduleP :: Parser ([T.Text], [PsiDeclaration])
+moduleP = do
   exactly ModuleToken
   modName <- exactly DotToken \|/ satisfy isIdentifier
   exactly WhereToken
-  return (getIdentifier . tokenType <$> modName, [])
+  content <- many declarationP
+  return (getIdentifier . tokenType <$> modName, content)
   where
     isIdentifier n = case tokenType n of
       (IdentifierToken _) -> True
