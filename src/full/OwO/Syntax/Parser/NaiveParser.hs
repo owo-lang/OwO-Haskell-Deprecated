@@ -27,20 +27,22 @@ parseTokens fType = parseCode $ do
     , declarations       = decls
     }
 
-layoutP :: Parser a -> Parser a
+layoutP :: Parser a -> Parser [a]
 layoutP p = do
   exactly BraceLToken
-  content <- p
+  content <- option0 [] $ exactly SemicolonToken \||/ p
   exactly BraceRToken
   return content
 
-isIdentifier :: PsiToken -> Bool
-isIdentifier n = case tokenType n of
-  (IdentifierToken _) -> True
-  _                   -> False
+postulateP :: Parser [PsiDeclaration]
+postulateP = do
+  exactly PostulateToken
+  -- TODO convert to PsiPostulate
+  join <$> layoutP declarationP
 
-declarationP :: Parser PsiDeclaration
-declarationP = moduleP'
+declarationP :: Parser [PsiDeclaration]
+declarationP = (return <$> moduleP')
+  <|> postulateP
 --  <|> return __TODO__
 
 moduleP' :: Parser PsiDeclaration
@@ -54,8 +56,13 @@ moduleP = do
   exactly ModuleToken
   modName <- exactly DotToken \||/ satisfy isIdentifier
   exactly WhereToken
-  content <- layoutP . option0 [] $ exactly SemicolonToken \||/ declarationP
+  content <- join <$> layoutP declarationP
   return (getIdentifier . tokenType <$> modName, content)
   where
     getIdentifier (IdentifierToken i) = i
     getIdentifier _                   = T.pack __IMPOSSIBLE__
+
+isIdentifier :: PsiToken -> Bool
+isIdentifier n = case tokenType n of
+  (IdentifierToken _) -> True
+  _                   -> False
