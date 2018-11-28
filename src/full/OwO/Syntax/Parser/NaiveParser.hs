@@ -40,9 +40,11 @@ moduleP' = do
 moduleP :: Parser ([T.Text], [PsiDeclaration])
 moduleP = do
   exactly ModuleToken
-  modName <- exactly DotToken \|/ satisfy isIdentifier
+  modName <- exactly DotToken \||/ satisfy isIdentifier
   exactly WhereToken
-  content <- many declarationP
+  exactly BraceLToken
+  content <- option0 [] $ exactly SemicolonToken \||/ declarationP
+  exactly BraceRToken
   return (getIdentifier . tokenType <$> modName, content)
   where
     isIdentifier n = case tokenType n of

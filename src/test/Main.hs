@@ -31,5 +31,5 @@ main = hspec .
       p "where" `shouldSatisfy` isLeft
     it "should parse module name" $ do
       let p s = moduleNameList . topLevelModuleName <$> parseNaiveSimple s
-      p "module A where" `shouldBe` Right [T.pack "A"]
-      p "module A.B.C where" `shouldBe` Right (T.pack <$> ["A", "B", "C"])
+      p "module A where\n" `shouldBe` Right [T.pack "A"]
+      p "module A.B.C where\n" `shouldBe` Right (T.pack <$> ["A", "B", "C"])
