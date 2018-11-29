@@ -38,40 +38,45 @@ parseTokens fix fType = parseCode $ do
 --------------------------------------------------------------------------------
 
 identifierP' :: Parser (Loc, T.Text)
-identifierP' = satisfyMap mapIdentifier
-  where
-    mapIdentifier :: PsiToken -> Maybe (Loc, T.Text)
-    mapIdentifier tok = case tokenType tok of
-      (IdentifierToken t) -> Just (location tok, t)
-      _                   -> Nothing
+identifierP' = satisfyMap $ \tok -> case tokenType tok of
+  (IdentifierToken t) -> Just (location tok, t)
+  _                   -> Nothing
 
 identifierP :: Parser PsiTerm
-identifierP = mapIdentifier <$> identifierP'
-  where mapIdentifier (l, t) = PsiReference $ Name l t
+identifierP = PsiReference . uncurry Name <$> identifierP'
 
 integerP' :: Parser (Loc, Integer)
-integerP' = satisfyMap mapInteger
-  where
-    mapInteger :: PsiToken -> Maybe (Loc, Integer)
-    mapInteger tok = case tokenType tok of
-      (IntegerToken i) -> Just (location tok, i)
-      _                -> Nothing
+integerP' = satisfyMap $ \tok -> case tokenType tok of
+  (IntegerToken i) -> Just (location tok, i)
+  _                -> Nothing
 
 integerP :: Parser PsiTerm
 integerP = mapInteger <$> integerP'
   where mapInteger (l, i) = PsiConstant l $ IntegerConst i
 
 stringP' :: Parser (Loc, T.Text)
-stringP' = satisfyMap mapString
-  where
-    mapString :: PsiToken -> Maybe (Loc, T.Text)
-    mapString tok = case tokenType tok of
-      (StringToken s) -> Just (location tok, s)
-      _               -> Nothing
+stringP' = satisfyMap $ \tok -> case tokenType tok of
+  (StringToken s) -> Just (location tok, s)
+  _               -> Nothing
+
+stringP :: Parser PsiTerm
+stringP = mapString <$> stringP'
+  where mapString (l, s) = PsiConstant l $ StringConst s
+
+charP' :: Parser (Loc, Char)
+charP' = satisfyMap $ \tok -> case tokenType tok of
+  (CharToken c) -> Just (location tok, c)
+  _             -> Nothing
+
+charP :: Parser PsiTerm
+charP = mapChar <$> charP'
+  where mapChar (l, c) = PsiConstant l $ CharConst c
 
 atomP :: [PsiFixityInfo] -> Parser PsiTerm
 atomP fix = identifierP
  <|> integerP
+ <|> stringP
+ <|> charP
  <|> do
    exactly BracketLToken
    expr <- expressionP fix
@@ -94,8 +99,8 @@ typeSignatureP' fix = do
 
 typeSignatureP :: [PsiFixityInfo] -> DeclarationP
 typeSignatureP fix = do
-  (a, b, c) <- typeSignatureP' fix
-  return . return $ PsiTypeSignature a b c
+  s <- typeSignatureP' fix
+  return . return $ uncurry3 PsiTypeSignature s
 
 layoutP :: Parser a -> Parser [a]
 layoutP p = do
@@ -107,12 +112,13 @@ layoutP p = do
 postulateP :: [PsiFixityInfo] -> DeclarationP
 postulateP fix = do
   exactly PostulateToken
-  (a, b, c) <- typeSignatureP' fix
-  return . return $ PsiPostulate a b c
+  s <- typeSignatureP' fix
+  return . return $ uncurry3 PsiPostulate s
 
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
   <|> postulateP fix
+  <|> typeSignatureP fix
 --  <|> return __TODO__
 
 moduleP :: [PsiFixityInfo] -> DeclarationP
