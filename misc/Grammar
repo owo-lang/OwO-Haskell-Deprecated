@@ -1,4 +1,0 @@
-{* Gwammwr fwr OwO *}
-
-<data-type-specifier> ::= "data"
-                        | "codata"
