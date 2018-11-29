@@ -1,3 +1,6 @@
+{-# LANGUAGE ApplicativeDo   #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 -- | Only for early-stage testing
 module OwO.Syntax.Parser.NaiveParser (parseTokens) where
 
@@ -10,6 +13,9 @@ import           Control.Applicative
 import           Control.Monad
 import           Data.Functor
 import qualified Data.Text                          as T
+
+import           Each.Invoke
+import           Each.Transform                     (each)
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser.NaiveCombinators
@@ -38,8 +44,11 @@ identifierP' = satisfyMap $ \tok -> case tokenType tok of
   (IdentifierToken t) -> Just (location tok, t)
   _                   -> Nothing
 
+nameP :: Parser Name
+nameP = uncurry Name <$> identifierP'
+
 identifierP :: Parser PsiTerm
-identifierP = PsiReference . uncurry Name <$> identifierP'
+identifierP = PsiReference <$> nameP
 
 integerP' :: Parser (Loc, Integer)
 integerP' = satisfyMap $ \tok -> case tokenType tok of
@@ -81,6 +90,20 @@ atomP fix = identifierP
 
 expressionP :: [PsiFixityInfo] -> Parser PsiTerm
 expressionP = atomP -- TODO add other
+
+--------------------------------------------------------------------------------
+--------------------------------- Fixity info ----------------------------------
+--------------------------------------------------------------------------------
+
+fixityP :: Parser PsiFixityInfo
+fixityP = $(each [|
+  (~! (infixLP <|> infixRP <|> infixP))
+  (~! (fromInteger . snd <$> integerP'))
+  (~! some nameP) |])
+  where
+    infixLP = exactly InfixLToken >> return PsiInfixL
+    infixRP = exactly InfixRToken >> return PsiInfixR
+    infixP  = exactly InfixToken  >> return PsiInfix
 
 --------------------------------------------------------------------------------
 --------------------------------- Declarations ---------------------------------

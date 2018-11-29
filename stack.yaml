@@ -5,7 +5,8 @@ resolver: lts-12.18
 packages:
 - .
 
-# extra-deps:
+extra-deps:
+- each-1.1.0.0
 # flags: {}
 # extra-package-dbs: []
 
