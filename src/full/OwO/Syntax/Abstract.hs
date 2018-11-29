@@ -27,8 +27,11 @@ module OwO.Syntax.Abstract
   , DataPragma(..)
   , DataPragmas
 
-  , PsiFileType(..)
   , PsiFile(..)
+  , PsiFileType(..)
+  , extensionOf
+  , decideFileType
+  , fileTypeAndExtensions
 
   , PsiDeclaration'(..)
   , PsiDeclaration
@@ -41,7 +44,10 @@ module OwO.Syntax.Abstract
   , hasParentModule
   ) where
 
+import           Control.Applicative ((<|>))
 import qualified Data.Text           as T
+import           Data.Functor        ((<&>))
+import           System.FilePath     (isExtensionOf)
 
 import           OwO.Syntax.Common
 import           OwO.Syntax.Position
@@ -69,7 +75,7 @@ locationOfName (NoName l _) = l
 
 textOfName :: Name -> T.Text
 textOfName (Name   _ n) = n
-textOfName (NoName _ n) = T.pack $ "_" ++ show n
+textOfName (NoName _ n) = T.pack $ '_' : show n
 
 instance Eq Name where
   Name _ a == Name _ b = a == b
@@ -108,6 +114,21 @@ data PsiFileType
   = CodeFileType
   | LiterateFileType
   deriving (Eq, Generic, Ord, Show)
+
+extensionOf :: PsiFileType -> String
+extensionOf CodeFileType     = ".owo"
+extensionOf LiterateFileType = ".lowo"
+
+decideFileType :: FilePath -> Maybe PsiFileType
+decideFileType path = foldr f Nothing fileTypeAndExtensions
+  where f (ext, ft) m = m <|> if ext `isExtensionOf` path
+                              then Just ft else Nothing
+
+fileTypeAndExtensions :: [(String, PsiFileType)]
+fileTypeAndExtensions =
+  [ CodeFileType
+  , LiterateFileType
+  ] <&> \ft -> (extensionOf ft, ft)
 
 -- | Qualified Name
 newtype QModuleName = QModuleName { moduleNameList :: [T.Text] }

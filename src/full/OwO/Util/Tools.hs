@@ -7,14 +7,15 @@ module OwO.Util.Tools
   , parseNaiveSimple
   ) where
 
+import           Data.Maybe           (fromMaybe)
+import           Prelude              hiding (lex)
+import           System.Exit          (exitFailure)
+import           System.IO
+
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
-
-import           Prelude              hiding (lex)
-import           System.Exit          (exitFailure)
-import           System.IO
 
 #include <impossible.h>
 
@@ -41,5 +42,15 @@ dumpTokens file hideLocation = lex <$> readFile file >>= \case
       let f = if hideLocation then simpleToken else prettyToken
       in mapM_ putStrLn $ f <$> tokens
 
+printAst :: Bool -> PsiDeclaration -> IO ()
+printAst hideLocation declaration = return __TODO__
+
 dumpAst :: FilePath -> Bool -> IO ()
-dumpAst file hideLocation = return __TODO__
+dumpAst file hideLocation = parseNaive ft <$> readFile file >>= \case
+    Left errMsg -> hPutStrLn stderr errMsg >> exitFailure
+    Right pFile -> do
+      putStrLn $ "File type: "       ++ show (fileType pFile)
+      putStrLn $ "Top module name: " ++ show (topLevelModuleName pFile)
+      mapM_ (printAst hideLocation) $ declarations pFile
+  where
+    ft = fromMaybe CodeFileType $ decideFileType file
