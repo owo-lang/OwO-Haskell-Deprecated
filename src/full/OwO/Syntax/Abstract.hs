@@ -11,6 +11,7 @@ module OwO.Syntax.Abstract
 
   , PsiTerm'(..)
   , PsiTerm
+  , ConstInfo(..)
 
   , PsiDataCons'(..)
   , PsiDataCons
@@ -31,6 +32,8 @@ module OwO.Syntax.Abstract
 
   , PsiDeclaration'(..)
   , PsiDeclaration
+
+  , PsiFixityInfo'(..)
   , PsiFixityInfo
 
   , QModuleName(..)
@@ -72,6 +75,13 @@ instance Eq Name where
   Name _ a == Name _ b = a == b
   _ == _ = False
 
+data ConstInfo
+  = IntConst Int
+  | IntegerConst Integer
+  | StringConst T.Text
+  | CharConst Char
+  deriving (Eq, Generic, Ord, Show)
+
 -- | The type parameter c is the name representation, which is probably C.Name
 data PsiTerm' c
   = PsiReference c
@@ -81,6 +91,8 @@ data PsiTerm' c
   -}
   | PsiPatternVar c
   -- ^ Pattern variable
+  | PsiConstant Loc ConstInfo
+  -- ^ constant
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
   | PsiDotPattern (PsiTerm' c)
@@ -119,11 +131,11 @@ data PsiFile = PsiFile
   , declarations       :: [PsiDeclaration]
   } deriving (Eq, Generic, Ord, Show)
 
-data PsiFixityInfo
-  = PsiInfix
-  | PsiInfixL
-  | PsiInfixR
-  deriving (Eq, Generic, Ord, Show)
+data PsiFixityInfo' c
+  = PsiInfix  Int [c]
+  | PsiInfixL Int [c]
+  | PsiInfixR Int [c]
+  deriving (Eq, Functor, Generic, Ord, Show)
 
 -- | Function level pragma
 data FnPragma
@@ -191,9 +203,9 @@ type DataPragmas = [DataPragma]
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiPattern, PsiCopattern
 data PsiDeclaration' t c
-  = PsiFixity PsiFixityInfo Int [c]
+  = PsiFixity (PsiFixityInfo' c)
   -- ^ (infix, infixl, infixr), priority, symbols
-  | PsiType c FnPragmas (t c)
+  | PsiTypeSignature c FnPragmas (t c)
   -- ^ Type signature
   | PsiSubmodule QModuleName [PsiDeclaration' t c]
   -- ^ Module defined in modules
@@ -211,3 +223,4 @@ type PsiDeclaration = PsiDeclaration' PsiTerm' Name
 type PsiDataCons    = PsiDataCons'    PsiTerm' Name
 type PsiDataInfo    = PsiDataInfo'    PsiTerm' Name
 type PsiPatternInfo = PsiPatternInfo' PsiTerm' Name
+type PsiFixityInfo  = PsiFixityInfo'  Name

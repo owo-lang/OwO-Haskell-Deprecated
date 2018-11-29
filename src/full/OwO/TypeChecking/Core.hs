@@ -62,13 +62,6 @@ data BinderInfo i
   -- ^ Intermediate value used for reduction
   deriving (Eq, Functor, Generic, Ord, Show)
 
-data ConstInfo
-  = IntConst Int
-  | IntegerConst Integer
-  | StringConst T.Text
-  | CharConst Char
-  deriving (Eq, Generic, Ord, Show)
-
 -- | Core language term, @i@ refers to the identifier.
 --   We translate type-checked code into this form
 data Term' i

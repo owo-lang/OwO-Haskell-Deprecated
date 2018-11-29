@@ -20,4 +20,4 @@ lex :: String -> Either String [PsiToken]
 lex = flip runAlex scanAll
 
 parseNaive :: PsiFileType -> String -> Either String PsiFile
-parseNaive t s = lex s >>= NP.parseTokens t
+parseNaive t s = lex s >>= NP.parseTokens [] t

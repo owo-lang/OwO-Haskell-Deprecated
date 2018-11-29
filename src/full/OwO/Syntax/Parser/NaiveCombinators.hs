@@ -12,6 +12,7 @@ module OwO.Syntax.Parser.NaiveCombinators
  -- Unit combinators
  , item
  , satisfy
+ , satisfyMap
  , dissatisfy
  , exactly
  , oneOf
@@ -85,6 +86,11 @@ item = Parser $ \case
 
 satisfy :: (PsiToken -> Bool) -> Parser PsiToken
 satisfy p = item >>= \c -> if p c then return c else empty
+
+satisfyMap :: (PsiToken -> Maybe a) -> Parser a
+satisfyMap p = p <$> item >>= \case
+ Just a  -> return a
+ Nothing -> empty
 
 dissatisfy :: (PsiToken -> Bool) -> Parser PsiToken
 dissatisfy p = satisfy $ not . p
