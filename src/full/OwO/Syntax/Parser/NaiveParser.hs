@@ -98,9 +98,7 @@ typeSignatureP' fix = do
   return (uncurry Name i, [], t) -- TODO pragma
 
 typeSignatureP :: [PsiFixityInfo] -> DeclarationP
-typeSignatureP fix = do
-  s <- typeSignatureP' fix
-  return . return $ uncurry3 PsiTypeSignature s
+typeSignatureP fix = return . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
 
 layoutP :: Parser a -> Parser [a]
 layoutP p = do
@@ -110,10 +108,9 @@ layoutP p = do
   return content
 
 postulateP :: [PsiFixityInfo] -> DeclarationP
-postulateP fix = do
+postulateP fix = return . uncurry3 PsiPostulate <$> do
   exactly PostulateToken
-  s <- typeSignatureP' fix
-  return . return $ uncurry3 PsiPostulate s
+  typeSignatureP' fix
 
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
