@@ -8,6 +8,7 @@ import           Control.Applicative
     , some
     )
 import           Control.Monad
+import           Data.Functor
 import qualified Data.Text                          as T
 
 import           OwO.Syntax.Abstract
@@ -103,9 +104,10 @@ layoutP p = do
   return content
 
 postulateP :: [PsiFixityInfo] -> DeclarationP
-postulateP fix = return . uncurry3 PsiPostulate <$> do
+postulateP fix = do
   exactly PostulateToken
-  typeSignatureP' fix
+  ts <- layoutP $ typeSignatureP' fix
+  return $ uncurry3 PsiPostulate <$> ts
 
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
