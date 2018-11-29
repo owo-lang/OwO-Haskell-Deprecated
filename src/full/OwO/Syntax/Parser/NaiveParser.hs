@@ -14,14 +14,16 @@ import           Control.Monad
 import           Data.Functor
 import qualified Data.Text                          as T
 
-import           Each.Invoke
-import           Each.Transform                     (each)
-
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
 import           OwO.Util.Three
+
+-- TODO: https://github.com/dramforever/each/pull/1
+import           Each                               hiding ((~!))
+infixl 0 ~!
+(~!) = undefined
 
 type DeclarationP = Parser [PsiDeclaration]
 
@@ -97,8 +99,8 @@ expressionP = atomP -- TODO add other
 
 fixityP :: Parser PsiFixityInfo
 fixityP = $(each [|
-  (~! (infixLP <|> infixRP <|> infixP))
-  (~! (fromInteger . snd <$> integerP'))
+  (~! infixLP <|> infixRP <|> infixP)
+  (~! fromInteger . snd <$> integerP')
   (~! some nameP) |])
   where
     infixLP = exactly InfixLToken >> return PsiInfixL
