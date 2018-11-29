@@ -1,4 +1,6 @@
 {-# LANGUAGE CPP #-}
+
+-- | Only for early-stage testing
 module OwO.Syntax.Parser.NaiveParser (parseTokens) where
 
 import           Control.Applicative
@@ -8,14 +10,16 @@ import           Control.Applicative
     , some
     )
 import           Control.Monad
-import qualified Data.Text                      as T
+import qualified Data.Text                          as T
 
 import           OwO.Syntax.Abstract
-import           OwO.Syntax.Parser.NaiveParserC
+import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
 
 #include <impossible.h>
+
+type DeclarationP = Parser [PsiDeclaration]
 
 parseTokens :: PsiFileType -> [PsiToken] -> Either String PsiFile
 parseTokens fType = parseCode $ do
@@ -34,22 +38,22 @@ layoutP p = do
   exactly BraceRToken
   return content
 
-postulateP :: Parser [PsiDeclaration]
+postulateP :: DeclarationP
 postulateP = do
   exactly PostulateToken
   -- TODO convert to PsiPostulate
   join <$> layoutP declarationP
 
-declarationP :: Parser [PsiDeclaration]
-declarationP = (return <$> moduleP')
+declarationP :: DeclarationP
+declarationP = moduleP'
   <|> postulateP
 --  <|> return __TODO__
 
-moduleP' :: Parser PsiDeclaration
+moduleP' :: DeclarationP
 moduleP' = do
   (name, decls) <- moduleP
   let moduleName = QModuleName { moduleNameList = name }
-  return $ PsiSubmodule moduleName decls
+  return . return $ PsiSubmodule moduleName decls
 
 moduleP :: Parser ([T.Text], [PsiDeclaration])
 moduleP = do

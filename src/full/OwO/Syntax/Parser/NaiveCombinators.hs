@@ -4,7 +4,7 @@
 
 -- | Should not be used in production environment
 --   For early stage testing purpose
-module OwO.Syntax.Parser.NaiveParserC
+module OwO.Syntax.Parser.NaiveCombinators
  ( Parser(..)
  , (<~>)
  , parseCode
