@@ -1,12 +1,11 @@
 module Main where
 
-import           Data.Either    (isLeft)
-import qualified Data.Text      as T
+import           Data.Either         (isLeft)
+import qualified Data.Text           as T
 
 import           Test.Hspec
--- import           Text.Pretty.Simple (pPrint)
 
-import           System.Exit    (ExitCode (..), exitWith)
+import           System.Exit         (ExitCode (..), exitWith)
 
 import           OwO.Syntax.Abstract
 import           OwO.Util.Tools
