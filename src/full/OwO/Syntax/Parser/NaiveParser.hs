@@ -1,6 +1,3 @@
-{-# LANGUAGE CPP        #-}
-{-# LANGUAGE LambdaCase #-}
-
 -- | Only for early-stage testing
 module OwO.Syntax.Parser.NaiveParser (parseTokens) where
 
@@ -18,8 +15,6 @@ import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
 import           OwO.Util.Three
-
-#include <impossible.h>
 
 type DeclarationP = Parser [PsiDeclaration]
 
