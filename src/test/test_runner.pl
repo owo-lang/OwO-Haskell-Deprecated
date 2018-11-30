@@ -16,10 +16,11 @@ sub ntr {return colored $_[0], 'green';}
 sub red {return colored $_[0], 'red';}
 sub redy {return colored $_[0], 'bold red';}
 
-foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/`) {
+foreach my $fixture (map {substr $_, 0, -1}
+        split /[ \t\n]+/, `ls -t -d testData/*/`) {
     say colored("Fixture $fixture:", 'yellow');
     my $fixtureFlags = -e "$fixture.flags" ? `cat $fixture.flags` : '';
-    foreach my $case (split /[ \t\n]+/, `ls -G $fixture/*.owo`) {
+    foreach my $case (split /[ \t\n]+/, `ls -t -G $fixture/*.owo`) {
         my $out = $case =~ s/\.owo/\.out/rg;
         my $flagFile = $case =~ s/\.owo/\.flags/rg;
         my $caseFlags = -e $flagFile ? `cat $flagFile` : '';
