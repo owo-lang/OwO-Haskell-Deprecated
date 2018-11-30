@@ -1,0 +1,33 @@
+File type: CodeFileType
+Top module name: .MultipleClause
+ type signature "f" (30 3 2) (31 3 3)
+  no pragmas
+  named reference "Type" (34 3 6) (38 3 10)
+ implementation of function  "f" (40 4 2) (41 4 3)
+  no pragmas
+  clause for  "f" (40 4 2) (41 4 3)
+  patterns
+   named reference "Nil" (42 4 4) (45 4 7)
+  function body
+   named reference "Nothing" (53 4 15) (60 4 22)
+  no with abstraction
+  no where clause
+  clause for  "f" (62 5 2) (63 5 3)
+  patterns
+   function application
+   function being applied
+    function application
+    function being applied
+     named reference "Cons" (64 5 4) (68 5 8)
+    value applied to the function
+     named reference "n" (69 5 9) (70 5 10)
+   value applied to the function
+    named reference "m" (71 5 11) (72 5 12)
+  function body
+   function application
+   function being applied
+    named reference "Just" (75 5 15) (79 5 19)
+   value applied to the function
+    named reference "n" (80 5 20) (81 5 21)
+  no with abstraction
+  no where clause

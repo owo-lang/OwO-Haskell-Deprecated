@@ -16,8 +16,6 @@ Top module name: .SimpleApplication
     named reference "b" (40 2 10) (41 2 11)
   no with abstraction
   no where clause
- implementation of function  "a" (43 3 2) (44 3 3)
-  no pragmas
   clause for  "a" (43 3 2) (44 3 3)
   patterns
   function body
@@ -32,8 +30,6 @@ Top module name: .SimpleApplication
      named reference "b" (52 3 11) (53 3 12)
   no with abstraction
   no where clause
- implementation of function  "a" (56 4 2) (57 4 3)
-  no pragmas
   clause for  "a" (56 4 2) (57 4 3)
   patterns
   function body

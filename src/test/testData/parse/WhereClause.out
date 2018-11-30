@@ -58,8 +58,6 @@ Top module name: .SimpleApplication
           IntegerConst 666
         no with abstraction
         no where clause
- implementation of function  "f" (150 14 2) (151 14 3)
-  no pragmas
   clause for  "f" (150 14 2) (151 14 3)
   patterns
   function body
@@ -80,8 +78,6 @@ Top module name: .SimpleApplication
      named reference "a" (174 15 9) (175 15 10)
     no with abstraction
     no where clause
- implementation of function  "f" (178 17 2) (179 17 3)
-  no pragmas
   clause for  "f" (178 17 2) (179 17 3)
   patterns
   function body
@@ -102,8 +98,6 @@ Top module name: .SimpleApplication
      named reference "a" (200 17 24) (201 17 25)
     no with abstraction
     no where clause
- implementation of function  "f" (204 19 2) (205 19 3)
-  no pragmas
   clause for  "f" (204 19 2) (205 19 3)
   patterns
   function body

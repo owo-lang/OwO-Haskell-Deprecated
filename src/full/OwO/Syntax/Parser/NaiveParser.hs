@@ -49,9 +49,9 @@ identifierP' = satisfyMap $ \tok -> case tokenType tok of
   IdentifierToken t -> Just (location tok, t)
   _                 -> Nothing
 
-specificNameP :: T.Text -> Parser Name
-specificNameP n = satisfyMap $ \tok -> case tokenType tok of
-  IdentifierToken t -> if t == n then Just $ Name (location tok) t
+specificNameP :: (T.Text -> Bool) -> Parser Name
+specificNameP f = satisfyMap $ \tok -> case tokenType tok of
+  IdentifierToken t -> if f t then Just . flip Name t $ location tok
                        else Nothing
   _                 -> Nothing
 
@@ -120,20 +120,17 @@ fixityP = $(each [|
 --------------------------------------------------------------------------------
 
 -- TODO: support with abstraction
--- TODO: support where
-{-# ANN firstClauseP "HLint: ignore Evaluate" #-}
-firstClauseP :: [PsiFixityInfo] -> Parser PsiImplInfo
-firstClauseP fix = $(each [|
+patternMatchingClauseP ::
+  [PsiFixityInfo] ->
+  (T.Text -> Bool) ->
+  Parser PsiImplInfo
+patternMatchingClauseP fix f = $(each [|
   PsiImplSimple
-  (~! nameP)
-  (const (~! es) (~! exactly EqualToken))
+  (~! specificNameP f)
+  (~! many $ expressionP fix)
   []
-  (~! expressionP fix)
-  (~! option0 [] (whereClauseP fix)) |])
-  where es = many $ expressionP fix
-
-restClausesP :: [PsiFixityInfo] -> T.Text -> Parser PsiImplInfo
-restClausesP fix n = empty
+  (~! exactly EqualToken *> expressionP fix)
+  (~! option0 [] $ whereClauseP fix) |])
 
 whereClauseP :: [PsiFixityInfo] -> DeclarationP
 whereClauseP fix = do
@@ -145,9 +142,10 @@ whereClauseP fix = do
 implementationP :: [PsiFixityInfo] -> DeclarationP
 implementationP fix = do
   ps <- many $ fnPragmaP fix <* exactly SemicolonToken
-  hd <- firstClauseP fix
+  hd <- patternMatchingClauseP fix $ const True
   let functionName = functionNameOfImplementation hd
-  tl <- many . restClausesP fix $ textOfName functionName
+  tl <- many $ exactly SemicolonToken *>
+     patternMatchingClauseP fix (textOfName functionName ==)
   return [PsiImplementation functionName ps $ hd :| tl]
 
 --------------------------------------------------------------------------------
@@ -160,14 +158,13 @@ fnPragmaP _ = empty -- TODO
 dataPragmaP :: [PsiFixityInfo] -> Parser DataPragma
 dataPragmaP _ = empty -- TODO
 
-{-# ANN typeSignatureP' "HLint: ignore Evaluate" #-}
 typeSignatureP' :: [PsiFixityInfo] -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
   p <- many $ fnPragmaP fix <* exactly SemicolonToken
   $(each [|
     ( uncurry Name (~! identifierP')
-    , const p (~! exactly ColonToken)
-    , (~! expressionP fix)
+    , p
+    , (~! exactly ColonToken *> expressionP fix)
     ) |])
 
 typeSignatureP :: [PsiFixityInfo] -> DeclarationP
