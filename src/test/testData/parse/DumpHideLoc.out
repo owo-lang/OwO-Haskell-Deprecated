@@ -14,7 +14,8 @@ Top module name: .A
  implementation of function  "f"
   no pragmas
   clause for  "f"
-  no pattern matching
+  patterns
+  function body
    function application
    function being applied
     function application

@@ -1,0 +1,10 @@
+module SimplePatternMatching where
+
+  onlyVariables : SomeFunctionType
+  onlyVariables a b c = f a b c
+
+  destructed : SomeFunctionType
+  destructed (f a) (g b) = destructed (g a) (f b)
+
+  noParenthesis : SomeFunctionType
+  noParenthesis f a b = noParenthesis (f b a)

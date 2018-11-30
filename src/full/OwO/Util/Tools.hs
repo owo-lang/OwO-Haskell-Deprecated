@@ -77,7 +77,9 @@ printImplementation :: Int -> Bool -> PsiImplInfo -> IO ()
 printImplementation indent hideLocation = \case
   PsiImplSimple n ps ws expr whereClause -> do
     puts $ "clause for " ++ name n
-    puts $ if null ps then "no pattern matching" else pure __TODO__
+    puts "patterns"
+    mapM_ pExpr ps
+    puts "function body"
     pExpr expr
     puts $ if null ws then "no with abstraction" else pure __TODO__
     if null whereClause then puts "no where clause" else do
