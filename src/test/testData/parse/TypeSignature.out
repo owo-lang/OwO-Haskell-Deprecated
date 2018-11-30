@@ -1,8 +1,8 @@
 File type: CodeFileType
 Top module name: .ParseTest.TypeSignature
- type signature a (40 3 3) (41 3 4)
+ type signature "a" (40 3 3) (41 3 4)
   no pragmas
-  named reference b (44 3 7) (45 3 8)
- type signature c (48 4 3) (49 4 4)
+  named reference "b" (44 3 7) (45 3 8)
+ type signature "c" (48 4 3) (49 4 4)
   no pragmas
-  named reference d (52 4 7) (53 4 8)
+  named reference "d" (52 4 7) (53 4 8)

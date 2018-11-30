@@ -50,7 +50,8 @@ dumpTokens file hideLocation = lex <$> readFile file >>= \case
 put :: Int -> String -> IO ()
 put indent = putStrLn . (replicate indent ' ' ++)
 
-printName locate n = (' ' :) $ T.unpack (textOfName n) ++ locate (locationOfName n)
+printName locate n = (' ' :) $
+  show (T.unpack $ textOfName n) ++ locate (locationOfName n)
 
 printExpr :: Int -> Bool -> PsiTerm -> IO ()
 printExpr indent hideLocation = \case

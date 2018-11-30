@@ -1,0 +1,32 @@
+File type: CodeFileType
+Top module name: .A
+ type signature "f"
+  no pragmas
+  function application
+  function being applied
+   named reference "F"
+  value applied to the function
+   function application
+   function being applied
+    named reference "Type"
+   value applied to the function
+    named reference "level"
+ constant clause "f"
+  no pragmas
+  function application
+  function being applied
+   function application
+   function being applied
+    function application
+    function being applied
+     named reference "a"
+    value applied to the function
+     named reference "b"
+   value applied to the function
+    named reference "c"
+  value applied to the function
+   function application
+   function being applied
+    named reference "d"
+   value applied to the function
+    named reference "e"

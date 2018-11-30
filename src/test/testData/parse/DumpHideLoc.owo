@@ -1,0 +1,3 @@
+module A where
+ f : F (Type level)
+ f = (a b) c (d e)

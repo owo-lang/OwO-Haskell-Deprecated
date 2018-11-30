@@ -144,8 +144,8 @@ postulateP fix = do
   ts <- layoutP $ typeSignatureP' fix
   return $ uncurry3 PsiPostulate <$> ts
 
-patternP :: [PsiFixityInfo] -> DeclarationP
-patternP fix = do
+patternClauseP :: [PsiFixityInfo] -> DeclarationP
+patternClauseP fix = do
   i <- identifierP'
   -- TODO patterns
   exactly EqualToken
@@ -157,7 +157,7 @@ declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
   <|> postulateP fix
   <|> typeSignatureP fix
-  <|> patternP fix
+  <|> patternClauseP fix
 --  <|> return __TODO__
 
 moduleP :: [PsiFixityInfo] -> DeclarationP
