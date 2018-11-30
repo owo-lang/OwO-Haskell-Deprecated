@@ -1,0 +1,11 @@
+File type: CodeFileType
+Top module name: .EmptyClause
+ type signature a (26 2 2) (27 2 3)
+  no pragmas
+ constant clause a (36 3 2) (37 3 3)
+  no pragmas
+ submodule .B
+  type signature b (60 5 3) (61 5 4)
+   no pragmas
+  constant clause b (71 6 3) (72 6 4)
+   no pragmas

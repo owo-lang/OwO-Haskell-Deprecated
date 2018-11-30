@@ -1,0 +1,6 @@
+module EmptyClause where
+ a : Type
+ a = b
+ module B where
+  b : Type
+  b = c

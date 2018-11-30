@@ -242,7 +242,7 @@ data PsiDeclaration' t c
   -- ^ Primitive
   | PsiData c DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
-  | PsiPattern FnPragmas [PsiPatternInfo' t c]
+  | PsiPattern c FnPragmas [PsiPatternInfo' t c] (t c)
   -- ^ A pattern matching clause
   deriving (Eq, Functor, Generic, Ord, Show)
 

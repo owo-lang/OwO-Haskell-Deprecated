@@ -135,17 +135,27 @@ postulateP fix = do
   ts <- layoutP $ typeSignatureP' fix
   return $ uncurry3 PsiPostulate <$> ts
 
+patternP :: [PsiFixityInfo] -> DeclarationP
+patternP fix = do
+  i <- identifierP'
+  -- TODO patterns
+  exactly EqualToken
+  t <- expressionP fix
+  -- TODO pragma
+  return [PsiPattern (uncurry Name i) [] [] t]
+
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
   <|> postulateP fix
   <|> typeSignatureP fix
+  <|> patternP fix
 --  <|> return __TODO__
 
 moduleP :: [PsiFixityInfo] -> DeclarationP
 moduleP fix = do
   (name, decls) <- moduleP' fix
   let moduleName = QModuleName { moduleNameList = name }
-  return . return $ PsiSubmodule moduleName decls
+  return [PsiSubmodule moduleName decls]
 
 moduleP' :: [PsiFixityInfo] -> Parser ([T.Text], [PsiDeclaration])
 moduleP' fix = do

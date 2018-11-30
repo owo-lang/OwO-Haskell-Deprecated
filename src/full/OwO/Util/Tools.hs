@@ -55,12 +55,18 @@ printAst indent hideLocation = \case
       mapM_ (puts . name) ns
     PsiPostulate n ps t -> do
       puts $ "postulate" ++ name n
-      puts $ if ps == [] then " no pragmas" else __TODO__
+      puts $ if null ps then " no pragmas" else return __TODO__
       -- TODO print the type expression
     PsiTypeSignature n ps t -> do
       puts $ "type signature" ++ name n
-      puts $ if ps == [] then " no pragmas" else __TODO__
+      puts $ if null ps then " no pragmas" else return __TODO__
       -- TODO print the type expression
+    PsiPattern n ps pis t -> do
+      let description = if null pis then "constant clause"
+                        else "pattern matching clause"
+      puts $ description ++ name n
+      puts $ if null ps then " no pragmas" else return __TODO__
+      -- TODO print the expression
     PsiSubmodule n ds -> do
       puts $ "submodule " ++ show n
       mapM_ recur ds

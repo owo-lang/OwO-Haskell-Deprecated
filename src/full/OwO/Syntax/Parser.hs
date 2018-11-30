@@ -1,7 +1,6 @@
 module OwO.Syntax.Parser where
 
 import           Prelude                       hiding (lex)
-import           System.FilePath
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser.Lexer
