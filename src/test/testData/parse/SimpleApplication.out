@@ -1,38 +1,54 @@
 File type: CodeFileType
 Top module name: .SimpleApplication
- constant clause "a" (32 2 2) (33 2 3)
+ implementation of function  "a" (32 2 2) (33 2 3)
   no pragmas
-  function application
-  function being applied
+  clause for  "a" (32 2 2) (33 2 3)
+  no pattern matching
    function application
    function being applied
-    named reference "f" (36 2 6) (37 2 7)
+    function application
+    function being applied
+     named reference "f" (36 2 6) (37 2 7)
+    value applied to the function
+     named reference "a" (38 2 8) (39 2 9)
    value applied to the function
-    named reference "a" (38 2 8) (39 2 9)
-  value applied to the function
-   named reference "b" (40 2 10) (41 2 11)
- constant clause "a" (43 3 2) (44 3 3)
+    named reference "b" (40 2 10) (41 2 11)
+  no with abstraction
+  no where clause
+ implementation of function  "a" (43 3 2) (44 3 3)
   no pragmas
-  function application
-  function being applied
-   named reference "f" (47 3 6) (48 3 7)
-  value applied to the function
+  clause for  "a" (43 3 2) (44 3 3)
+  no pattern matching
    function application
    function being applied
-    named reference "a" (50 3 9) (51 3 10)
+    named reference "f" (47 3 6) (48 3 7)
    value applied to the function
-    named reference "b" (52 3 11) (53 3 12)
- constant clause "a" (56 4 2) (57 4 3)
+    function application
+    function being applied
+     named reference "a" (50 3 9) (51 3 10)
+    value applied to the function
+     named reference "b" (52 3 11) (53 3 12)
+  no with abstraction
+  no where clause
+ implementation of function  "a" (56 4 2) (57 4 3)
   no pragmas
-  function application
-  function being applied
+  clause for  "a" (56 4 2) (57 4 3)
+  no pattern matching
    function application
    function being applied
-    named reference "f" (61 4 7) (62 4 8)
+    function application
+    function being applied
+     named reference "f" (61 4 7) (62 4 8)
+    value applied to the function
+     named reference "a" (63 4 9) (64 4 10)
    value applied to the function
-    named reference "a" (63 4 9) (64 4 10)
-  value applied to the function
-   named reference "b" (66 4 12) (67 4 13)
- constant clause "undefined" (69 5 2) (78 5 11)
+    named reference "b" (66 4 12) (67 4 13)
+  no with abstraction
+  no where clause
+ implementation of function  "undefined" (69 5 2) (78 5 11)
   no pragmas
-  named reference "undefined" (81 5 14) (90 5 23)
+  clause for  "undefined" (69 5 2) (78 5 11)
+  no pattern matching
+   named reference "undefined" (81 5 14) (90 5 23)
+  no with abstraction
+  no where clause

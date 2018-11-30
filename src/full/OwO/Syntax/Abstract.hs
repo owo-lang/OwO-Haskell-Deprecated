@@ -19,8 +19,9 @@ module OwO.Syntax.Abstract
   , PsiDataInfo'(..)
   , PsiDataInfo
 
-  , PsiPatternInfo'(..)
-  , PsiPatternInfo
+  , PsiImplInfo'(..)
+  , PsiImplInfo
+  , functionNameOfImplementation
 
   , FnPragma(..)
   , FnPragmas
@@ -46,8 +47,9 @@ module OwO.Syntax.Abstract
   ) where
 
 import           Control.Applicative ((<|>))
-import qualified Data.Text           as T
 import           Data.Functor        ((<&>))
+import           Data.List.NonEmpty  (NonEmpty)
+import qualified Data.Text           as T
 import           System.FilePath     (isExtensionOf)
 
 import           OwO.Syntax.Common
@@ -204,24 +206,29 @@ data PsiDataInfo' t c
 
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --
--- 1. The whole application (missing for PClauseR and PWithR because they're
---    within a "with" clause)
+-- 0. The function name
+-- 1. The patterns (missing for PClauseR and PWithR because they're within a
+--    "with" clause)
 -- 2. The list of extra 'with' patterns
 -- 3. The right-hand side
 -- 4. The where block (PsiDeclaration' t)
-data PsiPatternInfo' t c
-  = PsiPatternSimple  Loc c (t c) [t c] (t c) [PsiDeclaration' t c]
+data PsiImplInfo' t c
+  = PsiImplSimple c [t c] [t c] (t c) [PsiDeclaration' t c]
   -- ^ Most simple pattern
   -- TODO
   {-
-  | PsiPatternWith    Loc c (t c) [t c] (t c) [PsiDeclaration' t c]
+  | PsiImplWith   c [t c] [t c] (t c) [PsiDeclaration' t c]
   -- ^ Pattern with 'with', we may use the keyword 'case'
-  | PsiPatternSimpleR Loc         [t c] (t c) [PsiDeclaration' t c]
+  | PsiImplSimpleR        [t c] (t c) [PsiDeclaration' t c]
   -- ^ Most simple pattern
-  | PsiPatternWithR   Loc         [t c] (t c) [PsiDeclaration' t c]
-  -- ^ Pattern with 'with', we may use the keyword 'case'
+  | PsiImplWithR          [t c] (t c) [PsiDeclaration' t c]
+  -- ^ Impl with 'with', we may use the keyword 'case'
   -}
   deriving (Eq, Generic, Functor, Ord, Show)
+
+functionNameOfImplementation :: PsiImplInfo -> Name
+functionNameOfImplementation (PsiImplSimple n _ _ _ _) = n
+-- Impossible for PsiImplSimpleR, PsiImplWithR
 
 data DataPragma
   = NoPositivityCheck
@@ -230,7 +237,7 @@ data DataPragma
 type DataPragmas = [DataPragma]
 
 -- | Top-level declarations
---   TODOs: PsiCodata, PsiPattern, PsiCopattern
+--   TODOs: PsiCodata, PsiCopattern
 data PsiDeclaration' t c
   = PsiFixity (PsiFixityInfo' c)
   -- ^ (infix, infixl, infixr), priority, symbols
@@ -244,12 +251,12 @@ data PsiDeclaration' t c
   -- ^ Primitive
   | PsiData c DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
-  | PsiPattern c FnPragmas [PsiPatternInfo' t c] (t c)
-  -- ^ A pattern matching clause
+  | PsiImplementation c FnPragmas (NonEmpty (PsiImplInfo' t c))
+  -- ^ A pattern matching clause which is an implementation of a function
   deriving (Eq, Functor, Generic, Ord, Show)
 
 type PsiDeclaration = PsiDeclaration' PsiTerm' Name
 type PsiDataCons    = PsiDataCons'    PsiTerm' Name
 type PsiDataInfo    = PsiDataInfo'    PsiTerm' Name
-type PsiPatternInfo = PsiPatternInfo' PsiTerm' Name
+type PsiImplInfo    = PsiImplInfo'    PsiTerm' Name
 type PsiFixityInfo  = PsiFixityInfo'  Name

@@ -13,6 +13,7 @@ import           Control.Applicative
 import           Control.Monad
 import           Data.Functor
 import           Data.List                          (partition)
+import           Data.List.NonEmpty                 (NonEmpty (..))
 import qualified Data.Text                          as T
 
 import           Each
@@ -95,7 +96,7 @@ expressionP fix = applicationP fix
   <|> atomP fix -- TODO add other
 
 --------------------------------------------------------------------------------
---------------------------------- Fixity info ----------------------------------
+---------------------------------- Operators -----------------------------------
 --------------------------------------------------------------------------------
 
 fixityP :: Parser PsiFixityInfo
@@ -107,6 +108,34 @@ fixityP = $(each [|
     infixLP = exactly InfixLToken >> return PsiInfixL
     infixRP = exactly InfixRToken >> return PsiInfixR
     infixP  = exactly InfixToken  >> return PsiInfix
+
+--------------------------------------------------------------------------------
+----------------------------- Function definitions -----------------------------
+--------------------------------------------------------------------------------
+
+-- TODO: support with abstraction
+-- TODO: support where
+{-# ANN firstClauseP "HLint: ignore" #-}
+firstClauseP :: [PsiFixityInfo] -> Parser PsiImplInfo
+firstClauseP fix = $(each [|
+  PsiImplSimple
+  (~! nameP)
+  (const (~! es) (~! exactly EqualToken))
+  []
+  (~! expressionP fix)
+  [] |])
+  where es = many $ expressionP fix
+
+restClausesP :: [PsiFixityInfo] -> T.Text -> Parser PsiImplInfo
+restClausesP fix n = empty
+
+implementationP :: [PsiFixityInfo] -> DeclarationP
+implementationP fix = do
+  ps <- many $ fnPragmaP fix <* exactly SemicolonToken
+  hd <- firstClauseP fix
+  let functionName = functionNameOfImplementation hd
+  tl <- many . restClausesP fix $ textOfName functionName
+  return [PsiImplementation functionName ps $ hd :| tl]
 
 --------------------------------------------------------------------------------
 --------------------------------- Declarations ---------------------------------
@@ -139,20 +168,11 @@ postulateP :: [PsiFixityInfo] -> DeclarationP
 postulateP fix = exactly PostulateToken >>
   $(each [| uncurry3 PsiPostulate <$> bind (layoutP $ typeSignatureP' fix) |])
 
-patternClauseP :: [PsiFixityInfo] -> DeclarationP
-patternClauseP fix = do
-  p <- option0 [] $ exactly SemicolonToken \||/ fnPragmaP fix
-  i <- identifierP'
-  -- TODO patterns
-  exactly EqualToken
-  t <- expressionP fix
-  return [PsiPattern (uncurry Name i) p [] t]
-
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
   <|> postulateP fix
   <|> typeSignatureP fix
-  <|> patternClauseP fix
+  <|> implementationP fix
 --  <|> return __TODO__
 
 moduleP :: [PsiFixityInfo] -> DeclarationP

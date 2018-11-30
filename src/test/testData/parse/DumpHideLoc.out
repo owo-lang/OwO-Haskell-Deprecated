@@ -11,22 +11,26 @@ Top module name: .A
     named reference "Type"
    value applied to the function
     named reference "level"
- constant clause "f"
+ implementation of function  "f"
   no pragmas
-  function application
-  function being applied
+  clause for  "f"
+  no pattern matching
    function application
    function being applied
     function application
     function being applied
-     named reference "a"
+     function application
+     function being applied
+      named reference "a"
+     value applied to the function
+      named reference "b"
     value applied to the function
-     named reference "b"
+     named reference "c"
    value applied to the function
-    named reference "c"
-  value applied to the function
-   function application
-   function being applied
-    named reference "d"
-   value applied to the function
-    named reference "e"
+    function application
+    function being applied
+     named reference "d"
+    value applied to the function
+     named reference "e"
+  no with abstraction
+  no where clause

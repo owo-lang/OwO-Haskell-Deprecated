@@ -8,6 +8,7 @@ module OwO.Util.Tools
   ) where
 
 import           Control.Monad        (join)
+import           Data.List.NonEmpty   (NonEmpty (..))
 import           Data.Maybe           (fromMaybe)
 import qualified Data.Text            as T
 import           Prelude              hiding (lex)
@@ -66,8 +67,27 @@ printExpr indent hideLocation = \case
       puts "value applied to the function"
       recur a
   where
-    recur  = flip printExpr hideLocation $ succ indent
     puts   = put indent
+    recur  = flip printExpr hideLocation $ succ indent
+    name   = printName locate
+    locate | hideLocation = const []
+           | otherwise    = (' ' :) . showLoc
+
+printImplementation :: Int -> Bool -> PsiImplInfo -> IO ()
+printImplementation indent hideLocation = \case
+  PsiImplSimple n ps ws expr whereClause -> do
+    puts $ "clause for " ++ name n
+    puts $ if null ps then "no pattern matching" else pure __TODO__
+    pExpr expr
+    puts $ if null ws then "no with abstraction" else pure __TODO__
+    if null whereClause then puts "no where clause" else do
+      puts "where clause"
+      mapM_ pDecl whereClause
+  where
+    puts   = put indent
+    recur  = flip printImplementation hideLocation $ succ indent
+    pExpr  = flip printExpr hideLocation $ succ indent
+    pDecl  = flip printDeclaration hideLocation $ succ indent
     name   = printName locate
     locate | hideLocation = const []
            | otherwise    = (' ' :) . showLoc
@@ -80,18 +100,16 @@ printDeclaration indent hideLocation = \case
       mapM_ (puts . name) ns
     PsiPostulate n ps t -> do
       puts $ "postulate" ++ name n
-      puts $ if null ps then " no pragmas" else return __TODO__
+      puts $ if null ps then " no pragmas" else pure __TODO__
       pExpr t
     PsiTypeSignature n ps t -> do
       puts $ "type signature" ++ name n
-      puts $ if null ps then " no pragmas" else return __TODO__
+      puts $ if null ps then " no pragmas" else pure __TODO__
       pExpr t
-    PsiPattern n ps pis t -> do
-      let description = if null pis then "constant clause"
-                        else "pattern matching clause"
-      puts $ description ++ name n
+    PsiImplementation n ps impls -> do
+      puts $ "implementation of function " ++ name n
       puts $ if null ps then " no pragmas" else return __TODO__
-      pExpr t
+      mapM_ pImpl impls
     PsiSubmodule n ds -> do
       puts $ "submodule " ++ show n
       mapM_ recur ds
@@ -99,6 +117,7 @@ printDeclaration indent hideLocation = \case
   where
     puts   = put indent
     pExpr  = flip printExpr hideLocation $ succ indent
+    pImpl  = flip printImplementation hideLocation $ succ indent
     recur  = flip printDeclaration hideLocation $ succ indent
     name   = printName locate
     locate | hideLocation = const []
