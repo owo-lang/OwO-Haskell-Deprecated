@@ -15,7 +15,6 @@ import           Data.Functor
 import           Data.List                          (partition)
 import qualified Data.Text                          as T
 
--- TODO: https://github.com/dramforever/each/pull/1
 import           Each
 
 import           OwO.Syntax.Abstract
@@ -106,8 +105,8 @@ expressionP fix = applicationP fix
 
 fixityP :: Parser PsiFixityInfo
 fixityP = $(each [|
-  (~! (infixLP <|> infixRP <|> infixP))
-  (~! (fromInteger . snd <$> integerP'))
+  (~! infixLP <|> infixRP <|> infixP)
+  (~! fromInteger . snd <$> integerP')
   (~! some nameP) |])
   where
     infixLP = exactly InfixLToken >> return PsiInfixL

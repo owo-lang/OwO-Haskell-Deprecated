@@ -6,7 +6,7 @@ packages:
 - .
 
 extra-deps:
-- each-1.1.0.0
+- each-1.1.1.0
 # flags: {}
 # extra-package-dbs: []
 
