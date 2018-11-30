@@ -1,0 +1,4 @@
+module ParseTest.TypeSignature where
+
+  a : b
+  c : d

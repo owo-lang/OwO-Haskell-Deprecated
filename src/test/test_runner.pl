@@ -32,7 +32,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
             map {say red("  $_")} split /\n/, $diff;
             next if $isCI;
             print colored('  Update the golden value (y/N)? ', 'cyan');
-            getc eq 'y' ? `owo $flags -c $case > $out`
+            (readline =~ s/[\n|\r]//rg) eq 'y' ? `owo $flags -c $case > $out`
                 : say colored(<<'HINT', 'bold yellow');
   Leaving it alone.
   To update the golden value, run `test_runner.pl` in `src/test` directly.

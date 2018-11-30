@@ -7,7 +7,9 @@ module OwO.Util.Tools
   , parseNaiveSimple
   ) where
 
+import           Control.Monad        (join)
 import           Data.Maybe           (fromMaybe)
+import qualified Data.Text            as T
 import           Prelude              hiding (lex)
 import           System.Exit          (exitFailure)
 import           System.IO
@@ -20,14 +22,17 @@ import           OwO.Syntax.TokenType
 #include <impossible.h>
 
 prettyToken :: PsiToken -> String
-prettyToken token = simpleToken token ++ " " ++
-    printLoc (iStart loc) ++ " " ++ printLoc (iEnd loc)
-  where
-    loc = location token
-    printLoc loc = "(" ++ show (posPos  loc) ++
-                   " " ++ show (posLine loc) ++
-                   " " ++ show (posCol  loc) ++
-                   ")"
+prettyToken token = simpleToken token ++ " " ++ showLoc loc
+  where loc = location token
+
+showLoc :: Loc' a -> String
+showLoc loc = showPos (iStart loc) ++ " " ++ showPos (iEnd loc)
+
+showPos :: Position' a -> String
+showPos p = "(" ++ show (posPos  p) ++
+            " " ++ show (posLine p) ++
+            " " ++ show (posCol  p) ++
+            ")"
 
 simpleToken :: PsiToken -> String
 simpleToken = show . tokenType
@@ -42,8 +47,22 @@ dumpTokens file hideLocation = lex <$> readFile file >>= \case
       let f = if hideLocation then simpleToken else prettyToken
       in mapM_ putStrLn $ f <$> tokens
 
-printAst :: Bool -> PsiDeclaration -> IO ()
-printAst hideLocation declaration = return __TODO__
+printAst :: Int -> Bool -> PsiDeclaration -> IO ()
+printAst indent hideLocation = \case
+    PsiFixity info -> do
+      let (n, i, ns) = fixityInfo info
+      puts $ n ++ " " ++ show i
+      mapM_ (puts . name) ns
+    PsiTypeSignature n ps t -> do
+      puts $ "type signature" ++ name n
+      puts $ if ps == [] then " no pragmas" else __TODO__
+      -- TODO print the type expression
+  where
+    puts   = putStrLn . (replicate indent ' ' ++)
+    name n = (' ' :) $ T.unpack (textOfName n) ++ locate (locationOfName n)
+    recur  = flip printAst hideLocation $ succ indent
+    locate | hideLocation = const []
+           | otherwise    = (' ' :) . showLoc
 
 dumpAst :: FilePath -> Bool -> IO ()
 dumpAst file hideLocation = parseNaive ft <$> readFile file >>= \case
@@ -51,6 +70,6 @@ dumpAst file hideLocation = parseNaive ft <$> readFile file >>= \case
     Right pFile -> do
       putStrLn $ "File type: "       ++ show (fileType pFile)
       putStrLn $ "Top module name: " ++ show (topLevelModuleName pFile)
-      mapM_ (printAst hideLocation) $ declarations pFile
+      mapM_ (printAst 1 hideLocation) $ declarations pFile
   where
     ft = fromMaybe CodeFileType $ decideFileType file

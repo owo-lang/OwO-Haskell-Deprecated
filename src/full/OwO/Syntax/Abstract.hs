@@ -38,6 +38,7 @@ module OwO.Syntax.Abstract
 
   , PsiFixityInfo'(..)
   , PsiFixityInfo
+  , fixityInfo
 
   , QModuleName(..)
   , parentModule
@@ -157,6 +158,11 @@ data PsiFixityInfo' c
   | PsiInfixL Int [c]
   | PsiInfixR Int [c]
   deriving (Eq, Functor, Generic, Ord, Show)
+
+fixityInfo :: PsiFixityInfo' c -> (String, Int, [c])
+fixityInfo (PsiInfix  a b) = ("infix", a, b)
+fixityInfo (PsiInfixL a b) = ("infixl", a, b)
+fixityInfo (PsiInfixR a b) = ("infixr", a, b)
 
 -- | Function level pragma
 data FnPragma

@@ -1,0 +1,6 @@
+File type: CodeFileType
+Top module name: .ParseTest.TypeSignature
+ type signature a (40 3 3) (41 3 4)
+  no pragmas
+ type signature c (48 4 3) (49 4 4)
+  no pragmas
