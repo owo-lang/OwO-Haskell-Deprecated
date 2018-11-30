@@ -1,0 +1,20 @@
+module SimpleApplication where
+
+ f = g 233
+  where
+   g  a = a
+    where
+     x = 666
+   g' a = a
+    where
+     x = 666
+      where
+       x = 666
+
+ f = g 233 where
+  g a = a
+
+ f = g 233 where g a = a
+
+ f = g 233
+  where g a = a
