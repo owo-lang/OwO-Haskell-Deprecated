@@ -91,8 +91,15 @@ atomP fix = identifierP
    exactly BracketRToken
    return expr
 
+applicationP :: [PsiFixityInfo] -> Parser PsiTerm
+applicationP fix = do
+  f <- atomP fix
+  a <- expressionP fix
+  return $ PsiApplication f a
+
 expressionP :: [PsiFixityInfo] -> Parser PsiTerm
-expressionP = atomP -- TODO add other
+expressionP fix = applicationP fix
+  <|> atomP fix -- TODO add other
 
 --------------------------------------------------------------------------------
 --------------------------------- Fixity info ----------------------------------

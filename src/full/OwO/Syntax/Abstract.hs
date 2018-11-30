@@ -98,12 +98,14 @@ data PsiTerm' c
   -}
   | PsiPatternVar c
   -- ^ Pattern variable
+  | PsiApplication (PsiTerm' c) (PsiTerm' c)
+  -- ^ Function application
   | PsiConstant Loc ConstInfo
   -- ^ constant
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
-  | PsiDotPattern (PsiTerm' c)
-  -- ^ Dotted pattern
+  | PsiInaccessiblePattern (PsiTerm' c)
+  -- ^ Dotted pattern, inaccessible pattern
   | PsiMetaVar c
   -- ^ Meta variable
   deriving (Eq, Generic, Ord, Show)

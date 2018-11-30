@@ -1,0 +1,6 @@
+File type: CodeFileType
+Top module name: .SimpleApplication
+ constant clause a (32 2 2) (33 2 3)
+  no pragmas
+ constant clause undefined (43 3 2) (52 3 11)
+  no pragmas

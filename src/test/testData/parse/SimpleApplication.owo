@@ -1,0 +1,3 @@
+module SimpleApplication where
+ a = f a b
+ undefined = undefined
