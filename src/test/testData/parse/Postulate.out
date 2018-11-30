@@ -1,0 +1,17 @@
+File type: CodeFileType
+Top module name: .A
+ postulate OMG_IN_A (31 3 5) (39 3 13)
+  no pragmas
+ submodule .B
+  postulate OMG_IN_B (84 6 7) (92 6 15)
+   no pragmas
+  postulate OMG_IN_B' (107 7 7) (116 7 16)
+   no pragmas
+  type signature OMG_IN_B' (128 8 5) (137 8 14)
+   no pragmas
+ postulate OMG_IN_A (161 10 5) (169 10 13)
+  no pragmas
+ postulate OMG_IN_A' (182 11 5) (191 11 14)
+  no pragmas
+ type signature OMG_IN_A_ (201 12 3) (210 12 12)
+  no pragmas

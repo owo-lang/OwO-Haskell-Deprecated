@@ -12,6 +12,7 @@ import           Control.Applicative
     )
 import           Control.Monad
 import           Data.Functor
+import           Data.List                          (partition)
 import qualified Data.Text                          as T
 
 import           OwO.Syntax.Abstract

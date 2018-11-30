@@ -1,0 +1,19 @@
+File type: CodeFileType
+Top module name: .Parsing.Submodule
+ type signature insideTop (33 2 3) (42 2 12)
+  no pragmas
+ submodule .modA
+  type signature insideA (74 4 5) (81 4 12)
+   no pragmas
+ type signature insideTop (91 5 3) (100 5 12)
+  no pragmas
+ submodule .modB
+  type signature insideB (132 7 5) (139 7 12)
+   no pragmas
+  submodule .modC
+   type signature insideC (175 9 7) (182 9 14)
+    no pragmas
+  type signature insideB (194 10 5) (201 10 12)
+   no pragmas
+ type signature insideTop (211 11 3) (220 11 12)
+  no pragmas

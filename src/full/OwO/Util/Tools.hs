@@ -53,10 +53,18 @@ printAst indent hideLocation = \case
       let (n, i, ns) = fixityInfo info
       puts $ n ++ " " ++ show i
       mapM_ (puts . name) ns
+    PsiPostulate n ps t -> do
+      puts $ "postulate" ++ name n
+      puts $ if ps == [] then " no pragmas" else __TODO__
+      -- TODO print the type expression
     PsiTypeSignature n ps t -> do
       puts $ "type signature" ++ name n
       puts $ if ps == [] then " no pragmas" else __TODO__
       -- TODO print the type expression
+    PsiSubmodule n ds -> do
+      puts $ "submodule " ++ show n
+      mapM_ recur ds
+    _ -> __TODO__
   where
     puts   = putStrLn . (replicate indent ' ' ++)
     name n = (' ' :) $ T.unpack (textOfName n) ++ locate (locationOfName n)

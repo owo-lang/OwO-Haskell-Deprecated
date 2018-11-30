@@ -1,0 +1,11 @@
+module Parsing.Submodule where
+  insideTop : Type
+  module modA where
+    insideA : Type
+  insideTop : Type
+  module modB where
+    insideB : Type
+    module modC where
+      insideC : Type
+    insideB : Type
+  insideTop : Type

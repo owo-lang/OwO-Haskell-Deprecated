@@ -1,0 +1,12 @@
+module A where
+  postulate
+    OMG_IN_A : Type
+  module B where
+    postulate
+      OMG_IN_B  : Type
+      OMG_IN_B' : Type
+    OMG_IN_B' : Type
+  postulate
+    OMG_IN_A  : Type
+    OMG_IN_A' : Type
+  OMG_IN_A_ : Type
