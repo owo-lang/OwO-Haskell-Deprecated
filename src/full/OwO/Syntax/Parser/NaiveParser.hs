@@ -46,8 +46,14 @@ parseTokens fix fType = parseCode $ do
 
 identifierP' :: Parser (Loc, T.Text)
 identifierP' = satisfyMap $ \tok -> case tokenType tok of
-  (IdentifierToken t) -> Just (location tok, t)
-  _                   -> Nothing
+  IdentifierToken t -> Just (location tok, t)
+  _                 -> Nothing
+
+specificNameP :: T.Text -> Parser Name
+specificNameP n = satisfyMap $ \tok -> case tokenType tok of
+  IdentifierToken t -> if t == n then Just $ Name (location tok) t
+                       else Nothing
+  _                 -> Nothing
 
 nameP :: Parser Name
 nameP = uncurry Name <$> identifierP'
@@ -57,24 +63,24 @@ identifierP = PsiReference <$> nameP
 
 integerP' :: Parser (Loc, Integer)
 integerP' = satisfyMap $ \tok -> case tokenType tok of
-  (IntegerToken i) -> Just (location tok, i)
-  _                -> Nothing
+  IntegerToken i -> Just (location tok, i)
+  _              -> Nothing
 
 integerP :: Parser PsiTerm
 integerP = uncurry ((. IntegerConst) . PsiConstant) <$> integerP'
 
 stringP' :: Parser (Loc, T.Text)
 stringP' = satisfyMap $ \tok -> case tokenType tok of
-  (StringToken s) -> Just (location tok, s)
-  _               -> Nothing
+  StringToken s -> Just (location tok, s)
+  _             -> Nothing
 
 stringP :: Parser PsiTerm
 stringP = uncurry ((. StringConst) . PsiConstant) <$> stringP'
 
 charP' :: Parser (Loc, Char)
 charP' = satisfyMap $ \tok -> case tokenType tok of
-  (CharToken c) -> Just (location tok, c)
-  _             -> Nothing
+  CharToken c -> Just (location tok, c)
+  _           -> Nothing
 
 charP :: Parser PsiTerm
 charP = uncurry ((. CharConst) . PsiConstant) <$> charP'
@@ -115,7 +121,7 @@ fixityP = $(each [|
 
 -- TODO: support with abstraction
 -- TODO: support where
-{-# ANN firstClauseP "HLint: ignore" #-}
+{-# ANN firstClauseP "HLint: ignore Evaluate" #-}
 firstClauseP :: [PsiFixityInfo] -> Parser PsiImplInfo
 firstClauseP fix = $(each [|
   PsiImplSimple
@@ -154,13 +160,15 @@ fnPragmaP _ = empty -- TODO
 dataPragmaP :: [PsiFixityInfo] -> Parser DataPragma
 dataPragmaP _ = empty -- TODO
 
+{-# ANN typeSignatureP' "HLint: ignore Evaluate" #-}
 typeSignatureP' :: [PsiFixityInfo] -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
   p <- many $ fnPragmaP fix <* exactly SemicolonToken
-  i <- identifierP'
-  exactly ColonToken
-  t <- expressionP fix
-  return (uncurry Name i, p, t)
+  $(each [|
+    ( uncurry Name (~! identifierP')
+    , const p (~! exactly ColonToken)
+    , (~! expressionP fix)
+    ) |])
 
 typeSignatureP :: [PsiFixityInfo] -> DeclarationP
 typeSignatureP fix = pure . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
@@ -189,9 +197,9 @@ moduleP fix = do
   return [PsiSubmodule moduleName decls]
 
 moduleP' :: [PsiFixityInfo] -> Parser ([T.Text], [PsiDeclaration])
-moduleP' fix = do
-  exactly ModuleToken
-  modName <- exactly DotToken \||/ identifierP'
-  exactly WhereToken
-  content <- join <$> layoutP (declarationP fix)
-  return (snd <$> modName, content)
+moduleP' fix = $(each [|
+  ( snd <$> (~! exactly ModuleToken *>
+                  (exactly DotToken \||/ identifierP')
+                <* exactly WhereToken)
+  , (~! join <$> layoutP (declarationP fix))
+  ) |])
