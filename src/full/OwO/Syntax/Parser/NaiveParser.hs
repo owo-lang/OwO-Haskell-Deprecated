@@ -123,11 +123,18 @@ firstClauseP fix = $(each [|
   (const (~! es) (~! exactly EqualToken))
   []
   (~! expressionP fix)
-  [] |])
+  (~! option0 [] (whereClauseP fix)) |])
   where es = many $ expressionP fix
 
 restClausesP :: [PsiFixityInfo] -> T.Text -> Parser PsiImplInfo
 restClausesP fix n = empty
+
+whereClauseP :: [PsiFixityInfo] -> DeclarationP
+whereClauseP fix = do
+  many $ exactly SemicolonToken
+  exactly WhereToken
+  many $ exactly SemicolonToken
+  join <$> layoutP (declarationP fix)
 
 implementationP :: [PsiFixityInfo] -> DeclarationP
 implementationP fix = do

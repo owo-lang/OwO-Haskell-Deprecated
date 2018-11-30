@@ -110,7 +110,7 @@ printDeclaration indent hideLocation = \case
       pExpr t
     PsiImplementation n ps impls -> do
       puts $ "implementation of function " ++ name n
-      puts $ if null ps then " no pragmas" else return __TODO__
+      puts $ if null ps then " no pragmas" else pure __TODO__
       mapM_ pImpl impls
     PsiSubmodule n ds -> do
       puts $ "submodule " ++ show n
