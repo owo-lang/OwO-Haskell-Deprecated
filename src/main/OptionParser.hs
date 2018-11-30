@@ -3,7 +3,6 @@ module OptionParser
   , CmdOptions(..)
   ) where
 
-import           Data.Char           (toLower)
 import           Options.Applicative
 
 import           OwO.Options
