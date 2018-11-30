@@ -2,10 +2,14 @@ File type: CodeFileType
 Top module name: .EmptyClause
  type signature a (26 2 2) (27 2 3)
   no pragmas
+  named reference Type (30 2 6) (34 2 10)
  constant clause a (36 3 2) (37 3 3)
   no pragmas
+  named reference b (40 3 6) (41 3 7)
  submodule .B
   type signature b (60 5 3) (61 5 4)
    no pragmas
+   named reference Type (64 5 7) (68 5 11)
   constant clause b (71 6 3) (72 6 4)
    no pragmas
+   named reference c (75 6 7) (76 6 8)

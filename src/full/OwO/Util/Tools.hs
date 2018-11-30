@@ -47,8 +47,32 @@ dumpTokens file hideLocation = lex <$> readFile file >>= \case
       let f = if hideLocation then simpleToken else prettyToken
       in mapM_ putStrLn $ f <$> tokens
 
-printAst :: Int -> Bool -> PsiDeclaration -> IO ()
-printAst indent hideLocation = \case
+put :: Int -> String -> IO ()
+put indent = putStrLn . (replicate indent ' ' ++)
+
+printName locate n = (' ' :) $ T.unpack (textOfName n) ++ locate (locationOfName n)
+
+printExpr :: Int -> Bool -> PsiTerm -> IO ()
+printExpr indent hideLocation = \case
+    PsiConstant l info -> do
+      puts $ "constant" ++ locate l
+      succ indent `put` show info
+    PsiReference n -> put indent $ "named reference" ++ name n
+    PsiApplication f a -> do
+      puts "function application"
+      puts "function being applied"
+      recur f
+      puts "value applied to the function"
+      recur a
+  where
+    recur  = flip printExpr hideLocation $ succ indent
+    puts   = put indent
+    name   = printName locate
+    locate | hideLocation = const []
+           | otherwise    = (' ' :) . showLoc
+
+printDeclaration :: Int -> Bool -> PsiDeclaration -> IO ()
+printDeclaration indent hideLocation = \case
     PsiFixity info -> do
       let (n, i, ns) = fixityInfo info
       puts $ n ++ " " ++ show i
@@ -56,25 +80,26 @@ printAst indent hideLocation = \case
     PsiPostulate n ps t -> do
       puts $ "postulate" ++ name n
       puts $ if null ps then " no pragmas" else return __TODO__
-      -- TODO print the type expression
+      pExpr t
     PsiTypeSignature n ps t -> do
       puts $ "type signature" ++ name n
       puts $ if null ps then " no pragmas" else return __TODO__
-      -- TODO print the type expression
+      pExpr t
     PsiPattern n ps pis t -> do
       let description = if null pis then "constant clause"
                         else "pattern matching clause"
       puts $ description ++ name n
       puts $ if null ps then " no pragmas" else return __TODO__
-      -- TODO print the expression
+      pExpr t
     PsiSubmodule n ds -> do
       puts $ "submodule " ++ show n
       mapM_ recur ds
     _ -> __TODO__
   where
-    puts   = putStrLn . (replicate indent ' ' ++)
-    name n = (' ' :) $ T.unpack (textOfName n) ++ locate (locationOfName n)
-    recur  = flip printAst hideLocation $ succ indent
+    puts   = put indent
+    pExpr  = flip printExpr hideLocation $ succ indent
+    recur  = flip printDeclaration hideLocation $ succ indent
+    name   = printName locate
     locate | hideLocation = const []
            | otherwise    = (' ' :) . showLoc
 
@@ -84,6 +109,6 @@ dumpAst file hideLocation = parseNaive ft <$> readFile file >>= \case
     Right pFile -> do
       putStrLn $ "File type: "       ++ show (fileType pFile)
       putStrLn $ "Top module name: " ++ show (topLevelModuleName pFile)
-      mapM_ (printAst 1 hideLocation) $ declarations pFile
+      mapM_ (printDeclaration 1 hideLocation) $ declarations pFile
   where
     ft = fromMaybe CodeFileType $ decideFileType file

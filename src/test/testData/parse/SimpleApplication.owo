@@ -1,3 +1,5 @@
 module SimpleApplication where
  a = f a b
+ a = f (a b)
+ a = (f a) b
  undefined = undefined

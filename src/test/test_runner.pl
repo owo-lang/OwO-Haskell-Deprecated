@@ -25,7 +25,8 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
         my $caseFlags = -e $flagFile ? `cat $flagFile` : '';
         `touch $out`;
         my $flags = "$fixtureFlags $caseFlags" =~ s/[\n|\r]//rg;
-        my $diff = `owo $flags -c $case | diff --strip-trailing-cr - $out`;
+        my $cmd = "owo $flags -c $case";
+        my $diff = `$cmd | diff --strip-trailing-cr - $out`;
         if (length $diff) {
             push @failure, $case;
             say red(" Failed $case:");
@@ -33,9 +34,10 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
             next if $isCI;
             print colored('  Update the golden value (y/N)? ', 'cyan');
             (readline =~ s/[\n|\r]//rg) eq 'y' ? `owo $flags -c $case > $out`
-                : say colored(<<'HINT', 'bold yellow');
+                : say colored(<<"HINT", 'bold yellow');
   Leaving it alone.
   To update the golden value, run `test_runner.pl` in `src/test` directly.
+  Command: $cmd
 HINT
         } else {
             say ntr(" Passed $case");

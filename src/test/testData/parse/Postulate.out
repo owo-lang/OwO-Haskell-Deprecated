@@ -2,16 +2,23 @@ File type: CodeFileType
 Top module name: .A
  postulate OMG_IN_A (31 3 5) (39 3 13)
   no pragmas
+  named reference Type (42 3 16) (46 3 20)
  submodule .B
   postulate OMG_IN_B (84 6 7) (92 6 15)
    no pragmas
+   named reference Type (96 6 19) (100 6 23)
   postulate OMG_IN_B' (107 7 7) (116 7 16)
    no pragmas
+   named reference Type (119 7 19) (123 7 23)
   type signature OMG_IN_B' (128 8 5) (137 8 14)
    no pragmas
+   named reference Type (140 8 17) (144 8 21)
  postulate OMG_IN_A (161 10 5) (169 10 13)
   no pragmas
+  named reference Type (173 10 17) (177 10 21)
  postulate OMG_IN_A' (182 11 5) (191 11 14)
   no pragmas
+  named reference Type (194 11 17) (198 11 21)
  type signature OMG_IN_A_ (201 12 3) (210 12 12)
   no pragmas
+  named reference Type (213 12 15) (217 12 19)

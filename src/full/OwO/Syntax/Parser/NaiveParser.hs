@@ -86,16 +86,18 @@ atomP fix = identifierP
  <|> stringP
  <|> charP
  <|> do
-   exactly BracketLToken
+   exactly ParenthesisLToken
    expr <- expressionP fix
-   exactly BracketRToken
+   exactly ParenthesisRToken
    return expr
 
+-- applicationP :: [PsiFixityInfo] -> Parser PsiTerm
+-- applicationP fix = $(each [|
+--   PsiApplication
+--   (~! atomP fix)
+--   (~! expressionP fix) |])
 applicationP :: [PsiFixityInfo] -> Parser PsiTerm
-applicationP fix = do
-  f <- atomP fix
-  a <- expressionP fix
-  return $ PsiApplication f a
+applicationP fix = atomP fix `chainl1` pure PsiApplication
 
 expressionP :: [PsiFixityInfo] -> Parser PsiTerm
 expressionP fix = applicationP fix
