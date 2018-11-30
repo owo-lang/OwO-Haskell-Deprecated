@@ -17,10 +17,9 @@ sub red {return colored $_[0], 'red';}
 sub redy {return colored $_[0], 'bold red';}
 
 foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/`) {
-    say "Fixture $fixture:";
+    say colored("Fixture $fixture:", 'yellow');
     my $fixtureFlags = -e "$fixture.flags" ? `cat $fixture.flags` : '';
     foreach my $case (split /[ \t\n]+/, `ls -G $fixture/*.owo`) {
-        say " Case $case:";
         my $out = $case =~ s/\.owo/\.out/rg;
         my $flagFile = $case =~ s/\.owo/\.flags/rg;
         my $caseFlags = -e $flagFile ? `cat $flagFile` : '';
@@ -29,6 +28,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
         my $diff = `owo $flags -c $case | diff --strip-trailing-cr - $out`;
         if (length $diff) {
             push @failure, $case;
+            say red(" Failed $case:");
             map {say red("  $_")} split /\n/, $diff;
             next if $isCI;
             print colored('  Update the golden value (y/N)? ', 'cyan');
@@ -38,7 +38,7 @@ foreach my $fixture (map {substr $_, 0, -1} split /[ \t\n]+/, `ls -d testData/*/
   To update the golden value, run `test_runner.pl` in `src/test` directly.
 HINT
         } else {
-            say ntr('  Passed!');
+            say ntr(" Passed $case");
             $success++;
         }
     }
