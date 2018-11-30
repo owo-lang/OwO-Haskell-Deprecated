@@ -60,8 +60,7 @@ integerP' = satisfyMap $ \tok -> case tokenType tok of
   _                -> Nothing
 
 integerP :: Parser PsiTerm
-integerP = mapInteger <$> integerP'
-  where mapInteger (l, i) = PsiConstant l $ IntegerConst i
+integerP = uncurry ((. IntegerConst) . PsiConstant) <$> integerP'
 
 stringP' :: Parser (Loc, T.Text)
 stringP' = satisfyMap $ \tok -> case tokenType tok of
@@ -69,8 +68,7 @@ stringP' = satisfyMap $ \tok -> case tokenType tok of
   _               -> Nothing
 
 stringP :: Parser PsiTerm
-stringP = mapString <$> stringP'
-  where mapString (l, s) = PsiConstant l $ StringConst s
+stringP = uncurry ((. StringConst) . PsiConstant) <$> stringP'
 
 charP' :: Parser (Loc, Char)
 charP' = satisfyMap $ \tok -> case tokenType tok of
@@ -78,19 +76,16 @@ charP' = satisfyMap $ \tok -> case tokenType tok of
   _             -> Nothing
 
 charP :: Parser PsiTerm
-charP = mapChar <$> charP'
-  where mapChar (l, c) = PsiConstant l $ CharConst c
+charP = uncurry ((. CharConst) . PsiConstant) <$> charP'
 
 atomP :: [PsiFixityInfo] -> Parser PsiTerm
 atomP fix = identifierP
- <|> integerP
- <|> stringP
- <|> charP
- <|> do
-   exactly ParenthesisLToken
-   expr <- expressionP fix
-   exactly ParenthesisRToken
-   return expr
+  <|> integerP
+  <|> stringP
+  <|> charP
+  <|> exactly ParenthesisLToken *>
+       expressionP fix
+      <* exactly ParenthesisRToken
 
 applicationP :: [PsiFixityInfo] -> Parser PsiTerm
 applicationP fix = atomP fix `chainl1` pure PsiApplication
@@ -125,7 +120,7 @@ dataPragmaP _ = empty -- TODO
 
 typeSignatureP' :: [PsiFixityInfo] -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
-  p <- option0 [] $ exactly SemicolonToken \||/ fnPragmaP fix
+  p <- many $ fnPragmaP fix <* exactly SemicolonToken
   i <- identifierP'
   exactly ColonToken
   t <- expressionP fix
@@ -135,17 +130,14 @@ typeSignatureP :: [PsiFixityInfo] -> DeclarationP
 typeSignatureP fix = pure . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
 
 layoutP :: Parser a -> Parser [a]
-layoutP p = do
-  exactly BraceLToken
-  content <- option0 [] $ exactly SemicolonToken \||/ p
-  exactly BraceRToken
-  return content
+layoutP p =
+  exactly BraceLToken *>
+    option0 [] (exactly SemicolonToken \||/ p)
+  <* exactly BraceRToken
 
 postulateP :: [PsiFixityInfo] -> DeclarationP
-postulateP fix = do
-  exactly PostulateToken
-  ts <- layoutP $ typeSignatureP' fix
-  return $ uncurry3 PsiPostulate <$> ts
+postulateP fix = exactly PostulateToken >>
+  $(each [| uncurry3 PsiPostulate <$> bind (layoutP $ typeSignatureP' fix) |])
 
 patternClauseP :: [PsiFixityInfo] -> DeclarationP
 patternClauseP fix = do
