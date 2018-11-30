@@ -15,20 +15,22 @@ import           Data.Functor
 import           Data.List                          (partition)
 import qualified Data.Text                          as T
 
+-- TODO: https://github.com/dramforever/each/pull/1
+import           Each
+
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
 import           OwO.Util.Three
 
--- TODO: https://github.com/dramforever/each/pull/1
-import           Each                               hiding ((~!))
-infixl 0 ~!
-(~!) = undefined
-
 type DeclarationP = Parser [PsiDeclaration]
 
-parseTokens :: [PsiFixityInfo] -> PsiFileType -> [PsiToken] -> Either String PsiFile
+parseTokens ::
+  [PsiFixityInfo] ->
+  PsiFileType ->
+  [PsiToken] ->
+  Either String PsiFile
 parseTokens fix fType = parseCode $ do
   (name, decls) <- moduleP' fix
   let moduleName = QModuleName { moduleNameList = name }
@@ -91,11 +93,6 @@ atomP fix = identifierP
    exactly ParenthesisRToken
    return expr
 
--- applicationP :: [PsiFixityInfo] -> Parser PsiTerm
--- applicationP fix = $(each [|
---   PsiApplication
---   (~! atomP fix)
---   (~! expressionP fix) |])
 applicationP :: [PsiFixityInfo] -> Parser PsiTerm
 applicationP fix = atomP fix `chainl1` pure PsiApplication
 
@@ -109,8 +106,8 @@ expressionP fix = applicationP fix
 
 fixityP :: Parser PsiFixityInfo
 fixityP = $(each [|
-  (~! infixLP <|> infixRP <|> infixP)
-  (~! fromInteger . snd <$> integerP')
+  (~! (infixLP <|> infixRP <|> infixP))
+  (~! (fromInteger . snd <$> integerP'))
   (~! some nameP) |])
   where
     infixLP = exactly InfixLToken >> return PsiInfixL
@@ -121,15 +118,22 @@ fixityP = $(each [|
 --------------------------------- Declarations ---------------------------------
 --------------------------------------------------------------------------------
 
+fnPragmaP :: [PsiFixityInfo] -> Parser FnPragma
+fnPragmaP _ = empty -- TODO
+
+dataPragmaP :: [PsiFixityInfo] -> Parser DataPragma
+dataPragmaP _ = empty -- TODO
+
 typeSignatureP' :: [PsiFixityInfo] -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
+  p <- option0 [] $ exactly SemicolonToken \||/ fnPragmaP fix
   i <- identifierP'
   exactly ColonToken
   t <- expressionP fix
-  return (uncurry Name i, [], t) -- TODO pragma
+  return (uncurry Name i, p, t)
 
 typeSignatureP :: [PsiFixityInfo] -> DeclarationP
-typeSignatureP fix = return . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
+typeSignatureP fix = pure . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
 
 layoutP :: Parser a -> Parser [a]
 layoutP p = do
@@ -146,12 +150,12 @@ postulateP fix = do
 
 patternClauseP :: [PsiFixityInfo] -> DeclarationP
 patternClauseP fix = do
+  p <- option0 [] $ exactly SemicolonToken \||/ fnPragmaP fix
   i <- identifierP'
   -- TODO patterns
   exactly EqualToken
   t <- expressionP fix
-  -- TODO pragma
-  return [PsiPattern (uncurry Name i) [] [] t]
+  return [PsiPattern (uncurry Name i) p [] t]
 
 declarationP :: [PsiFixityInfo] -> DeclarationP
 declarationP fix = moduleP fix
