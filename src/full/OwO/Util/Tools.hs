@@ -115,7 +115,6 @@ printDeclaration indent hideLocation = \case
     PsiSubmodule n ds -> do
       puts $ "submodule " ++ show n
       mapM_ recur ds
-    _ -> __TODO__
   where
     puts   = put indent
     pExpr  = flip printExpr hideLocation $ succ indent

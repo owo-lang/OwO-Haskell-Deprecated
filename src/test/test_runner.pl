@@ -27,14 +27,14 @@ foreach my $fixture (map {substr $_, 0, -1}
         `touch $out`;
         my $flags = "$fixtureFlags $caseFlags" =~ s/[\n|\r]//rg;
         my $cmd = "owo $flags -c $case";
-        my $diff = `$cmd | diff --strip-trailing-cr - $out`;
+        my $diff = `$cmd 2>&1 | diff --strip-trailing-cr - $out`;
         if (length $diff) {
             push @failure, $case;
             say red(" Failed $case:");
             map {say red("  $_")} split /\n/, $diff;
             next if $isCI;
             print colored('  Update the golden value (y/N)? ', 'cyan');
-            (readline =~ s/[\n|\r]//rg) eq 'y' ? `owo $flags -c $case > $out`
+            (readline =~ s/[\n|\r]//rg) eq 'y' ? `owo $flags -c $case &> $out`
                 : say colored(<<"HINT", 'bold yellow');
   Leaving it alone.
   To update the golden value, run `test_runner.pl` in `src/test` directly.

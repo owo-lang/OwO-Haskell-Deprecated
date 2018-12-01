@@ -2,6 +2,7 @@
 {-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE MultiWayIf            #-}
 
 -- | Core language
 module OwO.TypeChecking.Core
@@ -15,10 +16,12 @@ module OwO.TypeChecking.Core
   , Type
   , typeUniverseOfLevel
   , typeUniverseModule
+  , primitiveModule
 
   , Definition(..)
   ) where
 
+import           Data.Char
 import qualified Data.Text           as T
 
 import           OwO.Syntax.Abstract
@@ -92,11 +95,32 @@ data Definition
 
 -- | Built-in definition: Type0, Type1, etc
 typeUniverseOfLevel :: Int -> Definition
-typeUniverseOfLevel i =
-  SimpleDefinition (TType . ULevelLit $ succ i) (TType $ ULevelLit i)
+typeUniverseOfLevel = uncurry SimpleDefinition . typeUniverseOfLevel'
+
+typeUniverseOfLevel' :: Int -> (Term, Type)
+typeUniverseOfLevel' i = (TType . ULevelLit $ succ i, TType $ ULevelLit i)
 
 -- | Module name for type universes. Like a placeholder
 typeUniverseModule :: QModuleName
-typeUniverseModule = QModuleName
+typeUniverseModule = primitiveModule
+
+primitiveModule :: QModuleName
+primitiveModule = QModuleName
   { moduleNameList = T.pack <$> ["OwO", "Primitive"]
   }
+
+typeText = T.pack "Type"
+infText = T.pack "Inf"
+arrowText = T.pack "->"
+
+builtinDefinition' :: T.Text -> Maybe (Term, Type)
+builtinDefinition' t
+  | t `T.isPrefixOf` typeText = let trailing = T.drop 4 t in if
+    | T.all isDigit trailing -> Just . typeUniverseOfLevel' . read $ T.unpack trailing
+    | trailing == infText    -> Just (TType ULevelMax, TType ULevelMax)
+    | otherwise              -> Nothing
+  | t == arrowText = Just __TODO__
+  | otherwise = Nothing
+
+builtinDefinition :: T.Text -> Maybe Definition
+builtinDefinition = (uncurry SimpleDefinition <$>) . builtinDefinition'
