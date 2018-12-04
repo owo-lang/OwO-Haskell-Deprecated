@@ -4,7 +4,10 @@
 {-# LANGUAGE DeriveFunctor   #-}
 
 -- | Only for early-stage testing
-module OwO.Syntax.Parser.NaiveParser (parseTokens) where
+module OwO.Syntax.Parser.NaiveParser
+  ( parseTokens
+  , fixityP
+  ) where
 
 import           Control.Applicative
     ( Alternative (..)
@@ -74,17 +77,31 @@ identifierP' = satisfyMap $ \tok -> case tokenType tok of
   IdentifierToken t -> Just (location tok, t)
   _                 -> Nothing
 
+operatorP' :: Parser (Loc, T.Text)
+operatorP' = satisfyMap $ \tok -> case tokenType tok of
+  OperatorToken t -> Just (location tok, t)
+  _               -> Nothing
+
 specificNameP :: (T.Text -> Bool) -> Parser Name
 specificNameP f = satisfyMap $ \tok -> case tokenType tok of
   IdentifierToken t -> if f t then Just . flip Name t $ location tok
                        else Nothing
   _                 -> Nothing
 
-nameP :: Parser Name
-nameP = uncurry Name <$> identifierP'
+specificOperatorP :: (T.Text -> Bool) -> Parser Name
+specificOperatorP f = satisfyMap $ \tok -> case tokenType tok of
+  OperatorToken t -> if f t then Just . flip Name t $ location tok
+                     else Nothing
+  _               -> Nothing
+
+nameIdP :: Parser Name
+nameIdP = uncurry Name <$> identifierP'
+
+nameOpP :: Parser Name
+nameOpP = uncurry Name <$> operatorP'
 
 identifierP :: Parser PsiTerm
-identifierP = PsiReference <$> nameP
+identifierP = PsiReference <$> nameIdP
 
 integerP' :: Parser (Loc, Integer)
 integerP' = satisfyMap $ \tok -> case tokenType tok of
@@ -110,17 +127,18 @@ charP' = satisfyMap $ \tok -> case tokenType tok of
 charP :: Parser PsiTerm
 charP = uncurry ((. CharConst) . PsiConstant) <$> charP'
 
-atomP :: Parser PsiTerm
-atomP = identifierP
+atomP :: FixityInfo -> Parser PsiTerm
+atomP fix = identifierP
   <|> integerP
   <|> stringP
   <|> charP
+  <|> insideParen (expressionP fix)
 
-applicationP :: Parser PsiTerm
-applicationP = chainl1 atomP $ pure PsiApplication
+applicationP :: FixityInfo -> Parser PsiTerm
+applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
 expressionP :: FixityInfo -> Parser PsiTerm
-expressionP = flip operatorsP (applicationP <|> atomP) . regularizeFixity
+expressionP fix = flip operatorsP (applicationP fix <|> atomP fix) $ regularizeFixity fix
 
 --------------------------------------------------------------------------------
 ---------------------------------- Operators -----------------------------------
@@ -130,7 +148,7 @@ fixityP :: Parser PsiFixityInfo
 fixityP = $(each [|
   (~! infixLP <|> infixRP <|> infixP)
   (~! fromInteger . snd <$> integerP')
-  (~! some nameP) |])
+  (~! some nameOpP) |])
   where
     infixLP = exactly InfixLToken >> return PsiInfixL
     infixRP = exactly InfixRToken >> return PsiInfixR
@@ -150,17 +168,15 @@ regularizeFixity = (fmap (textOfName <$>) . snd <$>)
 
 -- | Inspiration: https://www.codewars.com/kata/operator-parser
 operatorsP :: RegularFixity [T.Text] -> Parser PsiTerm -> Parser PsiTerm
-operatorsP fix rp = re
-  where tm = rp <|> insideParen re
-        re = foldr fu tm fix
+operatorsP fix rp = foldr fu rp fix
 
 fu :: RegularFixityInfo [T.Text] -> Parser PsiTerm -> Parser PsiTerm
-fu (L  a) atom = chainl1 atom . foldr1 (<|>) $ makeChain' <$> a
-fu (R  a) atom = chainr1 atom . foldr1 (<|>) $ makeChain' <$> a
+fu (L  a) atom = chainr1 atom . foldr1 (<|>) $ makeChain' <$> a
+fu (R  a) atom = chainl1 atom . foldr1 (<|>) $ makeChain' <$> a
 fu (No a) atom = option1 atom . foldr1 (<|>) $ makeChain' <$> a
 
 makeChain' :: T.Text -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
-makeChain' = makeChain . (PsiReference <$>) . specificNameP . (==)
+makeChain' = makeChain . (PsiReference <$>) . specificOperatorP . (==)
 
 makeChain :: Parser PsiTerm -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
 makeChain = (((PsiApplication .) . PsiApplication) <$>)
