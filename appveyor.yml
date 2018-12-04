@@ -11,6 +11,10 @@ artifacts:
 - path: "dist\\build\\owo\\owo.exe"
   name: executable
 
+cache:
+- "c:\\sr"
+- "c:\\Users\appveyor\\AppData\\Local\\Programs\\stack"
+
 build_script:
 - cabal update
 - cabal install alex
