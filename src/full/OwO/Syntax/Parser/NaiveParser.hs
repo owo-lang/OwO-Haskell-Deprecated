@@ -1,6 +1,7 @@
 {-# LANGUAGE ApplicativeDo   #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections   #-}
+{-# LANGUAGE DeriveFunctor   #-}
 
 -- | Only for early-stage testing
 module OwO.Syntax.Parser.NaiveParser (parseTokens) where
@@ -13,7 +14,7 @@ import           Control.Applicative
     )
 import           Control.Monad
 import           Data.Functor
-import           Data.List                          (partition)
+import           Data.List                          (partition, sortOn)
 import           Data.List.NonEmpty                 (NonEmpty (..))
 import qualified Data.Text                          as T
 
@@ -29,7 +30,9 @@ type FixityInfo = [PsiFixityInfo]
 type DeclarationP = FixityInfo -> Parser (FixityInfo, [PsiDeclaration])
 
 data RegularFixityInfo a = L a | R a | No a
-  deriving (Eq, Ord)
+  deriving (Eq, Functor, Ord)
+
+-- | Sorted list that holds all fixities
 type RegularFixity a = [RegularFixityInfo a]
 
 parseTokens ::
@@ -107,19 +110,17 @@ charP' = satisfyMap $ \tok -> case tokenType tok of
 charP :: Parser PsiTerm
 charP = uncurry ((. CharConst) . PsiConstant) <$> charP'
 
-atomP :: FixityInfo -> Parser PsiTerm
-atomP fix = identifierP
+atomP :: Parser PsiTerm
+atomP = identifierP
   <|> integerP
   <|> stringP
   <|> charP
-  <|> insideParen (expressionP fix)
 
-applicationP :: FixityInfo -> Parser PsiTerm
-applicationP fix = atomP fix `chainl1` pure PsiApplication
+applicationP :: Parser PsiTerm
+applicationP = chainl1 atomP $ pure PsiApplication
 
 expressionP :: FixityInfo -> Parser PsiTerm
-expressionP fix = applicationP fix
-  <|> atomP fix -- TODO add other
+expressionP = flip operatorsP (applicationP <|> atomP) . regularizeFixity
 
 --------------------------------------------------------------------------------
 ---------------------------------- Operators -----------------------------------
@@ -134,6 +135,21 @@ fixityP = $(each [|
     infixLP = exactly InfixLToken >> return PsiInfixL
     infixRP = exactly InfixRToken >> return PsiInfixR
     infixP  = exactly InfixToken  >> return PsiInfix
+
+regularizeFixity :: FixityInfo -> RegularFixity [T.Text]
+regularizeFixity = (fmap (textOfName <$>) . snd <$>)
+                 . sortOn fst
+                 . (mapFixity <$>)
+  where
+    mapFixity (PsiInfixL i a) = (i, L  a)
+    mapFixity (PsiInfixR i a) = (i, R  a)
+    mapFixity (PsiInfix  i a) = (i, No a)
+
+-- | Inspiration: https://www.codewars.com/kata/operator-parser
+operatorsP :: RegularFixity [T.Text] -> Parser PsiTerm -> Parser PsiTerm
+operatorsP fix rp = re
+  where tm = rp <|> insideParen re
+        re = foldr fu tm fix
 
 fu :: RegularFixityInfo [T.Text] -> Parser PsiTerm -> Parser PsiTerm
 fu (L  a) atom = chainl1 atom . foldr1 (<|>) $ makeChain' <$> a
@@ -228,12 +244,12 @@ declarationP fix = moduleP fix
 declarationsP :: DeclarationP
 declarationsP fix = (join <$>) <$> layoutStatedP fix declarationP
 
+-- | I did not put operator info in submodules to parent modules
+--   but store them separately in the submodules
 moduleP :: DeclarationP
 moduleP fix = do
   (name, fixity, decls) <- moduleP' fix
   let moduleName = QModuleName { moduleNameList = name }
-  -- Do not put operator info in submodules to parent modules
-  -- But store them separately in the submodules
   return $ (fix,) [PsiSubmodule moduleName fixity decls]
 
 moduleP' :: FixityInfo -> Parser ([T.Text], FixityInfo, [PsiDeclaration])

@@ -17,3 +17,6 @@ snd3 (_, b, _) = b
 
 flattenSnd :: (a, (b, c)) -> (a, b, c)
 flattenSnd (a, (b, c)) = (a, b, c)
+
+dropFst :: (a, b, c) -> (b, c)
+dropFst (_, b, c) = (b, c)
