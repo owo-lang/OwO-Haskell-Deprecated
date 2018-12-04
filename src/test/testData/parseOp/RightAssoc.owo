@@ -1,0 +1,4 @@
+module RightAssoc where
+
+  infixr 1 ::
+  fib = 0 :: 1 :: zipWith plus fib (tail fib)

@@ -1,0 +1,38 @@
+File type: CodeFileType
+Top module name: .Chain
+ implementation of function  "f" (35 4 3) (36 4 4)
+  no pragmas
+  clause for  "f" (35 4 3) (36 4 4)
+  patterns
+  function body
+   function application
+   function being applied
+    function application
+    function being applied
+     named reference "+" (41 4 9) (42 4 10)
+    value applied to the function
+     constant (39 4 7) (40 4 8)
+      IntegerConst 1
+   value applied to the function
+    function application
+    function being applied
+     function application
+     function being applied
+      named reference "+" (45 4 13) (46 4 14)
+     value applied to the function
+      constant (43 4 11) (44 4 12)
+       IntegerConst 1
+    value applied to the function
+     function application
+     function being applied
+      function application
+      function being applied
+       named reference "+" (49 4 17) (50 4 18)
+      value applied to the function
+       constant (47 4 15) (48 4 16)
+        IntegerConst 1
+     value applied to the function
+      constant (51 4 19) (52 4 20)
+       IntegerConst 1
+  no with abstraction
+  no where clause

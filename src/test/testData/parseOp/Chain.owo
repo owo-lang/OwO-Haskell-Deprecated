@@ -1,0 +1,5 @@
+module Chain where
+
+  infixl 1 +
+  f = 1 + 1 + 1 + 1
+
