@@ -26,7 +26,7 @@ import           OwO.Syntax.TokenType
 import           OwO.Util.Three
 
 type FixityInfo = [PsiFixityInfo]
-type DeclarationP = Parser [PsiDeclaration]
+type DeclarationP = FixityInfo -> Parser (FixityInfo, [PsiDeclaration])
 
 parseTokens ::
   FixityInfo ->
@@ -34,13 +34,13 @@ parseTokens ::
   [PsiToken] ->
   Either String PsiFile
 parseTokens fix fType = parseCode $ do
-  (name, decls) <- moduleP' fix
+  (name, fixity, decls) <- moduleP' fix
   let moduleName = QModuleName { moduleNameList = name }
   return $ PsiFile
     { fileType           = fType
     , topLevelModuleName = moduleName
     , declarations       = decls
-    , exposedFixityInfo  = [] -- TODO
+    , exposedFixityInfo  = fixity
     }
 
 semicolon :: Parser PsiToken
@@ -146,23 +146,23 @@ patternMatchingClauseP fix f = $(each [|
   (~! many $ expressionP fix)
   []
   (~! exactly EqualToken *> expressionP fix)
-  (~! option0 [] $ whereClauseP fix) |])
+  (~! option0 [] $ snd <$> whereClauseP fix) |])
 
-whereClauseP :: FixityInfo -> DeclarationP
+whereClauseP :: DeclarationP
 whereClauseP fix = do
   many semicolon
   exactly WhereToken
   many semicolon
-  join <$> layoutP (declarationP fix)
+  declarationsP fix
 
-implementationP :: FixityInfo -> DeclarationP
+implementationP :: DeclarationP
 implementationP fix = do
   ps <- many $ fnPragmaP fix <* semicolon
   hd <- patternMatchingClauseP fix $ const True
   let functionName = functionNameOfImplementation hd
   tl <- many $ semicolon *>
      patternMatchingClauseP fix (textOfName functionName ==)
-  return [PsiImplementation functionName ps $ hd :| tl]
+  return $ (fix,) [PsiImplementation functionName ps $ hd :| tl]
 
 --------------------------------------------------------------------------------
 --------------------------------- Declarations ---------------------------------
@@ -183,8 +183,9 @@ typeSignatureP' fix = do
     , (~! exactly ColonToken *> expressionP fix)
     ) |])
 
-typeSignatureP :: FixityInfo -> DeclarationP
-typeSignatureP fix = pure . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
+typeSignatureP :: DeclarationP
+typeSignatureP fix = ((fix,) <$>) $
+  pure . uncurry3 PsiTypeSignature <$> typeSignatureP' fix
 
 layoutP :: Parser a -> Parser [a]
 layoutP p =
@@ -198,28 +199,34 @@ layoutStatedP st p =
     option0 (st, []) (separatedStateful p semicolon st)
   <* exactly BraceRToken
 
-postulateP :: FixityInfo -> DeclarationP
-postulateP fix = exactly PostulateToken >>
+postulateP :: DeclarationP
+postulateP fix = exactly PostulateToken >> ((fix,) <$>)
   $(each [| uncurry3 PsiPostulate <$> bind (layoutP $ typeSignatureP' fix) |])
 
-declarationP :: FixityInfo -> DeclarationP
+declarationP :: DeclarationP
 declarationP fix = moduleP fix
   <|> postulateP fix
   <|> typeSignatureP fix
   <|> implementationP fix
 --  <|> return __TODO__
 
-moduleP :: FixityInfo -> DeclarationP
-moduleP fix = do
-  (name, decls) <- moduleP' fix
-  let moduleName = QModuleName { moduleNameList = name }
-  return [PsiSubmodule moduleName decls]
+declarationsP :: DeclarationP
+declarationsP fix = (join <$>) <$> layoutStatedP fix declarationP
 
-moduleP' :: FixityInfo -> Parser ([T.Text], [PsiDeclaration])
+moduleP :: DeclarationP
+moduleP fix = do
+  (name, fixity, decls) <- moduleP' fix
+  let moduleName = QModuleName { moduleNameList = name }
+  -- Do not put operator info in submodules to parent modules
+  -- But store them separately in the submodules
+  return $ (fix,) [PsiSubmodule moduleName fixity decls]
+
+moduleP' :: FixityInfo -> Parser ([T.Text], FixityInfo, [PsiDeclaration])
 moduleP' fix = $(each [|
+  flattenSnd
   ( snd <$>
     (~! exactly ModuleToken *>
           (exactly DotToken \|/ identifierP')
         <* exactly WhereToken)
-  , (~! join <$> layoutP (declarationP fix))
+  , (~! declarationsP fix)
   ) |])

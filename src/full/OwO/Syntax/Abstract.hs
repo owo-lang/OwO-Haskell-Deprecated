@@ -240,11 +240,9 @@ type DataPragmas = [DataPragma]
 -- | Top-level declarations
 --   TODOs: PsiCodata, PsiCopattern
 data PsiDeclaration' t c
-  = PsiFixity (PsiFixityInfo' c)
-  -- ^ (infix, infixl, infixr), priority, symbols
-  | PsiTypeSignature c FnPragmas (t c)
+  = PsiTypeSignature c FnPragmas (t c)
   -- ^ Type signature
-  | PsiSubmodule QModuleName [PsiDeclaration' t c]
+  | PsiSubmodule QModuleName [PsiFixityInfo' c] [PsiDeclaration' t c]
   -- ^ Module defined in modules
   | PsiPostulate c FnPragmas (t c)
   -- ^ Postulate, unsafe

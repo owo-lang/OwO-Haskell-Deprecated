@@ -96,10 +96,6 @@ printImplementation indent hideLocation = \case
 
 printDeclaration :: Int -> Bool -> PsiDeclaration -> IO ()
 printDeclaration indent hideLocation = \case
-    PsiFixity info -> do
-      let (n, i, ns) = fixityInfo info
-      puts $ n ++ " " ++ show i
-      mapM_ (puts . name) ns
     PsiPostulate n ps t -> do
       puts $ "postulate" ++ name n
       puts $ if null ps then " no pragmas" else pure __TODO__
@@ -112,8 +108,12 @@ printDeclaration indent hideLocation = \case
       puts $ "implementation of function " ++ name n
       puts $ if null ps then " no pragmas" else pure __TODO__
       mapM_ pImpl impls
-    PsiSubmodule n ds -> do
+    PsiSubmodule n fs ds -> do
       puts $ "submodule " ++ show n
+      let printFix (n, i, ns) = do
+            puts $ n ++ " " ++ show i
+            mapM_ (puts . name) ns
+      mapM_ (printFix . fixityInfo) fs
       mapM_ recur ds
   where
     puts   = put indent
