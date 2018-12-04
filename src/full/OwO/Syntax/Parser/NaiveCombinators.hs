@@ -29,9 +29,8 @@ module OwO.Syntax.Parser.NaiveCombinators
  , chainr1
  , chainl2
  , separated
- , separated'
+ , separatedStateful
  , (\|/)
- , (\||/)
  ) where
 
 import           Control.Applicative
@@ -75,9 +74,7 @@ instance Alternative Parser where
 (<~>) = flip (<|>)
 
 infixl 2 \|/
-infixl 2 \||/
 (\|/) = flip separated
-(\||/) = flip separated'
 
 item :: Parser PsiToken
 item = Parser $ \case
@@ -124,21 +121,21 @@ option1 p op = do
     f <- op
     f a <$> p
 
-separated :: Parser a -> Parser a -> Parser [a]
+separated :: Parser a -> Parser b -> Parser [a]
 separated ns ss = do
   n <- ns
   return [n] <~> do
-    s <- ss
-    r <- separated ns ss
-    return $ n : s : r
-
-separated' :: Parser a -> Parser b -> Parser [a]
-separated' ns ss = do
-  n <- ns
-  return [n] <~> do
     ss
-    r <- separated' ns ss
+    r <- separated ns ss
     return $ n : r
+
+separatedStateful :: (st -> Parser (st, a)) -> Parser b -> st -> Parser (st, [a])
+separatedStateful ns ss initial = do
+  (st, n) <- ns initial
+  return (st, [n]) <~> do
+    ss
+    (newSt, r) <- separatedStateful ns ss st
+    return (newSt, n : r)
 
 option0 :: b -> Parser b -> Parser b
 option0 d = (<|> return d)

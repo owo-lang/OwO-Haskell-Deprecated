@@ -155,6 +155,7 @@ data PsiFile = PsiFile
   { fileType           :: PsiFileType
   , topLevelModuleName :: QModuleName
   , declarations       :: [PsiDeclaration]
+  , exposedFixityInfo  :: [PsiFixityInfo]
   } deriving (Eq, Generic, Ord, Show)
 
 data PsiFixityInfo' c
