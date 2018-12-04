@@ -136,6 +136,9 @@ fixityP = $(each [|
     infixRP = exactly InfixRToken >> return PsiInfixR
     infixP  = exactly InfixToken  >> return PsiInfix
 
+infixDeclarationP :: DeclarationP
+infixDeclarationP fix = (, []) . (: fix) <$> fixityP
+
 regularizeFixity :: FixityInfo -> RegularFixity [T.Text]
 regularizeFixity = (fmap (textOfName <$>) . snd <$>)
                  . sortOn fst
@@ -235,11 +238,13 @@ postulateP fix = exactly PostulateToken >> ((fix,) <$>)
   $(each [| uncurry3 PsiPostulate <$> bind (layoutP $ typeSignatureP' fix) |])
 
 declarationP :: DeclarationP
-declarationP fix = moduleP fix
-  <|> postulateP fix
-  <|> typeSignatureP fix
-  <|> implementationP fix
---  <|> return __TODO__
+declarationP fix = foldr1 (<|>) $ fmap ($ fix)
+  [ moduleP
+  , postulateP
+  , typeSignatureP
+  , implementationP
+  , infixDeclarationP
+  ]
 
 declarationsP :: DeclarationP
 declarationsP fix = (join <$>) <$> layoutStatedP fix declarationP
