@@ -28,6 +28,10 @@ import           OwO.Util.Three
 type FixityInfo = [PsiFixityInfo]
 type DeclarationP = FixityInfo -> Parser (FixityInfo, [PsiDeclaration])
 
+data RegularFixityInfo a = L a | R a | No a
+  deriving (Eq, Ord)
+type RegularFixity a = [RegularFixityInfo a]
+
 parseTokens ::
   FixityInfo ->
   PsiFileType ->
@@ -130,6 +134,17 @@ fixityP = $(each [|
     infixLP = exactly InfixLToken >> return PsiInfixL
     infixRP = exactly InfixRToken >> return PsiInfixR
     infixP  = exactly InfixToken  >> return PsiInfix
+
+fu :: RegularFixityInfo [T.Text] -> Parser PsiTerm -> Parser PsiTerm
+fu (L  a) atom = chainl1 atom . foldr1 (<|>) $ makeChain' <$> a
+fu (R  a) atom = chainr1 atom . foldr1 (<|>) $ makeChain' <$> a
+fu (No a) atom = option1 atom . foldr1 (<|>) $ makeChain' <$> a
+
+makeChain' :: T.Text -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
+makeChain' = makeChain . (PsiReference <$>) . specificNameP . (==)
+
+makeChain :: Parser PsiTerm -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
+makeChain = (((PsiApplication .) . PsiApplication) <$>)
 
 --------------------------------------------------------------------------------
 ----------------------------- Function definitions -----------------------------
