@@ -11,9 +11,12 @@ artifacts:
 - path: "dist\\build\\owo\\owo.exe"
   name: executable
 
+environment:
+  global:
+    CABOPTS: "--store-dir=C:\\sr"
+
 cache:
 - "c:\\sr"
-- "c:\\Users\appveyor\\AppData\\Local\\Programs\\stack"
 
 build_script:
 - cabal update
