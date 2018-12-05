@@ -1,0 +1,9 @@
+module FixityInSubmodule where
+
+  module Submodule where
+    infix 1 +
+
+  module Submodule2 where
+    infix 1 + - *
+    infixl 2 <|> <$> <*>
+    infixr 3 <+>

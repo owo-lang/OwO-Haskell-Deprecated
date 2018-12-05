@@ -1,0 +1,50 @@
+File type: CodeFileType
+Top module name: .OperatorPatternMatching
+ implementation of function  "+" (58 5 8) (59 5 9)
+  no pragmas
+  clause for  "+" (58 5 8) (59 5 9)
+  patterns matching parsed as expression
+   function application
+   function being applied
+    function application
+    function being applied
+     named reference "+" (58 5 8) (59 5 9)
+    value applied to the function
+     named reference "zero" (53 5 3) (57 5 7)
+   value applied to the function
+    named reference "b" (60 5 10) (61 5 11)
+  function body
+   named reference "b" (64 5 14) (65 5 15)
+  no with abstraction
+  no where clause
+  clause for  "+" (76 6 11) (77 6 12)
+  patterns matching parsed as expression
+   function application
+   function being applied
+    function application
+    function being applied
+     named reference "+" (76 6 11) (77 6 12)
+    value applied to the function
+     function application
+     function being applied
+      named reference "suc" (69 6 4) (72 6 7)
+     value applied to the function
+      named reference "a" (73 6 8) (74 6 9)
+   value applied to the function
+    named reference "b" (78 6 13) (79 6 14)
+  function body
+   function application
+   function being applied
+    named reference "succ" (82 6 17) (86 6 21)
+   value applied to the function
+    function application
+    function being applied
+     function application
+     function being applied
+      named reference "+" (90 6 25) (91 6 26)
+     value applied to the function
+      named reference "a" (88 6 23) (89 6 24)
+    value applied to the function
+     named reference "b" (92 6 27) (93 6 28)
+  no with abstraction
+  no where clause
