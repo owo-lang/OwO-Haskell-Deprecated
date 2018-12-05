@@ -6,7 +6,8 @@ Top module name: .EmptyClause
  implementation of function  "a" (36 3 2) (37 3 3)
   no pragmas
   clause for  "a" (36 3 2) (37 3 3)
-  patterns
+  patterns matching parsed as expression
+   named reference "a" (36 3 2) (37 3 3)
   function body
    named reference "b" (40 3 6) (41 3 7)
   no with abstraction
@@ -18,7 +19,8 @@ Top module name: .EmptyClause
   implementation of function  "b" (71 6 3) (72 6 4)
    no pragmas
    clause for  "b" (71 6 3) (72 6 4)
-   patterns
+   patterns matching parsed as expression
+    named reference "b" (71 6 3) (72 6 4)
    function body
     named reference "c" (75 6 7) (76 6 8)
    no with abstraction

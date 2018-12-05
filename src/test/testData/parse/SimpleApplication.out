@@ -3,7 +3,8 @@ Top module name: .SimpleApplication
  implementation of function  "a" (32 2 2) (33 2 3)
   no pragmas
   clause for  "a" (32 2 2) (33 2 3)
-  patterns
+  patterns matching parsed as expression
+   named reference "a" (32 2 2) (33 2 3)
   function body
    function application
    function being applied
@@ -17,7 +18,8 @@ Top module name: .SimpleApplication
   no with abstraction
   no where clause
   clause for  "a" (43 3 2) (44 3 3)
-  patterns
+  patterns matching parsed as expression
+   named reference "a" (43 3 2) (44 3 3)
   function body
    function application
    function being applied
@@ -31,7 +33,8 @@ Top module name: .SimpleApplication
   no with abstraction
   no where clause
   clause for  "a" (56 4 2) (57 4 3)
-  patterns
+  patterns matching parsed as expression
+   named reference "a" (56 4 2) (57 4 3)
   function body
    function application
    function being applied
@@ -47,7 +50,8 @@ Top module name: .SimpleApplication
  implementation of function  "undefined" (69 5 2) (78 5 11)
   no pragmas
   clause for  "undefined" (69 5 2) (78 5 11)
-  patterns
+  patterns matching parsed as expression
+   named reference "undefined" (69 5 2) (78 5 11)
   function body
    named reference "undefined" (81 5 14) (90 5 23)
   no with abstraction

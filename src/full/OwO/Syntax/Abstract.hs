@@ -91,15 +91,13 @@ data ConstInfo
   | CharConst Char
   deriving (Eq, Generic, Ord, Show)
 
--- | The type parameter c is the name representation, which is probably C.Name
+-- | The type parameter c is the name representation, which is probably Name
+--   this is the AST for expressions (rhs) and pattern matching (lhs)
 data PsiTerm' c
   = PsiReference c
   -- ^ A reference to a variable
-  {-
-  | PsiLambda Loc c (PsiTerm' c) (PsiTerm' c)
-  -}
-  | PsiPatternVar c
-  -- ^ Pattern variable
+  | PsiLambda c (PsiTerm' c)
+  -- ^ Lambda abstraction, which has a name and a body
   | PsiApplication (PsiTerm' c) (PsiTerm' c)
   -- ^ Function application
   | PsiConstant Loc ConstInfo
@@ -208,13 +206,13 @@ data PsiDataInfo' t c
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --
 -- 0. The function name
--- 1. The patterns (missing for PClauseR and PWithR because they're within a
---    "with" clause)
+-- 1. The pattern matching expression, parsed as an application (missing for
+--    PClauseR and PWithR because they're within a "with" clause)
 -- 2. The list of extra 'with' patterns
 -- 3. The right-hand side
 -- 4. The where block (PsiDeclaration' t)
 data PsiImplInfo' t c
-  = PsiImplSimple c [t c] [t c] (t c) [PsiDeclaration' t c]
+  = PsiImplSimple c (t c) [t c] (t c) [PsiDeclaration' t c]
   -- ^ Most simple pattern
   -- TODO
   {-

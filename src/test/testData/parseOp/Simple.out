@@ -3,7 +3,8 @@ Top module name: .SimpleOp
  implementation of function  "f" (37 3 3) (38 3 4)
   no pragmas
   clause for  "f" (37 3 3) (38 3 4)
-  patterns
+  patterns matching parsed as expression
+   named reference "f" (37 3 3) (38 3 4)
   function body
    function application
    function being applied

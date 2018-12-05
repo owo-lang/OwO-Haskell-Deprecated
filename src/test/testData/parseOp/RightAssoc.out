@@ -3,7 +3,8 @@ Top module name: .RightAssoc
  implementation of function  "fib" (41 4 3) (44 4 6)
   no pragmas
   clause for  "fib" (41 4 3) (44 4 6)
-  patterns
+  patterns matching parsed as expression
+   named reference "fib" (41 4 3) (44 4 6)
   function body
    function application
    function being applied

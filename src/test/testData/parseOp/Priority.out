@@ -3,7 +3,8 @@ Top module name: .Priority
  implementation of function  "val" (55 5 3) (58 5 6)
   no pragmas
   clause for  "val" (55 5 3) (58 5 6)
-  patterns
+  patterns matching parsed as expression
+   named reference "val" (55 5 3) (58 5 6)
   function body
    function application
    function being applied

@@ -3,7 +3,8 @@ Top module name: .Chain
  implementation of function  "f" (35 4 3) (36 4 4)
   no pragmas
   clause for  "f" (35 4 3) (36 4 4)
-  patterns
+  patterns matching parsed as expression
+   named reference "f" (35 4 3) (36 4 4)
   function body
    function application
    function being applied

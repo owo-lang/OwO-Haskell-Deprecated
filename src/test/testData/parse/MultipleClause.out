@@ -6,19 +6,27 @@ Top module name: .MultipleClause
  implementation of function  "f" (40 4 2) (41 4 3)
   no pragmas
   clause for  "f" (40 4 2) (41 4 3)
-  patterns
-   named reference "Nil" (42 4 4) (45 4 7)
+  patterns matching parsed as expression
+   function application
+   function being applied
+    named reference "f" (40 4 2) (41 4 3)
+   value applied to the function
+    named reference "Nil" (42 4 4) (45 4 7)
   function body
    named reference "Nothing" (53 4 15) (60 4 22)
   no with abstraction
   no where clause
   clause for  "f" (62 5 2) (63 5 3)
-  patterns
+  patterns matching parsed as expression
    function application
    function being applied
     function application
     function being applied
-     named reference "Cons" (64 5 4) (68 5 8)
+     function application
+     function being applied
+      named reference "f" (62 5 2) (63 5 3)
+     value applied to the function
+      named reference "Cons" (64 5 4) (68 5 8)
     value applied to the function
      named reference "n" (69 5 9) (70 5 10)
    value applied to the function

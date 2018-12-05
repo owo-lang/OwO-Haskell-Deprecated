@@ -1,5 +1,7 @@
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE ApplicativeDo   #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE TupleSections   #-}
 {-# LANGUAGE DeriveFunctor   #-}
 
@@ -28,6 +30,8 @@ import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
 import           OwO.Util.Three
+
+#include <impossible.h>
 
 type FixityInfo = [PsiFixityInfo]
 type DeclarationP = FixityInfo -> Parser (FixityInfo, [PsiDeclaration])
@@ -82,12 +86,6 @@ operatorP' = satisfyMap $ \tok -> case tokenType tok of
   OperatorToken t -> Just (location tok, t)
   _               -> Nothing
 
-specificNameP :: (T.Text -> Bool) -> Parser Name
-specificNameP f = satisfyMap $ \tok -> case tokenType tok of
-  IdentifierToken t -> if f t then Just . flip Name t $ location tok
-                       else Nothing
-  _                 -> Nothing
-
 specificOperatorP :: (T.Text -> Bool) -> Parser Name
 specificOperatorP f = satisfyMap $ \tok -> case tokenType tok of
   OperatorToken t -> if f t then Just . flip Name t $ location tok
@@ -138,7 +136,8 @@ applicationP :: FixityInfo -> Parser PsiTerm
 applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
 expressionP :: FixityInfo -> Parser PsiTerm
-expressionP fix = flip operatorsP (applicationP fix <|> atomP fix) $ regularizeFixity fix
+expressionP fix = operatorsP (regularizeFixity fix) $
+  applicationP fix <|> atomP fix
 
 --------------------------------------------------------------------------------
 ---------------------------------- Operators -----------------------------------
@@ -190,13 +189,19 @@ patternMatchingClauseP ::
   FixityInfo ->
   (T.Text -> Bool) ->
   Parser PsiImplInfo
-patternMatchingClauseP fix f = $(each [|
-  PsiImplSimple
-  (~! specificNameP f)
-  (~! many $ expressionP fix)
-  []
-  (~! exactly EqualToken *> expressionP fix)
-  (~! option0 [] $ snd <$> whereClauseP fix) |])
+patternMatchingClauseP fix f = do
+  e <- expressionP fix
+  n <- tryExtractingName e
+  mkImplInfo n e
+  where
+    tryExtractingName = \case
+      app@(PsiApplication a _) -> tryExtractingName a
+      ref@(PsiReference a) | f (textOfName a) -> return a
+      _ -> empty
+    mkImplInfo fnName expr = $(each [|
+      PsiImplSimple fnName expr []
+      (~! exactly EqualToken *> expressionP fix)
+      (~! option0 [] $ snd <$> whereClauseP fix) |])
 
 whereClauseP :: DeclarationP
 whereClauseP fix = do

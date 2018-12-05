@@ -75,10 +75,10 @@ printExpr indent hideLocation = \case
 
 printImplementation :: Int -> Bool -> PsiImplInfo -> IO ()
 printImplementation indent hideLocation = \case
-  PsiImplSimple n ps ws expr whereClause -> do
+  PsiImplSimple n app ws expr whereClause -> do
     puts $ "clause for " ++ name n
-    puts "patterns"
-    mapM_ pExpr ps
+    puts "patterns matching parsed as expression"
+    pExpr app
     puts "function body"
     pExpr expr
     puts $ if null ws then "no with abstraction" else pure __TODO__
