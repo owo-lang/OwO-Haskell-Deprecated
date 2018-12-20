@@ -83,6 +83,8 @@ data TCEnv = TypeCheckingEnv
   -- ^ This is passed all around
   , envDefinitions :: TCCtx Definition
   -- ^ Local definitions
+  , envModuleName  :: QModuleName
+  -- ^ Current module name
   } deriving (Generic, Show)
 
 data TCErr' t

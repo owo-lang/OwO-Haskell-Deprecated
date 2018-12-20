@@ -17,7 +17,13 @@ import           OwO.TypeChecking.Reduce
 typeCheck :: TCEnv -> PsiTerm -> Either TCErr Term
 typeCheck env (PsiConstant _ info) = Right $ Constant info
 typeCheck env (PsiLambda binder term) = return __TODO__
-typeCheck env (PsiReference name) = return __TODO__
+typeCheck env (PsiReference name) =
+  case lookupCtxWithName
+    (envModuleName env)
+    (textOfName name)
+    (envDefinitions env) of
+      Nothing  -> Left  $ UnresolvedReferenceErr name
+      Just def -> Right $ Ref FunctionName name def
 typeCheck env term = return __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()

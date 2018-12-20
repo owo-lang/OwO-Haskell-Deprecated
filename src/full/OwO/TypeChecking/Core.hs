@@ -76,7 +76,7 @@ data Term' i
   -- ^ Application
   | Var !Int
   -- ^ A variable resolved with de bruijn index
-  | Param NameType i (Term' i)
+  | Ref NameType i Definition
   -- ^ Named reference, might be external definitions
   | Bind i !(BinderInfo (Term' i)) (Term' i)
   -- ^ Name binding
