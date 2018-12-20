@@ -15,6 +15,9 @@ import           OwO.TypeChecking.Reduce
 #include <impossible.h>
 
 typeCheck :: TCEnv -> PsiTerm -> Either TCErr Term
+typeCheck env (PsiConstant _ info) = Right $ Constant info
+typeCheck env (PsiLambda binder term) = return __TODO__
+typeCheck env (PsiReference name) = return __TODO__
 typeCheck env term = return __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()

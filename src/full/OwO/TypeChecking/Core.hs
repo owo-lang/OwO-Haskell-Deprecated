@@ -18,6 +18,9 @@ module OwO.TypeChecking.Core
   , typeUniverseModule
   , primitiveModule
 
+  , builtinDefinition
+  , builtinDefinition'
+
   , Definition(..)
   ) where
 
@@ -56,13 +59,14 @@ data ULevel
 data BinderInfo i
   = LambdaBinder !i
   -- ^ Lambda abstraction, type
-  {-
-  | Pi !i
-  -}
+  | TelescopeBinder !i i
+  -- ^ Pi type's binding, type and value
   | LetBinder !i i
   -- ^ Let binding, type and value
+{-
   | NLetBinder !i i
   -- ^ Intermediate value used for reduction
+-}
   deriving (Eq, Functor, Generic, Ord, Show)
 
 -- | Core language term, @i@ refers to the identifier.
