@@ -73,7 +73,7 @@ data BinderInfo i
 --   We translate type-checked code into this form
 data Term' i
   = App !(Term' i) (Term' i)
-  -- ^ Application
+  -- ^ Application, function being applied and value applied
   | Var !Int
   -- ^ A variable resolved with de bruijn index
   | Ref NameType i Definition
