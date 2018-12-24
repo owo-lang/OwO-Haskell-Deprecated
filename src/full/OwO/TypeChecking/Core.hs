@@ -20,6 +20,7 @@ module OwO.TypeChecking.Core
 
   , builtinDefinition
   , builtinDefinition'
+  , definitionType
 
   , Definition(..)
   ) where
@@ -96,6 +97,9 @@ data Definition
   = SimpleDefinition !Type !Term
   -- ^ No type signature, just an expression with (optional) type specified
   deriving (Eq, Generic, Ord, Show)
+
+definitionType :: Definition -> Type
+definitionType (SimpleDefinition t _) = t
 
 -- | Built-in definition: Type0, Type1, etc
 typeUniverseOfLevel :: Int -> Definition

@@ -1,13 +1,11 @@
-{-# LANGUAGE CPP             #-}
-{-# LANGUAGE LambdaCase      #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE CPP        #-}
+{-# LANGUAGE LambdaCase #-}
 
 module OwO.TypeChecking where
 
 import           Control.Applicative     (Alternative (..))
 import           Data.Functor            ((<&>))
 import           Data.Maybe              (catMaybes)
-import           Each
 
 import           OwO.Syntax.Abstract
 import           OwO.TypeChecking.Core
@@ -17,15 +15,21 @@ import           OwO.TypeChecking.Reduce
 
 #include <impossible.h>
 
-typeCheck :: TCEnv -> PsiTerm -> Either TCErr Term
-typeCheck env (PsiConstant _ info) = Right $ Constant info
+constType :: ConstInfo -> Type
+constType = __TODO__
+
+typeCheck :: TCEnv -> PsiTerm -> Either TCErr (Type, Term)
+typeCheck env (PsiConstant _ info) = Right (constType info, Constant info)
 typeCheck env (PsiLambda binder term) = return __TODO__
-typeCheck env (PsiApplication func term) = $(each [|
-  App (~! typeCheck env func) (~! typeCheck env term) |] )
+typeCheck env (PsiApplication func term) = do
+  (f, ft) <- typeCheck env func
+  (x, xt) <- typeCheck env term
+  -- TODO: check the relationship
+  return (__TODO__, App f x)
 typeCheck env (PsiReference name) =
   case contextual <|> builtin of
     Nothing  -> Left  $ UnresolvedReferenceErr name
-    Just def -> Right $ Ref FunctionName name def
+    Just def -> Right (definitionType def, Ref FunctionName name def)
   where
     txt = textOfName name
     builtin = builtinDefinition txt
