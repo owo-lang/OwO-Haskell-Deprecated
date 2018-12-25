@@ -7,7 +7,8 @@ import           Test.Hspec
 
 import           System.Exit                   (ExitCode (..), exitWith)
 
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.Concrete
+import           OwO.Syntax.Module
 import           OwO.Syntax.Parser             (runParser)
 import           OwO.Syntax.Parser.NaiveParser as NP
 import           OwO.Util.Tools
@@ -32,7 +33,7 @@ main = hspec $ do
       p "infixl 1 +"  `shouldSatisfy` isRight
       p "infixr 2 -"  `shouldSatisfy` isRight
       p "infix 3 <|>" `shouldSatisfy` isRight
-  
+
   describe "Type signature parsing" $ do
 
     it "Should not parse errored files" $ do
