@@ -146,13 +146,13 @@ fixityInfo (PsiInfixR a b) = ("infixr", a, b)
 
 -- | Function level pragma
 data FnPragma
-  = NonTerminate
+  = PgmNonTerminate
   -- ^ Do not reduce, disable termination check
-  | Instance
+  | PgmInstance
   -- ^ Add to instance search
-  | Failing
+  | PgmFailing
   -- ^ Supposed to raise an error (Maybe specify the error type?)
-  | Terminating
+  | PgmTerminating
   -- ^ Disable termination check, unsafe
   deriving (Eq, Ord, Show)
 
@@ -207,7 +207,7 @@ functionNameOfImplementation (PsiImplSimple n _ _ _ _) = n
 -- Impossible for PsiImplSimpleR, PsiImplWithR
 
 data DataPragma
-  = NoPositivityCheck
+  = PgmNoPositivityCheck
   deriving (Eq, Ord, Show)
 
 type DataPragmas = [DataPragma]

@@ -13,6 +13,7 @@ import           OwO.Syntax.Concrete
     , PsiTerm' (..)
     , textOfName
     )
+import           OwO.Syntax.Context
 import           OwO.TypeChecking.Core
 import           OwO.TypeChecking.Match
 import           OwO.TypeChecking.Monad
@@ -39,8 +40,7 @@ typeCheck env (PsiReference name) =
   where
     txt = textOfName name
     builtin = builtinDefinition txt
-    modName = envModuleName env
-    contextual = lookupCtxWithName modName txt $ envDefinitions env
+    contextual = lookupCtxCurrent txt $ envDefinitions env
 typeCheck env term = return __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()

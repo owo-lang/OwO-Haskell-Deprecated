@@ -4,16 +4,43 @@
 
 -- | Abstract syntax tree (see @OwO.Syntax.Concrete@)
 --   Prefixed with "Ast", stands for "Abstract Syntax Tree"
-module OwO.Syntax.Abstract where
+module OwO.Syntax.Abstract
+  ( Visibility(..)
+
+  -- Expressions
+  , AstTerm'(..)
+  , AstTerm
+
+  -- Constructor info
+  , AstConsInfo'(..)
+  , AstConsInfo
+
+  -- Function body info
+  , AstImplInfo'(..)
+  , AstImplInfo
+
+  -- Declarations
+  , AstDeclaration'(..)
+  , AstDeclaration
+
+  -- Concrete to Abstract
+  , concreteToAbstractTerm
+  , concreteToAbstractDecl
+  , concreteToAbstractTerm'
+  , concreteToAbstractDecl'
+  ) where
 
 import           Control.Applicative
 import           Control.Monad
 import           OwO.Syntax.Common
-import qualified OwO.Syntax.Concrete  as C
+import           OwO.Syntax.Concrete
+import           OwO.Syntax.Context
 import           OwO.Syntax.Position
-import           OwO.Util.StrictMaybe as Strict
+import qualified OwO.Util.StrictMaybe as Strict
 
 import           GHC.Generics         (Generic)
+
+#include <impossible.h>
 
 -- | All parameters becomes explicit in Ast
 --   this stores the explicit/implicit information of Cst
@@ -60,7 +87,26 @@ data AstDeclaration' t c
   -- ^ Function implementation, type, implementation
   deriving (Eq, Ord, Show)
 
-type AstDeclaration = AstDeclaration' AstTerm' C.Name
-type AstTerm        = AstTerm' C.Name
-type AstConsInfo    = AstConsInfo' AstTerm' C.Name
-type AstImplInfo    = AstImplInfo' AstTerm' C.Name
+type AstDeclaration = AstDeclaration' AstTerm' Name
+type AstTerm        = AstTerm' Name
+type AstConsInfo    = AstConsInfo' AstTerm' Name
+type AstImplInfo    = AstImplInfo' AstTerm' Name
+
+concreteToAbstractDecl :: [PsiDeclaration] -> [AstDeclaration]
+concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx
+
+concreteToAbstractTerm :: PsiTerm -> AstTerm
+concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx emptyCtx
+
+concreteToAbstractDecl' :: Context AstDeclaration -> [PsiDeclaration] -> [AstDeclaration]
+concreteToAbstractDecl' _   [      ] = []
+concreteToAbstractDecl' env (d : ds) =
+    let (decl, newEnv) = desugar d
+    in decl : checkRest newEnv
+  where
+    checkRest = flip concreteToAbstractDecl' ds
+    desugar decl = __TODO__
+
+concreteToAbstractTerm' :: Context AstDeclaration -> Context AstTerm -> PsiTerm -> AstTerm
+concreteToAbstractTerm' env localEnv term
+  = __TODO__
