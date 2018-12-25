@@ -92,21 +92,23 @@ type AstTerm        = AstTerm' Name
 type AstConsInfo    = AstConsInfo' AstTerm' Name
 type AstImplInfo    = AstImplInfo' AstTerm' Name
 
-concreteToAbstractDecl :: [PsiDeclaration] -> [AstDeclaration]
+type AstContext     = Context AstDeclaration
+
+concreteToAbstractDecl :: [PsiDeclaration] -> (AstContext, [AstDeclaration])
 concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx
 
 concreteToAbstractTerm :: PsiTerm -> AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx emptyCtx
 
-concreteToAbstractDecl' :: Context AstDeclaration -> [PsiDeclaration] -> [AstDeclaration]
-concreteToAbstractDecl' _   [      ] = []
+concreteToAbstractDecl' :: AstContext -> [PsiDeclaration] -> (AstContext, [AstDeclaration])
+concreteToAbstractDecl' env [      ] = (env, [])
 concreteToAbstractDecl' env (d : ds) =
     let (decl, newEnv) = desugar d
-    in decl : checkRest newEnv
+    in (decl :) <$> checkRest newEnv
   where
     checkRest = flip concreteToAbstractDecl' ds
     desugar decl = __TODO__
 
-concreteToAbstractTerm' :: Context AstDeclaration -> Context AstTerm -> PsiTerm -> AstTerm
+concreteToAbstractTerm' :: AstContext -> Context AstTerm -> PsiTerm -> AstTerm
 concreteToAbstractTerm' env localEnv term
   = __TODO__
