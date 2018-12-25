@@ -1,9 +1,9 @@
-{-# LANGUAGE CPP             #-}
 {-# LANGUAGE ApplicativeDo   #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE LambdaCase      #-}
-{-# LANGUAGE TupleSections   #-}
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE DeriveFunctor   #-}
+{-# LANGUAGE LambdaCase      #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TupleSections   #-}
 
 -- | Only for early-stage testing
 module OwO.Syntax.Parser.NaiveParser
@@ -25,7 +25,7 @@ import qualified Data.Text                          as T
 
 import           Each
 
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.Concrete
 import           OwO.Syntax.Parser.NaiveCombinators
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType

@@ -18,6 +18,8 @@ import qualified Data.Text                  as T
 import           OwO.Options
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
+import           OwO.Syntax.Concrete        (Name, PsiTerm, PsiTerm' (..))
+import           OwO.Syntax.Module
 import           OwO.Syntax.Position
 import           OwO.TypeChecking.Core
 

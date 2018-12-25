@@ -7,7 +7,12 @@ import           Control.Applicative     (Alternative (..))
 import           Data.Functor            ((<&>))
 import           Data.Maybe              (catMaybes)
 
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.Concrete
+    ( PsiFile (..)
+    , PsiTerm
+    , PsiTerm' (..)
+    , textOfName
+    )
 import           OwO.TypeChecking.Core
 import           OwO.TypeChecking.Match
 import           OwO.TypeChecking.Monad
@@ -18,8 +23,9 @@ import           OwO.TypeChecking.Reduce
 constType :: ConstInfo -> Type
 constType = __TODO__
 
+-- | TODO refactor after Ast/Cst distinction is done
 typeCheck :: TCEnv -> PsiTerm -> Either TCErr (Type, Term)
-typeCheck env (PsiConstant _ info) = Right (constType info, Constant info)
+typeCheck env (PsiConstant _ info) = Right (constType info, Const info)
 typeCheck env (PsiLambda binder term) = return __TODO__
 typeCheck env (PsiApplication func term) = do
   (f, ft) <- typeCheck env func

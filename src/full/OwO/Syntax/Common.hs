@@ -50,3 +50,10 @@ data MetaId = MetaId
 instance Show MetaId where
   showsPrec p (MetaId n m) = showParen (p > 0) $
     showString ("MetaId " ++ Strict.fromMaybe "null" m ++ " ") . shows n
+
+data ConstInfo
+  = IntConst Int
+  | IntegerConst Integer
+  | StringConst T.Text
+  | CharConst Char
+  deriving (Eq, Generic, Ord, Show)

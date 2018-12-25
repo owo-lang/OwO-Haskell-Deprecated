@@ -30,6 +30,7 @@ import qualified Data.Text           as T
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
+import           OwO.Syntax.Concrete (Name (..), QModuleName (..))
 import           OwO.Syntax.Position
 
 import           GHC.Generics        (Generic)
@@ -83,7 +84,7 @@ data Term' i
   -- ^ Name binding
   | TType ULevel
   -- ^ Type of Type, including type omega
-  | Constant ConstInfo
+  | Const ConstInfo
   deriving (Eq, Functor, Generic, Ord, Show)
 
 -- TODO
@@ -95,7 +96,7 @@ type Type = Term
 
 data Definition
   = SimpleDefinition !Type !Term
-  -- ^ No type signature, just an expression with (optional) type specified
+  -- ^ No pattern matching, just an expression with (optional) type specified
   deriving (Eq, Generic, Ord, Show)
 
 definitionType :: Definition -> Type
@@ -121,6 +122,7 @@ typeText = T.pack "Type"
 infText = T.pack "Inf"
 arrowText = T.pack "->"
 
+-- | Because there're infinite `TypeN`s, no way of pre-putting them into a module
 builtinDefinition' :: T.Text -> Maybe (Term, Type)
 builtinDefinition' t
   | t `T.isPrefixOf` typeText = let trailing = T.drop 4 t in if
@@ -130,5 +132,6 @@ builtinDefinition' t
   | t == arrowText = Just __TODO__
   | otherwise = Nothing
 
+-- | Because there're infinite `TypeN`s, no way of pre-putting them into a module
 builtinDefinition :: T.Text -> Maybe Definition
 builtinDefinition = (uncurry SimpleDefinition <$>) . builtinDefinition'

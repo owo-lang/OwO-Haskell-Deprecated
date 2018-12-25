@@ -15,7 +15,7 @@ import           Prelude              hiding (lex)
 import           System.Exit          (exitFailure)
 import           System.IO
 
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.Concrete
 import           OwO.Syntax.Parser
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType

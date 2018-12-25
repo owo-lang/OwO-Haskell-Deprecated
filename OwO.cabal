@@ -62,9 +62,11 @@ library
 
                   , OwO.Syntax.Abstract
                   , OwO.Syntax.Common
+                  , OwO.Syntax.Concrete
+                  , OwO.Syntax.Module
+                  , OwO.Syntax.Parser
                   , OwO.Syntax.Position
                   , OwO.Syntax.TokenType
-                  , OwO.Syntax.Parser
 
                   , OwO.Syntax.Parser.Lexer
                   , OwO.Syntax.Parser.NaiveCombinators

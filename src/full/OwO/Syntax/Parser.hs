@@ -2,7 +2,7 @@ module OwO.Syntax.Parser where
 
 import           Prelude                            hiding (lex)
 
-import           OwO.Syntax.Abstract
+import           OwO.Syntax.Concrete
 import           OwO.Syntax.Parser.Lexer
 import           OwO.Syntax.Parser.NaiveCombinators as NC
 import           OwO.Syntax.Parser.NaiveParser      as NP
