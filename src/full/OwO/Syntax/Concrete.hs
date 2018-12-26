@@ -5,11 +5,7 @@
 -- | Concrete syntax tree
 --   Prefixed with "Psi", stands for "Program Structure Item"
 module OwO.Syntax.Concrete
-  ( Name(..)
-  , locationOfName
-  , textOfName
-
-  , PsiTerm'(..)
+  ( PsiTerm'(..)
   , PsiTerm
   , ConstInfo(..)
 
@@ -46,42 +42,18 @@ module OwO.Syntax.Concrete
   , hasParentModule
   ) where
 
-import           Control.Applicative ((<|>))
-import           Data.Functor        ((<&>))
-import           Data.List.NonEmpty  (NonEmpty)
-import qualified Data.Text           as T
-import           System.FilePath     (isExtensionOf)
+import           Control.Applicative  ((<|>))
+import           Data.Functor         ((<&>))
+import           Data.List.NonEmpty   (NonEmpty)
+import qualified Data.Text            as T
+import           System.FilePath      (isExtensionOf)
 
 import           OwO.Syntax.Common
 import           OwO.Syntax.Module
 import           OwO.Syntax.Position
+import           OwO.Syntax.TokenType (Name (..))
 
 #include <impossible.h>
-
--- | A name is a non-empty list of alternating 'Id's and 'Hole's. A normal name
---   is represented by a singleton list, and operators are represented by a list
---   with 'Hole's where the arguments should go. For instance:
---   @[Hole,Id "+",Hole]@
---   is infix addition.
---
---   Equality and ordering on @Name@s are defined to ignore interval so same
---   names in different locations are equal.
-data Name
-  = Name   Loc T.Text -- ^ A identifier.
-  | NoName Loc NameId -- ^ @_@.
-  deriving (Ord, Show)
-
-locationOfName :: Name -> Loc
-locationOfName (Name   l _) = l
-locationOfName (NoName l _) = l
-
-textOfName :: Name -> T.Text
-textOfName (Name   _ n) = n
-textOfName (NoName _ n) = T.pack $ '_' : show n
-
-instance Eq Name where
-  Name _ a == Name _ b = a == b
-  _ == _ = False
 
 -- | The type parameter c is the name representation, which is probably Name
 --   this is the AST for expressions (rhs) and pattern matching (lhs)
@@ -111,11 +83,14 @@ type PsiTerm = PsiTerm' Name
 data PsiFileType
   = CodeFileType
   | LiterateFileType
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord)
+
+instance Show PsiFileType where
+  show CodeFileType     = "owo"
+  show LiterateFileType = "lowo"
 
 extensionOf :: PsiFileType -> FilePath
-extensionOf CodeFileType     = ".owo"
-extensionOf LiterateFileType = ".lowo"
+extensionOf = ('.' :) . show
 
 decideFileType :: FilePath -> Maybe PsiFileType
 decideFileType path = foldr f Nothing fileTypeAndExtensions
@@ -227,9 +202,9 @@ data PsiDeclaration' t c
 {-
   | PsiPrimitive c (t c)
   -- ^ Primitive
+-}
   | PsiData c DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
--}
   | PsiImplementation c FnPragmas (NonEmpty (PsiImplInfo' t c))
   -- ^ A pattern matching clause which is an implementation of a function
   deriving (Eq, Ord, Show)

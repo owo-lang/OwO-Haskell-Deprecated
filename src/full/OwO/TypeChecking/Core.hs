@@ -2,7 +2,9 @@
 {-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE ExtendedDefaultRules  #-}
 {-# LANGUAGE MultiWayIf            #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 -- | Core language
 module OwO.TypeChecking.Core
@@ -26,14 +28,15 @@ module OwO.TypeChecking.Core
   ) where
 
 import           Data.Char
-import qualified Data.Text           as T
+import qualified Data.Text            as T
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Common
-import           OwO.Syntax.Concrete (Name (..), QModuleName (..))
+import           OwO.Syntax.Concrete  (QModuleName (..))
 import           OwO.Syntax.Position
+import           OwO.Syntax.TokenType (Name (..))
 
-import           GHC.Generics        (Generic)
+import           GHC.Generics         (Generic)
 
 #include <impossible.h>
 
@@ -115,12 +118,12 @@ typeUniverseModule = primitiveModule
 
 primitiveModule :: QModuleName
 primitiveModule = QModuleName
-  { moduleNameList = T.pack <$> ["OwO", "Primitive"]
+  { moduleNameList = ["OwO", "Primitive"]
   }
 
-typeText = T.pack "Type"
-infText = T.pack "Inf"
-arrowText = T.pack "->"
+typeText = "Type" :: T.Text
+infText = "Inf" :: T.Text
+arrowText = "->" :: T.Text
 
 -- | Because there're infinite `TypeN`s, no way of pre-putting them into a module
 builtinDefinition' :: T.Text -> Maybe (Term, Type)

@@ -49,8 +49,8 @@ parseTokens ::
   Either String PsiFile
 parseTokens fix fType = parseCode $ do
   (name, fixity, decls) <- moduleP' fix
-  let moduleName = QModuleName { moduleNameList = name }
-  return $ PsiFile
+  let moduleName = QModuleName { moduleNameList = textOfName <$> name }
+  return PsiFile
     { fileType           = fType
     , topLevelModuleName = moduleName
     , declarations       = decls
@@ -76,30 +76,24 @@ insideBrace p =
 ---------------------------------- Expressions ---------------------------------
 --------------------------------------------------------------------------------
 
-identifierP' :: Parser (Loc, T.Text)
+identifierP' :: Parser Name
 identifierP' = satisfyMap $ \tok -> case tokenType tok of
-  IdentifierToken t -> Just (location tok, t)
+  IdentifierToken t -> Just t
   _                 -> Nothing
 
-operatorP' :: Parser (Loc, T.Text)
+operatorP' :: Parser Name
 operatorP' = satisfyMap $ \tok -> case tokenType tok of
-  OperatorToken t -> Just (location tok, t)
+  OperatorToken t -> Just t
   _               -> Nothing
 
-specificOperatorP :: (T.Text -> Bool) -> Parser Name
+specificOperatorP :: (Name -> Bool) -> Parser Name
 specificOperatorP f = satisfyMap $ \tok -> case tokenType tok of
-  OperatorToken t -> if f t then Just . flip Name t $ location tok
+  OperatorToken t -> if f t then Just t
                      else Nothing
   _               -> Nothing
 
-nameIdP :: Parser Name
-nameIdP = uncurry Name <$> identifierP'
-
-nameOpP :: Parser Name
-nameOpP = uncurry Name <$> operatorP'
-
 identifierP :: Parser PsiTerm
-identifierP = PsiReference <$> nameIdP
+identifierP = PsiReference <$> identifierP'
 
 integerP' :: Parser (Loc, Integer)
 integerP' = satisfyMap $ \tok -> case tokenType tok of
@@ -136,7 +130,7 @@ applicationP :: FixityInfo -> Parser PsiTerm
 applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
 telescopeP :: FixityInfo -> Parser PsiTerm
-telescopeP fix = chainr1 (exactly RightArrowToken) __TODO__
+telescopeP fix = return __TODO__
 
 expressionP :: FixityInfo -> Parser PsiTerm
 expressionP fix = operatorsP (regularizeFixity fix) $
@@ -150,7 +144,7 @@ fixityP :: Parser PsiFixityInfo
 fixityP = $(each [|
   (~! infixLP <|> infixRP <|> infixP)
   (~! fromInteger . snd <$> integerP')
-  (~! some nameOpP) |])
+  (~! some operatorP') |])
   where
     infixLP = exactly InfixLToken >> return PsiInfixL
     infixRP = exactly InfixRToken >> return PsiInfixR
@@ -159,8 +153,8 @@ fixityP = $(each [|
 infixDeclarationP :: DeclarationP
 infixDeclarationP fix = (, []) . (: fix) <$> fixityP
 
-regularizeFixity :: FixityInfo -> RegularFixity [T.Text]
-regularizeFixity = (fmap (textOfName <$>) . snd <$>)
+regularizeFixity :: FixityInfo -> RegularFixity [Name]
+regularizeFixity = (snd <$>)
                  . sortOn fst
                  . (mapFixity <$>)
   where
@@ -169,15 +163,15 @@ regularizeFixity = (fmap (textOfName <$>) . snd <$>)
     mapFixity (PsiInfix  i a) = (i, No a)
 
 -- | Inspiration: https://www.codewars.com/kata/operator-parser
-operatorsP :: RegularFixity [T.Text] -> Parser PsiTerm -> Parser PsiTerm
+operatorsP :: RegularFixity [Name] -> Parser PsiTerm -> Parser PsiTerm
 operatorsP fix rp = foldr fu rp fix
 
-fu :: RegularFixityInfo [T.Text] -> Parser PsiTerm -> Parser PsiTerm
+fu :: RegularFixityInfo [Name] -> Parser PsiTerm -> Parser PsiTerm
 fu (L  a) atom = chainr1 atom . foldr1 (<|>) $ makeChain' <$> a
 fu (R  a) atom = chainl1 atom . foldr1 (<|>) $ makeChain' <$> a
 fu (No a) atom = option1 atom . foldr1 (<|>) $ makeChain' <$> a
 
-makeChain' :: T.Text -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
+makeChain' :: Name -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
 makeChain' = makeChain . (PsiReference <$>) . specificOperatorP . (==)
 
 makeChain :: Parser PsiTerm -> Parser (PsiTerm -> PsiTerm -> PsiTerm)
@@ -190,7 +184,7 @@ makeChain = (((PsiApplication .) . PsiApplication) <$>)
 -- TODO: support with abstraction
 patternMatchingClauseP ::
   FixityInfo ->
-  (T.Text -> Bool) ->
+  (Name -> Bool) ->
   Parser PsiImplInfo
 patternMatchingClauseP fix f = do
   e <- expressionP fix
@@ -198,8 +192,8 @@ patternMatchingClauseP fix f = do
   mkImplInfo n e
   where
     tryExtractingName = \case
-      app@(PsiApplication a _) -> tryExtractingName a
-      ref@(PsiReference a) | f (textOfName a) -> return a
+      app@(PsiApplication a _)   -> tryExtractingName a
+      ref@(PsiReference a) | f a -> return a
       _ -> empty
     mkImplInfo fnName expr = $(each [|
       PsiImplSimple fnName expr []
@@ -219,7 +213,7 @@ implementationP fix = do
   hd <- patternMatchingClauseP fix $ const True
   let functionName = functionNameOfImplementation hd
   tl <- many $ semicolon *>
-     patternMatchingClauseP fix (textOfName functionName ==)
+     patternMatchingClauseP fix (functionName ==)
   return $ (fix,) [PsiImplementation functionName ps $ hd :| tl]
 
 --------------------------------------------------------------------------------
@@ -236,7 +230,7 @@ typeSignatureP' :: FixityInfo -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
   p <- many $ fnPragmaP fix <* semicolon
   $(each [|
-    ( uncurry Name (~! identifierP')
+    ( (~! identifierP')
     , p
     , (~! exactly ColonToken *> expressionP fix)
     ) |])
@@ -278,14 +272,13 @@ declarationsP fix = (join <$>) <$> layoutStatedP fix declarationP
 moduleP :: DeclarationP
 moduleP fix = do
   (name, fixity, decls) <- moduleP' fix
-  let moduleName = QModuleName { moduleNameList = name }
+  let moduleName = QModuleName { moduleNameList = textOfName <$> name }
   return $ (fix,) [PsiSubmodule moduleName fixity decls]
 
-moduleP' :: FixityInfo -> Parser ([T.Text], FixityInfo, [PsiDeclaration])
+moduleP' :: FixityInfo -> Parser ([Name], FixityInfo, [PsiDeclaration])
 moduleP' fix = $(each [|
   flattenSnd
-  ( snd <$>
-    (~! exactly ModuleToken *>
+  ( (~! exactly ModuleToken *>
           (exactly DotToken \|/ identifierP')
         <* exactly WhereToken)
   , (~! declarationsP fix)

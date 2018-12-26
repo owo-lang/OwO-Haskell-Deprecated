@@ -8,6 +8,11 @@ module OwO.Syntax.TokenType
  , PsiToken(..)
  , isStartingNewLayout
 
+ -- Names
+ , Name(..)
+ , locationOfName
+ , textOfName
+
  -- Alex
  , AlexUserState(..)
  , alexInitUserState
@@ -16,9 +21,35 @@ module OwO.Syntax.TokenType
 import           Data.Text            as T
 
 import           OwO.Syntax.Position
+import           OwO.Syntax.Common    (NameId)
 import qualified OwO.Util.StrictMaybe as Strict
 
 import           GHC.Generics         (Generic)
+
+-- | A name is a non-empty list of alternating 'Id's and 'Hole's. A normal name
+--   is represented by a singleton list, and operators are represented by a list
+--   with 'Hole's where the arguments should go. For instance:
+--   @[Hole,Id "+",Hole]@
+--   is infix addition.
+--
+--   Equality and ordering on @Name@s are defined to ignore interval so same
+--   names in different locations are equal.
+data Name
+  = Name   Loc T.Text -- ^ A identifier.
+  | NoName Loc NameId -- ^ @_@.
+  deriving (Ord, Show)
+
+locationOfName :: Name -> Loc
+locationOfName (Name   l _) = l
+locationOfName (NoName l _) = l
+
+textOfName :: Name -> T.Text
+textOfName (Name   _ n) = n
+textOfName (NoName _ n) = T.pack $ '_' : show n
+
+instance Eq Name where
+  Name _ a == Name _ b = a == b
+  _ == _ = False
 
 data TokenType
   = ModuleToken
@@ -90,9 +121,9 @@ data TokenType
   | DotToken
   -- ^ ., proof irrelevance, operators
 
-  | IdentifierToken T.Text
+  | IdentifierToken Name
   -- ^ identifier
-  | OperatorToken T.Text
+  | OperatorToken Name
   -- ^ binary operators
   | StringToken T.Text
   -- ^ string literal
