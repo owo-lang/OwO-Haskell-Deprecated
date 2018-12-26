@@ -9,6 +9,7 @@
 module OwO.Syntax.Parser.NaiveParser
   ( parseTokens
   , fixityP
+  , telescopeP
   ) where
 
 import           Control.Applicative
@@ -129,8 +130,26 @@ atomP fix = identifierP
 applicationP :: FixityInfo -> Parser PsiTerm
 applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
+telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
+telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
+  where
+    anonymousP vis = exprP <&> (NoName __TODO__, vis,)
+    bindingP vis l r = anonymousP vis <~> do
+      exactly l
+      name <- identifierP'
+      exactly ColonToken
+      expr <- exprP
+      exactly r
+      return (name, vis, expr)
+    explicitP = bindingP Explicit ParenthesisLToken ParenthesisRToken
+    implicitP = bindingP Implicit BraceLToken BraceRToken
+    instanceP = bindingP Instance InstanceArgumentLToken InstanceArgumentRToken
+
 telescopeP :: FixityInfo -> Parser PsiTerm
-telescopeP fix = return __TODO__
+telescopeP fix = expressionP fix <~> do
+  (name, vis, term) <- telescopeBindingP $ expressionP fix
+  exactly RightArrowToken
+  $(each [| PsiTelescope name vis term (~! telescopeP fix) |])
 
 expressionP :: FixityInfo -> Parser PsiTerm
 expressionP fix = operatorsP (regularizeFixity fix) $
@@ -146,9 +165,9 @@ fixityP = $(each [|
   (~! fromInteger . snd <$> integerP')
   (~! some operatorP') |])
   where
-    infixLP = exactly InfixLToken >> return PsiInfixL
-    infixRP = exactly InfixRToken >> return PsiInfixR
-    infixP  = exactly InfixToken  >> return PsiInfix
+    infixLP = exactly InfixLToken $> PsiInfixL
+    infixRP = exactly InfixRToken $> PsiInfixR
+    infixP  = exactly InfixToken  $> PsiInfix
 
 infixDeclarationP :: DeclarationP
 infixDeclarationP fix = (, []) . (: fix) <$> fixityP
@@ -229,11 +248,10 @@ dataPragmaP _ = empty -- TODO
 typeSignatureP' :: FixityInfo -> Parser (Name, FnPragmas, PsiTerm)
 typeSignatureP' fix = do
   p <- many $ fnPragmaP fix <* semicolon
-  $(each [|
-    ( (~! identifierP')
-    , p
-    , (~! exactly ColonToken *> expressionP fix)
-    ) |])
+  n <- identifierP'
+  exactly ColonToken
+  t <- telescopeP fix
+  return (n, p, t)
 
 typeSignatureP :: DeclarationP
 typeSignatureP fix = ((fix,) <$>) $
@@ -256,7 +274,7 @@ postulateP fix = exactly PostulateToken >> ((fix,) <$>)
   $(each [| uncurry3 PsiPostulate <$> bind (layoutP $ typeSignatureP' fix) |])
 
 declarationP :: DeclarationP
-declarationP fix = foldr1 (<|>) $ fmap ($ fix)
+declarationP fix = foldr1 (<|>) $ ($ fix) <$>
   [ moduleP
   , postulateP
   , typeSignatureP

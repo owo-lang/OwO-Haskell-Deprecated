@@ -7,29 +7,27 @@
 -- | Abstract syntax tree (see @OwO.Syntax.Concrete@)
 --   Prefixed with "Ast", stands for "Abstract Syntax Tree"
 module OwO.Syntax.Abstract
-  ( Visibility(..)
-
-  -- Expressions
-  , AstTerm'(..)
+  ( AstTerm'(..)
   , AstTerm
+  -- Expressions
 
-  -- Constructor info
   , AstConsInfo'(..)
   , AstConsInfo
+  -- Constructor info
 
-  -- Function body info
   , AstImplInfo'(..)
   , AstImplInfo
+  -- Function body info
 
-  -- Declarations
   , AstDeclaration'(..)
   , AstDeclaration
+  -- Declarations
 
-  -- Concrete to Abstract
   , concreteToAbstractTerm
   , concreteToAbstractDecl
   , concreteToAbstractTerm'
   , concreteToAbstractDecl'
+  -- Concrete to Abstract
   ) where
 
 import           Control.Applicative
@@ -48,19 +46,6 @@ import           OwO.Util.Three
 import           GHC.Generics         (Generic)
 
 #include <impossible.h>
-
--- | All parameters becomes explicit in Ast
---   this stores the explicit/implicit information of Cst
-data Visibility
-  = Explicit
-  | Implicit
-  | Instance
-  deriving (Eq, Ord)
-
-instance Show Visibility where
-  show Explicit = "(   )"
-  show Implicit = "{   }"
-  show Instance = "{| |}"
 
 -- | @a@ is @C.Name@ or something
 data AstTerm' c

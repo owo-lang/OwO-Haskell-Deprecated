@@ -3,25 +3,24 @@
 module OwO.Syntax.TokenType
  ( LayoutContext(..)
 
- -- Tokens
  , TokenType(..)
  , PsiToken(..)
  , isStartingNewLayout
+ -- Tokens
 
- -- Names
  , Name(..)
  , locationOfName
  , textOfName
+ -- Names
 
- -- Alex
  , AlexUserState(..)
  , alexInitUserState
+ -- Alex
  ) where
 
 import           Data.Text            as T
 
 import           OwO.Syntax.Position
-import           OwO.Syntax.Common    (NameId)
 import qualified OwO.Util.StrictMaybe as Strict
 
 import           GHC.Generics         (Generic)
@@ -36,16 +35,16 @@ import           GHC.Generics         (Generic)
 --   names in different locations are equal.
 data Name
   = Name   Loc T.Text -- ^ A identifier.
-  | NoName Loc NameId -- ^ @_@.
+  | NoName Loc        -- ^ @_@.
   deriving (Ord, Show)
 
 locationOfName :: Name -> Loc
 locationOfName (Name   l _) = l
-locationOfName (NoName l _) = l
+locationOfName (NoName l)   = l
 
 textOfName :: Name -> T.Text
 textOfName (Name   _ n) = n
-textOfName (NoName _ n) = T.pack $ '_' : show n
+textOfName (NoName _)   = T.pack "_"
 
 instance Eq Name where
   Name _ a == Name _ b = a == b

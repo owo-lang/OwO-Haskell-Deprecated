@@ -1,0 +1,40 @@
+File type: owo
+Top module name: .Telescope
+ type signature explicit (26 3 3) (34 3 11)
+  no pragmas
+  telescope binding A (38 3 15) (39 3 16)
+  ( )
+  binding type
+   named reference Type (42 3 19) (46 3 23)
+  return type
+   telescope binding x (52 3 29) (53 3 30)
+   ( )
+   binding type
+    named reference A (56 3 33) (57 3 34)
+   return type
+    named reference A (62 3 39) (63 3 40)
+ type signature implicit (66 4 3) (74 4 11)
+  no pragmas
+  telescope binding A (78 4 15) (79 4 16)
+  { }
+  binding type
+   named reference Type (82 4 19) (86 4 23)
+  return type
+   telescope binding x (92 4 29) (93 4 30)
+   ( )
+   binding type
+    named reference A (96 4 33) (97 4 34)
+   return type
+    named reference A (102 4 39) (103 4 40)
+ type signature typeclass (106 5 3) (115 5 12)
+  no pragmas
+  telescope binding ListMonad (121 5 18) (130 5 27)
+  {| |}
+  binding type
+   function application
+   function being applied
+    named reference Monad (133 5 30) (138 5 35)
+   value applied to the function
+    named reference List (139 5 36) (143 5 40)
+  return type
+   named reference SomeType (150 5 47) (158 5 55)

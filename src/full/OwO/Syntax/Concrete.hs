@@ -5,7 +5,9 @@
 -- | Concrete syntax tree
 --   Prefixed with "Psi", stands for "Program Structure Item"
 module OwO.Syntax.Concrete
-  ( PsiTerm'(..)
+  ( Visibility(..)
+
+  , PsiTerm'(..)
   , PsiTerm
   , ConstInfo(..)
 
@@ -55,6 +57,18 @@ import           OwO.Syntax.TokenType (Name (..))
 
 #include <impossible.h>
 
+-- | All parameters becomes explicit in Ast
+data Visibility
+  = Explicit
+  | Implicit
+  | Instance
+  deriving (Eq, Ord)
+
+instance Show Visibility where
+  show Explicit = "( )"
+  show Implicit = "{ }"
+  show Instance = "{| |}"
+
 -- | The type parameter c is the name representation, which is probably Name
 --   this is the AST for expressions (rhs) and pattern matching (lhs)
 data PsiTerm' c
@@ -72,9 +86,9 @@ data PsiTerm' c
   -- ^ Dotted pattern, inaccessible pattern
   | PsiMetaVar c
   -- ^ Meta variable
-  | PsiTelescope c (PsiTerm' c) (PsiTerm' c)
+  | PsiTelescope c Visibility (PsiTerm' c) (PsiTerm' c)
   -- ^ Pi type, since "Pi" is too short, I pick the name "Telescope"
-  -- binding name, type, and the body
+  -- binding name, visibility, type, and the body
   deriving (Eq, Ord, Show)
 
 type PsiTerm = PsiTerm' Name

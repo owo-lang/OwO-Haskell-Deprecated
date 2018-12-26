@@ -62,13 +62,21 @@ printExpr indent hideLocation = \case
     PsiConstant l info -> do
       puts $ "constant" ++ locate l
       succ indent `put` show info
-    PsiReference n -> put indent $ "named reference" ++ name n
+    PsiReference n -> puts $ "named reference" ++ name n
+    PsiTelescope n vis l r -> do
+      puts $ "telescope binding" ++ name n
+      puts $ show vis
+      puts "binding type"
+      recur l
+      puts "return type"
+      recur r
     PsiApplication f a -> do
       puts "function application"
       puts "function being applied"
       recur f
       puts "value applied to the function"
       recur a
+    _ -> __TODO__
   where
     puts   = put indent
     recur  = flip printExpr hideLocation $ succ indent

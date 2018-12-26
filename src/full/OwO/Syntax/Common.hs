@@ -14,28 +14,6 @@ import           GHC.Generics         (Generic)
 #include <impossible.h>
 
 --------------------------------------------------------------------------------
--- * NameId
---------------------------------------------------------------------------------
-
--- | The unique identifier of a name. Second argument is the top-level module
---   identifier.
-data NameId =
-  NameId {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
-  deriving (Eq, Generic, Ord)
-
-emptyNameId :: NameId
-emptyNameId = NameId 0 0
-
-instance Show NameId where
-  show (NameId n m) = show n ++ "@" ++ show m
-
-instance Enum NameId where
-  succ (NameId n m)     = NameId (n + 1) m
-  pred (NameId n m)     = NameId (n - 1) m
-  toEnum                = const __IMPOSSIBLE__ -- ^ should not be used
-  fromEnum (NameId n _) = fromIntegral n
-
---------------------------------------------------------------------------------
 -- * Meta variables
 --------------------------------------------------------------------------------
 
