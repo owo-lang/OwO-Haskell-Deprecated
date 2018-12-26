@@ -11,6 +11,7 @@ module OwO.Syntax.TokenType
  , Name(..)
  , locationOfName
  , textOfName
+ , hideName
  -- Names
 
  , AlexUserState(..)
@@ -45,6 +46,10 @@ locationOfName (NoName l)   = l
 textOfName :: Name -> T.Text
 textOfName (Name   _ n) = n
 textOfName (NoName _)   = T.pack "_"
+
+hideName :: Name -> Name
+hideName (Name loc _) = NoName loc
+hideName a = a
 
 instance Eq Name where
   Name _ a == Name _ b = a == b

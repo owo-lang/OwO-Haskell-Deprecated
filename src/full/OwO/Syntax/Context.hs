@@ -9,7 +9,7 @@ import qualified Data.Text           as T
 
 import           OwO.Syntax.Module
 
-type Text = T.Text
+type Text = Name
 
 type Binding a = Map.Map Text a
 

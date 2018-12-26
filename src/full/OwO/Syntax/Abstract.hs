@@ -33,13 +33,14 @@ module OwO.Syntax.Abstract
 import           Control.Applicative
 import           Control.Monad
 import           Data.List            (partition)
+import qualified Data.Map             as Map
 import           Each
 
 import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.Position
-import           OwO.Syntax.TokenType (Name (..))
+import           OwO.Syntax.TokenType (hideName, Name (..))
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Three
 
@@ -47,11 +48,12 @@ import           GHC.Generics         (Generic)
 
 #include <impossible.h>
 
--- | @a@ is @C.Name@ or something
+-- | @a@ is @Name@ or something
 data AstTerm' c
   = AstConst Loc ConstInfo
   | AstRef c (AstDeclaration' AstTerm' c)
-  | AstMetaVar Loc
+  | AstLocalRef c (AstTerm' c)
+  | AstMetaVar c
   deriving (Eq, Ord, Show)
 
 -- | Type constructors, data constructors
@@ -92,6 +94,8 @@ data DesugarError
   -- ^ Only type signature, not implementation
   | DuplicateTypeSignatureError (TypeSignature, TypeSignature)
   -- ^ Two type signatures, with same name
+  | UnresolvedReference Name
+  -- ^ Usage of undefined names
   deriving (Eq, Ord, Show)
 
 concreteToAbstractDecl :: Either DesugarError AstContext
@@ -122,20 +126,27 @@ concreteToAbstractDecl' env sigs (d : ds) = do
         ) : sigs
       , env
       ) |])
-    desugar (PsiImplementation name pgms clauses) = case partition ((== name) . fst3) sigs of
-        ([sig], rest)      -> __TODO__
-        ([   ], rest)      -> __TODO__
-        ((s0 : s1 : _), _) -> Left $ DuplicateTypeSignatureError (s0, s1)
+    desugar (PsiImplementation name pgms clauses) =
+      case partition ((== name) . fst3) sigs of
+        ([sig], rest) -> desugarFunction sig rest
+        ([   ], rest) -> desugarFunction (AstMetaVar $ hideName name) rest
+        ((a:b:_),  _) -> Left $ DuplicateTypeSignatureError (a, b)
       where
-
+        -- TODO deal with pragmas
+        desugarFunction ty rest = __TODO__
     desugar decl = __TODO__
 
 concreteToAbstractTerm'
   :: AstContext
-  -> Context AstTerm
+  -> Binding AstTerm
   -- Local variables
   -> PsiTerm
   -- Input term
   -> Either DesugarError AstTerm
 concreteToAbstractTerm' env localEnv = \case
+  (PsiReference name) -> case Map.lookup name localEnv of
+    Just ref -> Right $ AstLocalRef name ref
+    Nothing  -> case lookupCtxCurrent env of
+      Just ref -> Right $ AstRef name ref
+      Nothing  -> Left $ UnresolvedReference name
   _ -> __TODO__
