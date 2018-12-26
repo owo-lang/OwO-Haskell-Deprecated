@@ -109,17 +109,17 @@ simple :: TokenType -> AlexAction PsiToken
 simple token (pn, _, _, _) size = do
   -- run `pushLexState` when it's `where` or `postulate`
   isStartingNewLayout token `ifM` pushLexState layout
-  toMonadPsi' pn size token
+  toMonadPsi pn size token
 
 explicitBraceLeft :: AlexAction PsiToken
 explicitBraceLeft (pn, _, _, _) size = do
   popLexState
   pushLayout NoLayout
-  toMonadPsi' pn size BraceLToken
+  toMonadPsi pn size BraceLToken
 
 simpleString :: (String -> TokenType) -> AlexAction PsiToken
 simpleString f (pn, _, _, s) size =
-  toMonadPsi' pn size . f $ take size s
+  toMonadPsi pn size . f $ take size s
 
 simpleName :: (Name -> TokenType) -> AlexAction PsiToken
 simpleName f (pn, _, _, s) size = do
@@ -129,8 +129,8 @@ simpleName f (pn, _, _, s) size = do
     , location  = loc
     }
 
-toMonadPsi' :: AlexPosn -> Int -> TokenType -> Alex PsiToken
-toMonadPsi' pn size token = do
+toMonadPsi :: AlexPosn -> Int -> TokenType -> Alex PsiToken
+toMonadPsi pn size token = do
   loc <- currentLoc pn size
   pure PsiToken
     { tokenType = token
@@ -152,17 +152,17 @@ alexEOF = getLayout >>= \case
   where
     java token = do
        (pn, _, _, _) <- alexGetInput
-       toMonadPsi' pn 0 token
+       toMonadPsi pn 0 token
 
 pushBlockComment :: AlexAction PsiToken
 pushBlockComment (pn, _, _, s) size = do
   pushLexState nestedComment
-  toMonadPsi' pn size $ CommentToken (T.pack $ take size s)
+  toMonadPsi pn size $ CommentToken (T.pack $ take size s)
 
 popBlockComment :: AlexAction PsiToken
 popBlockComment (pn, _, _, s) size = do
   popLexState
-  toMonadPsi' pn size $ CommentToken (T.pack $ take size s)
+  toMonadPsi pn size $ CommentToken (T.pack $ take size s)
 
 doBol :: AlexAction PsiToken
 doBol (pn@(AlexPn _ _ col), _, _, _) size =
@@ -173,13 +173,13 @@ doBol (pn@(AlexPn _ _ col), _, _, _) size =
       GT -> popLexState >> alexMonadScan
     _ -> popLexState >> alexMonadScan
   where
-    addToken = toMonadPsi' pn size
+    addToken = toMonadPsi pn size
 
 newLayoutContext :: AlexAction PsiToken
 newLayoutContext (pn@(AlexPn _ _ col), _, _, _) size = do
   popLexState
   pushLayout $ Layout col
-  toMonadPsi' pn size BraceLToken
+  toMonadPsi pn size BraceLToken
 
 pushLayout :: LayoutContext -> Alex ()
 pushLayout lc = do
