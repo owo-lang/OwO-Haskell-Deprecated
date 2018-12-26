@@ -135,6 +135,9 @@ atomP fix = identifierP
 applicationP :: FixityInfo -> Parser PsiTerm
 applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
+telescopeP :: FixityInfo -> Parser PsiTerm
+telescopeP fix = chainr1 (exactly RightArrowToken) __TODO__
+
 expressionP :: FixityInfo -> Parser PsiTerm
 expressionP fix = operatorsP (regularizeFixity fix) $
   applicationP fix <|> atomP fix

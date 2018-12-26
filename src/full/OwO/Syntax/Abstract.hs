@@ -110,5 +110,5 @@ concreteToAbstractDecl' env (d : ds) =
     desugar decl = __TODO__
 
 concreteToAbstractTerm' :: AstContext -> Context AstTerm -> PsiTerm -> AstTerm
-concreteToAbstractTerm' env localEnv term
-  = __TODO__
+concreteToAbstractTerm' env localEnv = \case
+  _ -> __TODO__

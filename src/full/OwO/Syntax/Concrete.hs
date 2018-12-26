@@ -100,6 +100,9 @@ data PsiTerm' c
   -- ^ Dotted pattern, inaccessible pattern
   | PsiMetaVar c
   -- ^ Meta variable
+  | PsiTelescope c (PsiTerm' c) (PsiTerm' c)
+  -- ^ Pi type, since "Pi" is too short, I pick the name "Telescope"
+  -- binding name, type, and the body
   deriving (Eq, Ord, Show)
 
 type PsiTerm = PsiTerm' Name
