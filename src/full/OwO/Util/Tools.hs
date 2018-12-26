@@ -52,7 +52,7 @@ put :: Int -> String -> IO ()
 put indent = putStrLn . (replicate indent ' ' ++)
 
 printName locate n = (' ' :) $
-  show (T.unpack $ textOfName n) ++ locate (locationOfName n)
+  T.unpack (textOfName n) ++ locate (locationOfName n)
 
 printExpr :: Int -> Bool -> PsiTerm -> IO ()
 printExpr indent hideLocation = \case

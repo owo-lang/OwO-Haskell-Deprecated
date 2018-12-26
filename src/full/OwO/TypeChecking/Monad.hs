@@ -17,10 +17,11 @@ import qualified Data.Text                  as T
 
 import           OwO.Options
 import           OwO.Syntax.Common
-import           OwO.Syntax.Concrete        (Name, PsiTerm, PsiTerm' (..))
+import           OwO.Syntax.Concrete        (PsiTerm, PsiTerm' (..))
 import           OwO.Syntax.Context         (Context (..), emptyCtx)
 import           OwO.Syntax.Module
 import           OwO.Syntax.Position
+import           OwO.Syntax.TokenType       (Name (..))
 import           OwO.TypeChecking.Core
 
 import           GHC.Generics               (Generic)

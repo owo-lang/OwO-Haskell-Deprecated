@@ -40,6 +40,7 @@ import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.Position
+import           OwO.Syntax.TokenType (Name(..))
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Three
 
@@ -104,7 +105,7 @@ data DesugarError
   = NoImplementationError [TypeSignature]
   -- ^ Only type signature, not implementation
   | DuplicateTypeSignatureError (TypeSignature, TypeSignature)
-  -- ^ Tow type signatures, with same name
+  -- ^ Two type signatures, with same name
   deriving (Eq, Ord, Show)
 
 concreteToAbstractDecl :: Either DesugarError AstContext
@@ -136,11 +137,19 @@ concreteToAbstractDecl' env sigs (d : ds) = do
       , env
       ) |])
     desugar (PsiImplementation name pgms clauses) = case partition ((== name) . fst3) sigs of
-      ([sig], rest) -> __TODO__
-      ([   ], rest) -> __TODO__
-      ((s0 : s1 : _), _) -> Left $ DuplicateTypeSignatureError (s0, s1)
+        ([sig], rest) -> __TODO__
+        ([   ], rest) -> __TODO__
+        ((s0 : s1 : _), _) -> Left $ DuplicateTypeSignatureError (s0, s1)
+      where
+
     desugar decl = __TODO__
 
-concreteToAbstractTerm' :: AstContext -> Context AstTerm -> PsiTerm -> Either DesugarError AstTerm
+concreteToAbstractTerm'
+  :: AstContext
+  -> Context AstTerm
+  -- Local variables
+  -> PsiTerm
+  -- Input term
+  -> Either DesugarError AstTerm
 concreteToAbstractTerm' env localEnv term
   = __TODO__

@@ -59,12 +59,12 @@ $white_no_nl  ;
   infixr      { simple InfixRToken }
   infix       { simple InfixToken }
   @integer    { simpleString (IntegerToken . read) }
-  @identifier { simpleString (IdentifierToken . T.pack) }
+  @identifier { simpleName IdentifierToken }
   @string     { simpleString (StringToken . T.pack . read) }
   @character  { simpleString (CharToken . read) }
   \<\-        { simple LeftArrowToken }
   \-\>        { simple RightArrowToken }
-  @colon_op   { simpleString (OperatorToken . T.pack) }
+  @colon_op   { simpleName OperatorToken }
   \:          { simple ColonToken }
   \;          { simple SemicolonToken }
   \(\|        { simple IdiomBracketLToken }
@@ -83,7 +83,7 @@ $white_no_nl  ;
   \]          { simple BracketRToken }
   \=          { simple EqualToken }
   \.          { simple DotToken }
-  @operator   { simpleString (OperatorToken . T.pack) }
+  @operator   { simpleName OperatorToken }
 }
 
 <nestedComment> {
@@ -119,20 +119,30 @@ explicitBraceLeft (pn, _, _, _) size = do
 
 simpleString :: (String -> TokenType) -> AlexAction PsiToken
 simpleString f (pn, _, _, s) size =
-   toMonadPsi' pn size . f $ take size s
+  toMonadPsi' pn size . f $ take size s
+
+simpleName :: (Name -> TokenType) -> AlexAction PsiToken
+simpleName f (pn, _, _, s) size = do
+  loc <- currentLoc pn size
+  pure PsiToken
+    { tokenType = f . Name loc . T.pack $ take size s
+    , location  = loc
+    }
 
 toMonadPsi' :: AlexPosn -> Int -> TokenType -> Alex PsiToken
-toMonadPsi' (AlexPn pos line col) = toMonadPsi pos line col
+toMonadPsi' pn size token = do
+  loc <- currentLoc pn size
+  pure PsiToken
+    { tokenType = token
+    , location  = loc
+    }
 
-toMonadPsi :: Int -> Int -> Int -> Int -> TokenType -> Alex PsiToken
-toMonadPsi pos line col size token = do
+currentLoc :: AlexPosn -> Int -> Alex Loc
+currentLoc (AlexPn pos line col) size = do
   file <- currentFile <$> alexGetUserState
   let start = simplePosition pos line col
   let end   = simplePosition (pos + size) line (col + size)
-  pure $ PsiToken
-    { tokenType = token
-    , location  = locationFromSegment start end file
-    }
+  return $ locationFromSegment start end file
 
 alexEOF :: Alex PsiToken
 alexEOF = getLayout >>= \case

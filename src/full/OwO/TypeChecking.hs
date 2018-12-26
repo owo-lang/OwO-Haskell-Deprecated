@@ -11,9 +11,9 @@ import           OwO.Syntax.Concrete
     ( PsiFile (..)
     , PsiTerm
     , PsiTerm' (..)
-    , textOfName
     )
 import           OwO.Syntax.Context
+import           OwO.Syntax.TokenType    (textOfName)
 import           OwO.TypeChecking.Core
 import           OwO.TypeChecking.Match
 import           OwO.TypeChecking.Monad
