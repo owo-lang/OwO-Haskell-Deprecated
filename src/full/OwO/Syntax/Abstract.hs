@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeOperators         #-}
 
 -- | Abstract syntax tree (see @OwO.Syntax.Concrete@)
@@ -32,11 +33,15 @@ module OwO.Syntax.Abstract
 
 import           Control.Applicative
 import           Control.Monad
+import           Data.List            (partition)
+import           Each
+
 import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.Position
 import qualified OwO.Util.StrictMaybe as Strict
+import           OwO.Util.Three
 
 import           GHC.Generics         (Generic)
 
@@ -93,22 +98,49 @@ type AstConsInfo    = AstConsInfo' AstTerm' Name
 type AstImplInfo    = AstImplInfo' AstTerm' Name
 
 type AstContext     = Context AstDeclaration
+type TypeSignature  = (Name, FnPragmas, AstTerm)
 
-concreteToAbstractDecl :: [PsiDeclaration] -> (AstContext, [AstDeclaration])
-concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx
+data DesugarError
+  = NoImplementationError [TypeSignature]
+  -- ^ Only type signature, not implementation
+  | DuplicateTypeSignatureError (TypeSignature, TypeSignature)
+  -- ^ Tow type signatures, with same name
+  deriving (Eq, Ord, Show)
 
-concreteToAbstractTerm :: PsiTerm -> AstTerm
+concreteToAbstractDecl :: Either DesugarError AstContext
+concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx [] []
+
+concreteToAbstractTerm :: PsiTerm -> Either DesugarError AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx emptyCtx
 
-concreteToAbstractDecl' :: AstContext -> [PsiDeclaration] -> (AstContext, [AstDeclaration])
-concreteToAbstractDecl' env [      ] = (env, [])
-concreteToAbstractDecl' env (d : ds) =
-    let (decl, newEnv) = desugar d
-    in (decl :) <$> checkRest newEnv
+concreteToAbstractDecl'
+  :: AstContext
+  -- Existing context
+  -> [TypeSignature]
+  -- Unimplemented declarations
+  -> [PsiDeclaration]
+  -- Unchecked declarations
+  -> Either DesugarError AstContext
+concreteToAbstractDecl' env [] [      ] = Right env
+concreteToAbstractDecl' env sb [      ] = Left $ NoImplementationError sb
+concreteToAbstractDecl' env sigs (d : ds) = do
+    (newSigs, newEnv) <- desugar d
+    checkRest newEnv newSigs
   where
-    checkRest = flip concreteToAbstractDecl' ds
+    checkRest env sig = concreteToAbstractDecl' env sig ds
+    desugar (PsiTypeSignature name pgms sig) = $(each [|
+      ( ( name
+        , pgms
+        , (~! concreteToAbstractTerm' env emptyCtx sig)
+        ) : sigs
+      , env
+      ) |])
+    desugar (PsiImplementation name pgms clauses) = case partition ((== name) . fst3) sigs of
+      ([sig], rest) -> __TODO__
+      ([   ], rest) -> __TODO__
+      ((s0 : s1 : _), _) -> Left $ DuplicateTypeSignatureError (s0, s1)
     desugar decl = __TODO__
 
-concreteToAbstractTerm' :: AstContext -> Context AstTerm -> PsiTerm -> AstTerm
+concreteToAbstractTerm' :: AstContext -> Context AstTerm -> PsiTerm -> Either DesugarError AstTerm
 concreteToAbstractTerm' env localEnv term
   = __TODO__

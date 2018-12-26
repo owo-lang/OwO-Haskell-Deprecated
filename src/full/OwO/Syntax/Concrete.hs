@@ -224,9 +224,9 @@ data PsiDeclaration' t c
 {-
   | PsiPrimitive c (t c)
   -- ^ Primitive
+-}
   | PsiData c DataPragmas (PsiDataInfo' t c)
   -- ^ Inductive data families
--}
   | PsiImplementation c FnPragmas (NonEmpty (PsiImplInfo' t c))
   -- ^ A pattern matching clause which is an implementation of a function
   deriving (Eq, Ord, Show)
