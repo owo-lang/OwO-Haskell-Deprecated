@@ -102,7 +102,7 @@ concreteToAbstractDecl :: Either DesugarError AstContext
 concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx [] []
 
 concreteToAbstractTerm :: PsiTerm -> Either DesugarError AstTerm
-concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx emptyCtx
+concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx Map.empty
 
 concreteToAbstractDecl'
   :: AstContext
@@ -122,7 +122,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
     desugar (PsiTypeSignature name pgms sig) = $(each [|
       ( ( name
         , pgms
-        , (~! concreteToAbstractTerm' env emptyCtx sig)
+        , (~! concreteToAbstractTerm' env Map.empty sig)
         ) : sigs
       , env
       ) |])
@@ -146,7 +146,7 @@ concreteToAbstractTerm'
 concreteToAbstractTerm' env localEnv = \case
   (PsiReference name) -> case Map.lookup name localEnv of
     Just ref -> Right $ AstLocalRef name ref
-    Nothing  -> case lookupCtxCurrent env of
+    Nothing  -> case lookupCtxCurrent name env of
       Just ref -> Right $ AstRef name ref
       Nothing  -> Left $ UnresolvedReference name
   _ -> __TODO__

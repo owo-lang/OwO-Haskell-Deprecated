@@ -4,10 +4,11 @@
 module OwO.Syntax.Context where
 
 import           Control.Applicative
-import qualified Data.Map            as Map
-import qualified Data.Text           as T
+import qualified Data.Map             as Map
+import qualified Data.Text            as T
 
 import           OwO.Syntax.Module
+import           OwO.Syntax.TokenType (Name (..))
 
 type Text = Name
 

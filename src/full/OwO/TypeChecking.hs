@@ -38,9 +38,8 @@ typeCheck env (PsiReference name) =
     Nothing  -> Left  $ UnresolvedReferenceErr name
     Just def -> Right (definitionType def, Ref FunctionName name def)
   where
-    txt = textOfName name
-    builtin = builtinDefinition txt
-    contextual = lookupCtxCurrent txt $ envDefinitions env
+    builtin = builtinDefinition $ textOfName name
+    contextual = lookupCtxCurrent name $ envDefinitions env
 typeCheck env term = return __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()
