@@ -1,0 +1,3 @@
+module TelescopeAnonymous where
+
+  id : {A : Type} -> A -> A

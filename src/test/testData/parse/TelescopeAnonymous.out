@@ -1,0 +1,15 @@
+File type: owo
+Top module name: .TelescopeAnonymous
+ type signature id (35 3 3) (37 3 5)
+  no pragmas
+  telescope binding A (41 3 9) (42 3 10)
+  { }
+  binding type
+   named reference Type (45 3 13) (49 3 17)
+  return type
+   telescope binding _ (54 3 22) (55 3 23)
+   ( )
+   binding type
+    named reference A (54 3 22) (55 3 23)
+   return type
+    named reference A (59 3 27) (60 3 28)

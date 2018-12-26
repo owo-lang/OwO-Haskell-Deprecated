@@ -9,7 +9,6 @@
 module OwO.Syntax.Parser.NaiveParser
   ( parseTokens
   , fixityP
-  , telescopeP
   ) where
 
 import           Control.Applicative
@@ -133,7 +132,9 @@ applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
 telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
   where
-    anonymousP vis = exprP <&> (NoName __TODO__, vis,)
+    anonymousP vis = do
+      e <- exprP
+      return (NoName $ locationOfTerm e, vis, e)
     bindingP vis l r = anonymousP vis <~> do
       exactly l
       name <- identifierP'

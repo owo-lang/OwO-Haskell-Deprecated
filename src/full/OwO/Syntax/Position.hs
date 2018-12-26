@@ -26,6 +26,7 @@ module OwO.Syntax.Position
   , emptyLocationIn
   , emptyLocationInStr
   , locationFromSegment
+  , mergeLocations
   ) where
 
 import           Data.Foldable        (Foldable)
@@ -135,6 +136,12 @@ consecutiveAndSeparated is =
   (null is ||
    and (zipWith (<) (iEnd   <$> init is)
                     (iStart <$> tail is)))
+
+mergeLocations :: Loc' a -> Loc' a -> Loc' a
+mergeLocations (Loc start _) (Loc _ end) = Loc
+  { iStart = start
+  , iEnd   = end
+  }
 
 emptyLocationInStr :: String -> Loc
 emptyLocationInStr = emptyLocationIn . Strict.Just . T.pack

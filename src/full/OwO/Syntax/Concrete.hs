@@ -9,6 +9,7 @@ module OwO.Syntax.Concrete
 
   , PsiTerm'(..)
   , PsiTerm
+  , locationOfTerm
   , ConstInfo(..)
 
   , PsiDataCons'(..)
@@ -53,7 +54,7 @@ import           System.FilePath      (isExtensionOf)
 import           OwO.Syntax.Common
 import           OwO.Syntax.Module
 import           OwO.Syntax.Position
-import           OwO.Syntax.TokenType (Name (..))
+import           OwO.Syntax.TokenType (locationOfName, Name (..))
 
 #include <impossible.h>
 
@@ -92,6 +93,16 @@ data PsiTerm' c
   deriving (Eq, Ord, Show)
 
 type PsiTerm = PsiTerm' Name
+
+locationOfTerm :: PsiTerm -> Loc
+locationOfTerm (PsiReference     n) = locationOfName n
+locationOfTerm (PsiLambda      n t) = mergeLocations (locationOfName n) (locationOfTerm t) 
+locationOfTerm (PsiApplication f a) = mergeLocations (locationOfTerm f) (locationOfTerm a)
+locationOfTerm (PsiConstant  loc _) = loc
+locationOfTerm (PsiImpossible  loc) = loc
+locationOfTerm (PsiInaccessiblePattern t) = locationOfTerm t
+locationOfTerm (PsiMetaVar       n) = locationOfName n
+locationOfTerm (PsiTelescope   n _ _ ret) = mergeLocations (locationOfName n) (locationOfTerm ret)
 
 -- | Program Structure Item: File Type
 data PsiFileType
