@@ -1,16 +1,16 @@
-File type: CodeFileType
+File type: owo
 Top module name: .Priority
- implementation of function  "val" (55 5 3) (58 5 6)
+ implementation of function  val (55 5 3) (58 5 6)
   no pragmas
-  clause for  "val" (55 5 3) (58 5 6)
+  clause for  val (55 5 3) (58 5 6)
   patterns matching parsed as expression
-   named reference "val" (55 5 3) (58 5 6)
+   named reference val (55 5 3) (58 5 6)
   function body
    function application
    function being applied
     function application
     function being applied
-     named reference "+" (63 5 11) (64 5 12)
+     named reference + (63 5 11) (64 5 12)
     value applied to the function
      constant (61 5 9) (62 5 10)
       IntegerConst 1
@@ -19,13 +19,13 @@ Top module name: .Priority
     function being applied
      function application
      function being applied
-      named reference "-" (75 5 23) (76 5 24)
+      named reference - (75 5 23) (76 5 24)
      value applied to the function
       function application
       function being applied
        function application
        function being applied
-        named reference "*" (67 5 15) (68 5 16)
+        named reference * (67 5 15) (68 5 16)
        value applied to the function
         constant (65 5 13) (66 5 14)
          IntegerConst 1
@@ -34,7 +34,7 @@ Top module name: .Priority
        function being applied
         function application
         function being applied
-         named reference "/" (71 5 19) (72 5 20)
+         named reference / (71 5 19) (72 5 20)
         value applied to the function
          constant (69 5 17) (70 5 18)
           IntegerConst 1

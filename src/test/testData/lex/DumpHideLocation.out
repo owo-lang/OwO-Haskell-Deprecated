@@ -1,26 +1,26 @@
-IdentifierToken "Tokens"
-IdentifierToken "in"
-IdentifierToken "this"
-IdentifierToken "file"
-IdentifierToken "should"
-OperatorToken "**"
-IdentifierToken "not"
-OperatorToken "**"
-IdentifierToken "display"
-IdentifierToken "location"
-IdentifierToken "information"
+Identifier Tokens
+Identifier in
+Identifier this
+Identifier file
+Identifier should
+Operator **
+Identifier not
+Operator **
+Identifier display
+Identifier location
+Identifier information
 DotToken
-IdentifierToken "starPlatinum"
+Identifier starPlatinum
 EqualToken
-IdentifierToken "take"
+Identifier take
 IntegerToken 100
-OperatorToken "$"
-IdentifierToken "repeat"
-IdentifierToken "ora"
-IdentifierToken "theWorld"
+Operator $
+Identifier repeat
+Identifier ora
+Identifier theWorld
 EqualToken
-IdentifierToken "take"
+Identifier take
 IntegerToken 100
-OperatorToken "$"
-IdentifierToken "repeat"
-IdentifierToken "muda"
+Operator $
+Identifier repeat
+Identifier muda

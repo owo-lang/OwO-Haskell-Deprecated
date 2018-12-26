@@ -1,147 +1,147 @@
-File type: CodeFileType
+File type: owo
 Top module name: .SimpleApplication
- implementation of function  "f" (33 3 2) (34 3 3)
+ implementation of function  f (33 3 2) (34 3 3)
   no pragmas
-  clause for  "f" (33 3 2) (34 3 3)
+  clause for  f (33 3 2) (34 3 3)
   patterns matching parsed as expression
-   named reference "f" (33 3 2) (34 3 3)
+   named reference f (33 3 2) (34 3 3)
   function body
    function application
    function being applied
-    named reference "g" (37 3 6) (38 3 7)
+    named reference g (37 3 6) (38 3 7)
    value applied to the function
     constant (39 3 8) (42 3 11)
      IntegerConst 233
   no with abstraction
   where clause
-   implementation of function  "g" (54 5 4) (55 5 5)
+   implementation of function  g (54 5 4) (55 5 5)
     no pragmas
-    clause for  "g" (54 5 4) (55 5 5)
+    clause for  g (54 5 4) (55 5 5)
     patterns matching parsed as expression
      function application
      function being applied
-      named reference "g" (54 5 4) (55 5 5)
+      named reference g (54 5 4) (55 5 5)
      value applied to the function
-      named reference "a" (57 5 7) (58 5 8)
+      named reference a (57 5 7) (58 5 8)
     function body
-     named reference "a" (61 5 11) (62 5 12)
+     named reference a (61 5 11) (62 5 12)
     no with abstraction
     where clause
-     implementation of function  "x" (78 7 6) (79 7 7)
+     implementation of function  x (78 7 6) (79 7 7)
       no pragmas
-      clause for  "x" (78 7 6) (79 7 7)
+      clause for  x (78 7 6) (79 7 7)
       patterns matching parsed as expression
-       named reference "x" (78 7 6) (79 7 7)
+       named reference x (78 7 6) (79 7 7)
       function body
        constant (82 7 10) (85 7 13)
         IntegerConst 666
       no with abstraction
       no where clause
-   implementation of function  "g'" (89 8 4) (91 8 6)
+   implementation of function  g' (89 8 4) (91 8 6)
     no pragmas
-    clause for  "g'" (89 8 4) (91 8 6)
+    clause for  g' (89 8 4) (91 8 6)
     patterns matching parsed as expression
      function application
      function being applied
-      named reference "g'" (89 8 4) (91 8 6)
+      named reference g' (89 8 4) (91 8 6)
      value applied to the function
-      named reference "a" (92 8 7) (93 8 8)
+      named reference a (92 8 7) (93 8 8)
     function body
-     named reference "a" (96 8 11) (97 8 12)
+     named reference a (96 8 11) (97 8 12)
     no with abstraction
     where clause
-     implementation of function  "x" (113 10 6) (114 10 7)
+     implementation of function  x (113 10 6) (114 10 7)
       no pragmas
-      clause for  "x" (113 10 6) (114 10 7)
+      clause for  x (113 10 6) (114 10 7)
       patterns matching parsed as expression
-       named reference "x" (113 10 6) (114 10 7)
+       named reference x (113 10 6) (114 10 7)
       function body
        constant (117 10 10) (120 10 13)
         IntegerConst 666
       no with abstraction
       where clause
-       implementation of function  "x" (140 12 8) (141 12 9)
+       implementation of function  x (140 12 8) (141 12 9)
         no pragmas
-        clause for  "x" (140 12 8) (141 12 9)
+        clause for  x (140 12 8) (141 12 9)
         patterns matching parsed as expression
-         named reference "x" (140 12 8) (141 12 9)
+         named reference x (140 12 8) (141 12 9)
         function body
          constant (144 12 12) (147 12 15)
           IntegerConst 666
         no with abstraction
         no where clause
-  clause for  "f" (150 14 2) (151 14 3)
+  clause for  f (150 14 2) (151 14 3)
   patterns matching parsed as expression
-   named reference "f" (150 14 2) (151 14 3)
+   named reference f (150 14 2) (151 14 3)
   function body
    function application
    function being applied
-    named reference "g" (154 14 6) (155 14 7)
+    named reference g (154 14 6) (155 14 7)
    value applied to the function
     constant (156 14 8) (159 14 11)
      IntegerConst 233
   no with abstraction
   where clause
-   implementation of function  "g" (168 15 3) (169 15 4)
+   implementation of function  g (168 15 3) (169 15 4)
     no pragmas
-    clause for  "g" (168 15 3) (169 15 4)
+    clause for  g (168 15 3) (169 15 4)
     patterns matching parsed as expression
      function application
      function being applied
-      named reference "g" (168 15 3) (169 15 4)
+      named reference g (168 15 3) (169 15 4)
      value applied to the function
-      named reference "a" (170 15 5) (171 15 6)
+      named reference a (170 15 5) (171 15 6)
     function body
-     named reference "a" (174 15 9) (175 15 10)
+     named reference a (174 15 9) (175 15 10)
     no with abstraction
     no where clause
-  clause for  "f" (178 17 2) (179 17 3)
+  clause for  f (178 17 2) (179 17 3)
   patterns matching parsed as expression
-   named reference "f" (178 17 2) (179 17 3)
+   named reference f (178 17 2) (179 17 3)
   function body
    function application
    function being applied
-    named reference "g" (182 17 6) (183 17 7)
+    named reference g (182 17 6) (183 17 7)
    value applied to the function
     constant (184 17 8) (187 17 11)
      IntegerConst 233
   no with abstraction
   where clause
-   implementation of function  "g" (194 17 18) (195 17 19)
+   implementation of function  g (194 17 18) (195 17 19)
     no pragmas
-    clause for  "g" (194 17 18) (195 17 19)
+    clause for  g (194 17 18) (195 17 19)
     patterns matching parsed as expression
      function application
      function being applied
-      named reference "g" (194 17 18) (195 17 19)
+      named reference g (194 17 18) (195 17 19)
      value applied to the function
-      named reference "a" (196 17 20) (197 17 21)
+      named reference a (196 17 20) (197 17 21)
     function body
-     named reference "a" (200 17 24) (201 17 25)
+     named reference a (200 17 24) (201 17 25)
     no with abstraction
     no where clause
-  clause for  "f" (204 19 2) (205 19 3)
+  clause for  f (204 19 2) (205 19 3)
   patterns matching parsed as expression
-   named reference "f" (204 19 2) (205 19 3)
+   named reference f (204 19 2) (205 19 3)
   function body
    function application
    function being applied
-    named reference "g" (208 19 6) (209 19 7)
+    named reference g (208 19 6) (209 19 7)
    value applied to the function
     constant (210 19 8) (213 19 11)
      IntegerConst 233
   no with abstraction
   where clause
-   implementation of function  "g" (222 20 9) (223 20 10)
+   implementation of function  g (222 20 9) (223 20 10)
     no pragmas
-    clause for  "g" (222 20 9) (223 20 10)
+    clause for  g (222 20 9) (223 20 10)
     patterns matching parsed as expression
      function application
      function being applied
-      named reference "g" (222 20 9) (223 20 10)
+      named reference g (222 20 9) (223 20 10)
      value applied to the function
-      named reference "a" (224 20 11) (225 20 12)
+      named reference a (224 20 11) (225 20 12)
     function body
-     named reference "a" (228 20 15) (229 20 16)
+     named reference a (228 20 15) (229 20 16)
     no with abstraction
     no where clause

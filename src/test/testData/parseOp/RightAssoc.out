@@ -1,22 +1,22 @@
-File type: CodeFileType
+File type: owo
 Top module name: .RightAssoc
- implementation of function  "fib" (41 4 3) (44 4 6)
+ implementation of function  fib (41 4 3) (44 4 6)
   no pragmas
-  clause for  "fib" (41 4 3) (44 4 6)
+  clause for  fib (41 4 3) (44 4 6)
   patterns matching parsed as expression
-   named reference "fib" (41 4 3) (44 4 6)
+   named reference fib (41 4 3) (44 4 6)
   function body
    function application
    function being applied
     function application
     function being applied
-     named reference "::" (54 4 16) (56 4 18)
+     named reference :: (54 4 16) (56 4 18)
     value applied to the function
      function application
      function being applied
       function application
       function being applied
-       named reference "::" (49 4 11) (51 4 13)
+       named reference :: (49 4 11) (51 4 13)
       value applied to the function
        constant (47 4 9) (48 4 10)
         IntegerConst 0
@@ -30,16 +30,16 @@ Top module name: .RightAssoc
      function being applied
       function application
       function being applied
-       named reference "zipWith" (57 4 19) (64 4 26)
+       named reference zipWith (57 4 19) (64 4 26)
       value applied to the function
-       named reference "plus" (65 4 27) (69 4 31)
+       named reference plus (65 4 27) (69 4 31)
      value applied to the function
-      named reference "fib" (70 4 32) (73 4 35)
+      named reference fib (70 4 32) (73 4 35)
     value applied to the function
      function application
      function being applied
-      named reference "tail" (75 4 37) (79 4 41)
+      named reference tail (75 4 37) (79 4 41)
      value applied to the function
-      named reference "fib" (80 4 42) (83 4 45)
+      named reference fib (80 4 42) (83 4 45)
   no with abstraction
   no where clause

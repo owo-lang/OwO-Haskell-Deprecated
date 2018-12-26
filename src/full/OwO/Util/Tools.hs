@@ -36,7 +36,10 @@ showPos p = "(" ++ show (posPos  p) ++
             ")"
 
 simpleToken :: PsiToken -> String
-simpleToken = show . tokenType
+simpleToken token = case tokenType token of
+  OperatorToken   n -> "Operator "   ++ T.unpack (textOfName n)
+  IdentifierToken n -> "Identifier " ++ T.unpack (textOfName n)
+  others            -> show others
 
 parseNaiveSimple :: String -> Either String PsiFile
 parseNaiveSimple = parseNaive CodeFileType

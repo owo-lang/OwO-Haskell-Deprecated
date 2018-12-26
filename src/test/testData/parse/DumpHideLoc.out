@@ -1,21 +1,21 @@
-File type: CodeFileType
+File type: owo
 Top module name: .A
- type signature "f"
+ type signature f
   no pragmas
   function application
   function being applied
-   named reference "F"
+   named reference F
   value applied to the function
    function application
    function being applied
-    named reference "Type"
+    named reference Type
    value applied to the function
-    named reference "level"
- implementation of function  "f"
+    named reference level
+ implementation of function  f
   no pragmas
-  clause for  "f"
+  clause for  f
   patterns matching parsed as expression
-   named reference "f"
+   named reference f
   function body
    function application
    function being applied
@@ -23,16 +23,16 @@ Top module name: .A
     function being applied
      function application
      function being applied
-      named reference "a"
+      named reference a
      value applied to the function
-      named reference "b"
+      named reference b
     value applied to the function
-     named reference "c"
+     named reference c
    value applied to the function
     function application
     function being applied
-     named reference "d"
+     named reference d
     value applied to the function
-     named reference "e"
+     named reference e
   no with abstraction
   no where clause

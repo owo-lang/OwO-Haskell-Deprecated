@@ -1,27 +1,27 @@
-File type: CodeFileType
+File type: owo
 Top module name: .EmptyClause
- type signature "a" (26 2 2) (27 2 3)
+ type signature a (26 2 2) (27 2 3)
   no pragmas
-  named reference "Type" (30 2 6) (34 2 10)
- implementation of function  "a" (36 3 2) (37 3 3)
+  named reference Type (30 2 6) (34 2 10)
+ implementation of function  a (36 3 2) (37 3 3)
   no pragmas
-  clause for  "a" (36 3 2) (37 3 3)
+  clause for  a (36 3 2) (37 3 3)
   patterns matching parsed as expression
-   named reference "a" (36 3 2) (37 3 3)
+   named reference a (36 3 2) (37 3 3)
   function body
-   named reference "b" (40 3 6) (41 3 7)
+   named reference b (40 3 6) (41 3 7)
   no with abstraction
   no where clause
  submodule .B
-  type signature "b" (60 5 3) (61 5 4)
+  type signature b (60 5 3) (61 5 4)
    no pragmas
-   named reference "Type" (64 5 7) (68 5 11)
-  implementation of function  "b" (71 6 3) (72 6 4)
+   named reference Type (64 5 7) (68 5 11)
+  implementation of function  b (71 6 3) (72 6 4)
    no pragmas
-   clause for  "b" (71 6 3) (72 6 4)
+   clause for  b (71 6 3) (72 6 4)
    patterns matching parsed as expression
-    named reference "b" (71 6 3) (72 6 4)
+    named reference b (71 6 3) (72 6 4)
    function body
-    named reference "c" (75 6 7) (76 6 8)
+    named reference c (75 6 7) (76 6 8)
    no with abstraction
    no where clause
