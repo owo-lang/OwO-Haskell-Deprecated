@@ -9,6 +9,7 @@
 module OwO.Syntax.Parser.NaiveParser
   ( parseTokens
   , fixityP
+  , expressionP
   ) where
 
 import           Control.Applicative
@@ -132,9 +133,11 @@ applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
 telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
   where
+    anonymousP :: a -> Parser (Name, a, PsiTerm)
     anonymousP vis = do
       e <- exprP
       return (NoName $ locationOfTerm e, vis, e)
+    bindingP :: a -> TokenType -> TokenType -> Parser (Name, a, PsiTerm)
     bindingP vis l r = anonymousP vis <~> do
       exactly l
       name <- identifierP'
@@ -146,15 +149,17 @@ telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
     implicitP = bindingP Implicit BraceLToken BraceRToken
     instanceP = bindingP Instance InstanceArgumentLToken InstanceArgumentRToken
 
-telescopeP :: FixityInfo -> Parser PsiTerm
-telescopeP fix = expressionP fix <~> do
-  (name, vis, term) <- telescopeBindingP $ expressionP fix
+telescopeP :: Parser PsiTerm -> Parser PsiTerm
+telescopeP exprP = exprP <~> do
+  (name, vis, term) <- telescopeBindingP $ exprP
   exactly RightArrowToken
-  $(each [| PsiTelescope name vis term (~! telescopeP fix) |])
+  $(each [| PsiTelescope name vis term (~! telescopeP exprP) |])
 
 expressionP :: FixityInfo -> Parser PsiTerm
-expressionP fix = operatorsP (regularizeFixity fix) $
-  applicationP fix <|> atomP fix
+expressionP fix = telescopeP exprP
+  where
+    exprP = operatorsP (regularizeFixity fix) unitP
+    unitP = applicationP fix <|> atomP fix
 
 --------------------------------------------------------------------------------
 ---------------------------------- Operators -----------------------------------
@@ -251,7 +256,7 @@ typeSignatureP' fix = do
   p <- many $ fnPragmaP fix <* semicolon
   n <- identifierP'
   exactly ColonToken
-  t <- telescopeP fix
+  t <- expressionP fix
   return (n, p, t)
 
 typeSignatureP :: DeclarationP

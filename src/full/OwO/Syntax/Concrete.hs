@@ -58,7 +58,6 @@ import           OwO.Syntax.TokenType (locationOfName, Name (..))
 
 #include <impossible.h>
 
--- | All parameters becomes explicit in Ast
 data Visibility
   = Explicit
   | Implicit
