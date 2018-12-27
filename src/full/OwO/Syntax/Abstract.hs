@@ -51,9 +51,17 @@ import           GHC.Generics         (Generic)
 -- | @a@ is @Name@ or something
 data AstTerm' c
   = AstConst Loc ConstInfo
+  -- ^ Constants, same as in Psi
+  | AstApp (AstTerm' c) (AstTerm' c)
+  -- ^ Application
+  | AstBind c (AstTerm' c) (AstTerm' c)
+  -- ^ Name binding
   | AstRef c (AstDeclaration' AstTerm' c)
+  -- ^ A resolved reference, to a global declaration
   | AstLocalRef c (AstTerm' c)
+  -- ^ A resolved reference, to a local variable
   | AstMetaVar c
+  -- ^ Goals? Holes?
   deriving (Eq, Ord, Show)
 
 -- | Type constructors, data constructors
@@ -96,6 +104,8 @@ data DesugarError
   -- ^ Two type signatures, with same name
   | UnresolvedReference Name
   -- ^ Usage of undefined names
+  | DesugarSyntaxError String
+  -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
   deriving (Eq, Ord, Show)
 
 concreteToAbstractDecl :: Either DesugarError AstContext
@@ -130,7 +140,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
       case partition ((== name) . fst3) sigs of
         ([sig], rest) -> desugarFunction sig rest
         ([   ], rest) -> desugarFunction (AstMetaVar $ hideName name) rest
-        ((a:b:_),  _) -> Left $ DuplicateTypeSignatureError (a, b)
+        (a : b : _,_) -> Left $ DuplicateTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
         desugarFunction ty rest = __TODO__
@@ -143,10 +153,20 @@ concreteToAbstractTerm'
   -> PsiTerm
   -- Input term
   -> Either DesugarError AstTerm
-concreteToAbstractTerm' env localEnv = \case
-  (PsiReference name) -> case Map.lookup name localEnv of
-    Just ref -> Right $ AstLocalRef name ref
-    Nothing  -> case lookupCtxCurrent name env of
-      Just ref -> Right $ AstRef name ref
-      Nothing  -> Left $ UnresolvedReference name
-  _ -> __TODO__
+concreteToAbstractTerm' env localEnv =
+  \case
+    (PsiReference  name) -> case Map.lookup name localEnv of
+      Just ref -> Right $ AstLocalRef name ref
+      Nothing  -> case lookupCtxCurrent name env of
+        Just ref -> Right $ AstRef name ref
+        Nothing  -> Left $ UnresolvedReference name
+    (PsiLambda var body) -> __TODO__
+    (PsiApplication f a) -> do
+      f' <- recur f
+      a' <- recur a
+      -- TODO fill implicit arguments
+      return (AstApp f' a')
+    (PsiConstant  loc t) -> Right $ AstConst loc t
+    _ -> __TODO__
+  where
+    recur = concreteToAbstractTerm' env localEnv

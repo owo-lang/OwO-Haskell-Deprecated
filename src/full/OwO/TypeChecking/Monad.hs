@@ -2,7 +2,6 @@
 {-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE TupleSections         #-}
 
 -- | OwO's type checking state is a state monad transformer.
 --   We call it TypeCheckingMonad, in short TCM, as Agda does.
