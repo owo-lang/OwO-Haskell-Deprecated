@@ -82,7 +82,7 @@ data PsiTerm' c
   -- ^ constant
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
-  | PsiInaccessiblePattern (PsiTerm' c)
+  | PsiInaccessible (PsiTerm' c)
   -- ^ Dotted pattern, inaccessible pattern
   | PsiMetaVar c
   -- ^ Meta variable
@@ -95,13 +95,13 @@ type PsiTerm = PsiTerm' Name
 
 locationOfTerm :: PsiTerm -> Loc
 locationOfTerm (PsiReference     n) = locationOfName n
-locationOfTerm (PsiLambda      n t) = mergeLocations (locationOfName n) (locationOfTerm t) 
+locationOfTerm (PsiLambda      n t) = mergeLocations (locationOfName n) (locationOfTerm t)
 locationOfTerm (PsiApplication f a) = mergeLocations (locationOfTerm f) (locationOfTerm a)
 locationOfTerm (PsiConstant  loc _) = loc
 locationOfTerm (PsiImpossible  loc) = loc
-locationOfTerm (PsiInaccessiblePattern t) = locationOfTerm t
+locationOfTerm (PsiInaccessible  t) = locationOfTerm t
 locationOfTerm (PsiMetaVar       n) = locationOfName n
-locationOfTerm (PsiTelescope   n _ _ ret) = mergeLocations (locationOfName n) (locationOfTerm ret)
+locationOfTerm (PsiTelescope n _ _ r) = mergeLocations (locationOfName n) (locationOfTerm r)
 
 -- | Program Structure Item: File Type
 data PsiFileType

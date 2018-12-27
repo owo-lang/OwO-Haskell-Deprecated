@@ -5,6 +5,7 @@ module OwO.Util.Tools
   ( dumpTokens
   , dumpAst
   , parseNaiveSimple
+  , printExpr
   ) where
 
 import           Control.Monad        (join)

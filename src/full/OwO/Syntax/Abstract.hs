@@ -9,11 +9,17 @@
 module OwO.Syntax.Abstract
   ( AstTerm'(..)
   , AstTerm
+  , inventMetaVar
   -- Expressions
 
   , AstConsInfo'(..)
   , AstConsInfo
   -- Constructor info
+
+  , AstBinderInfo'(..)
+  , AstBinderInfo
+  , inventBinder
+  -- Free variable info
 
   , AstImplInfo'(..)
   , AstImplInfo
@@ -54,15 +60,20 @@ data AstTerm' c
   -- ^ Constants, same as in Psi
   | AstApp (AstTerm' c) (AstTerm' c)
   -- ^ Application
-  | AstBind c (AstTerm' c) (AstTerm' c)
+  | AstBind (AstBinderInfo' AstTerm' c) (AstTerm' c)
   -- ^ Name binding
   | AstRef c (AstDeclaration' AstTerm' c)
   -- ^ A resolved reference, to a global declaration
-  | AstLocalRef c (AstTerm' c)
-  -- ^ A resolved reference, to a local variable
+  | AstLocalRef c (AstBinderInfo' AstTerm' c)
+  -- ^ A resolved reference, to a locally binded free variable.
   | AstMetaVar c
   -- ^ Goals? Holes?
   deriving (Eq, Ord, Show)
+
+data AstBinderInfo' t c = AstBinderInfo
+  { binderName :: c
+  , binderType :: t c
+  } deriving (Eq, Ord, Show)
 
 -- | Type constructors, data constructors
 --   construct expressions under normal form
@@ -91,6 +102,7 @@ data AstDeclaration' t c
 
 type AstDeclaration = AstDeclaration' AstTerm' Name
 type AstTerm        = AstTerm' Name
+type AstBinderInfo  = AstBinderInfo' AstTerm' Name
 type AstConsInfo    = AstConsInfo' AstTerm' Name
 type AstImplInfo    = AstImplInfo' AstTerm' Name
 
@@ -107,6 +119,18 @@ data DesugarError
   | DesugarSyntaxError String
   -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
   deriving (Eq, Ord, Show)
+
+-- | Generate a meta var that does not present in user code
+--   from a name, because we need location for the metavar anyway
+inventMetaVar :: Name -> AstTerm
+inventMetaVar = AstMetaVar . hideName
+
+-- | Generate a binder with a name only
+inventBinder :: Name -> AstBinderInfo
+inventBinder name = AstBinderInfo
+  { binderName = name
+  , binderType = inventMetaVar name
+  }
 
 concreteToAbstractDecl :: Either DesugarError AstContext
 concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx [] []
@@ -139,7 +163,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
     desugar (PsiImplementation name pgms clauses) =
       case partition ((== name) . fst3) sigs of
         ([sig], rest) -> desugarFunction sig rest
-        ([   ], rest) -> desugarFunction (AstMetaVar $ hideName name) rest
+        ([   ], rest) -> desugarFunction (inventMetaVar name) rest
         (a : b : _,_) -> Left $ DuplicateTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
@@ -148,7 +172,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
 
 concreteToAbstractTerm'
   :: AstContext
-  -> Binding AstTerm
+  -> Binding AstBinderInfo
   -- Local variables
   -> PsiTerm
   -- Input term
@@ -160,13 +184,18 @@ concreteToAbstractTerm' env localEnv =
       Nothing  -> case lookupCtxCurrent name env of
         Just ref -> Right $ AstRef name ref
         Nothing  -> Left $ UnresolvedReference name
-    (PsiLambda var body) -> __TODO__
-    (PsiApplication f a) -> do
-      f' <- recur f
-      a' <- recur a
-      -- TODO fill implicit arguments
-      return (AstApp f' a')
+    (PsiLambda var body) ->
+      let binder   = inventBinder var
+          newLocal = Map.insert var binder localEnv
+      in $(each [|
+        AstBind binder
+        (~! recurEnv newLocal body) |])
+    (PsiApplication f a) -> $(each [| AstApp (~! recur f) (~! recur a) |])
     (PsiConstant  loc t) -> Right $ AstConst loc t
-    _ -> __TODO__
+    (PsiImpossible  loc) -> __TODO__
+    (PsiInaccessible  t) -> __TODO__
+    (PsiMetaVar    name) -> Right $ AstMetaVar name
+    (PsiTelescope var vis ty val) -> __TODO__
   where
     recur = concreteToAbstractTerm' env localEnv
+    recurEnv = concreteToAbstractTerm' env

@@ -58,7 +58,6 @@ See [this instruction](../src/test/testData/README.md).
 * The prefix `Psi` stands for *Program Structure Item*, it's for concrete syntax elements
   * contextual syntax errors can be detected here
 * The prefix `Ast` stands for *Abstract Syntax Tree*, it's for abstract syntax tree
-  * no implicit arguments, but meta variables only
   * no syntactic sugars
   * no unresolved references
 

@@ -22,5 +22,5 @@ lex = flip runAlex scanAll
 parseNaive :: PsiFileType -> String -> Either String PsiFile
 parseNaive t s = lex s >>= NP.parseTokens [] t
 
-runParser :: NC.Parser a -> String -> Either String a
-runParser p s = lex s >>= NC.parseCode p
+parseNaiveWith :: NC.Parser a -> String -> Either String a
+parseNaiveWith p s = lex s >>= NC.parseCode p
