@@ -21,6 +21,7 @@ module OwO.Syntax.Abstract
   , inventBinder
   , AstBinderKind'(..)
   , AstBinderKind
+  , binderValue
   -- Free variable info
 
   , AstImplInfo'(..)
@@ -67,7 +68,7 @@ data AstTerm' c
   | AstRef c (AstDeclaration' AstTerm' c)
   -- ^ A resolved reference, to a global declaration
   | AstLocalRef c (AstBinderInfo' AstTerm' c)
-  -- ^ A resolved reference, to a locally binded free variable.
+  -- ^ A resolved reference, to a locally bound free variable.
   | AstMetaVar c
   -- ^ Goals? Holes?
   deriving (Eq, Ord, Show)
@@ -81,14 +82,20 @@ data AstBinderInfo' t c = AstBinderInfo
 -- | i should be something like a @Term@
 data AstBinderKind' t
   = LambdaBinder
-  -- ^ Lambda abstraction, type
-  | TelescopeBinder
-  -- ^ Pi type's binding, type and value
+  -- ^ Lambda abstraction
+  | TelescopeBinder Visibility
+  -- ^ Pi type's binding
   | LetBinder t
-  -- ^ Let binding, type and value
+  -- ^ Let binding
   | GeneratedBinder t
-  -- ^ Intermediate value used for reduction
+  -- ^ Intermediate value binding generated
   deriving (Eq, Ord, Show)
+
+binderValue :: AstBinderKind' a -> Maybe a
+binderValue  LambdaBinder       = Nothing
+binderValue (TelescopeBinder _) = Nothing
+binderValue (LetBinder value)   = Just value
+binderValue (GeneratedBinder v) = Just v
 
 -- | Type constructors, data constructors
 --   construct expressions under normal form
@@ -128,7 +135,7 @@ type TypeSignature  = (Name, FnPragmas, AstTerm)
 data DesugarError
   = NoImplementationError [TypeSignature]
   -- ^ Only type signature, not implementation
-  | DuplicateTypeSignatureError (TypeSignature, TypeSignature)
+  | DuplicatedTypeSignatureError (TypeSignature, TypeSignature)
   -- ^ Two type signatures, with same name
   | UnresolvedReference Name
   -- ^ Usage of undefined names
