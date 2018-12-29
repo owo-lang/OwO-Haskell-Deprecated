@@ -9,7 +9,7 @@ import           System.Exit                   (ExitCode (..), exitWith)
 
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Module
-import           OwO.Syntax.Parser             (runParser)
+import           OwO.Syntax.Parser             (parseNaiveWith)
 import           OwO.Syntax.Parser.NaiveParser as NP
 import           OwO.Util.Tools
 
@@ -23,13 +23,13 @@ main = hspec $ do
   describe "Infix declaration parsing" $ do
 
     it "Should not parse incorrect infix declarations" $ do
-      let p = runParser NP.fixityP
+      let p = parseNaiveWith NP.fixityP
       p "infixl 1 233"  `shouldSatisfy` isLeft
       p "infixr +"      `shouldSatisfy` isLeft
       p "infix 1"       `shouldSatisfy` isLeft
 
     it "Should parse simple infix declarations" $ do
-      let p = runParser NP.fixityP
+      let p = parseNaiveWith NP.fixityP
       p "infixl 1 +"  `shouldSatisfy` isRight
       p "infixr 2 -"  `shouldSatisfy` isRight
       p "infix 3 <|>" `shouldSatisfy` isRight
