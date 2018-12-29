@@ -151,7 +151,7 @@ telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
 
 telescopeP :: Parser PsiTerm -> Parser PsiTerm
 telescopeP exprP = exprP <~> do
-  (name, vis, term) <- telescopeBindingP $ exprP
+  (name, vis, term) <- telescopeBindingP exprP
   exactly RightArrowToken
   $(each [| PsiTelescope name vis term (~! telescopeP exprP) |])
 

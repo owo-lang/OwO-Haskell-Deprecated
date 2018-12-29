@@ -1,6 +1,5 @@
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DeriveFunctor         #-}
-{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE ExtendedDefaultRules  #-}
 {-# LANGUAGE MultiWayIf            #-}
@@ -10,7 +9,7 @@
 module OwO.TypeChecking.Core
   ( NameType(..)
   , ULevel(..)
-  , BinderInfo(..)
+  -- , BinderInfo(..)
   , ConstInfo(..)
 
   , Term'(..)
@@ -49,7 +48,7 @@ data NameType
   -- ^ Type constructor, should be already resolved.
   | DataConstructor
   -- ^ Data constructor, should be already resolved.
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 data ULevel
   = ULevelLit Int
@@ -58,21 +57,7 @@ data ULevel
   -- ^ Level variables. Should be already computed.
   | ULevelMax
   -- ^ TypeInf, TypeOmega
-  deriving (Eq, Generic, Ord, Show)
-
--- | i should be something like a @Term@
-data BinderInfo i
-  = LambdaBinder !i
-  -- ^ Lambda abstraction, type
-  | TelescopeBinder !i i
-  -- ^ Pi type's binding, type and value
-  | LetBinder !i i
-  -- ^ Let binding, type and value
-{-
-  | NLetBinder !i i
-  -- ^ Intermediate value used for reduction
--}
-  deriving (Eq, Functor, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 -- | Core language term, @i@ refers to the identifier.
 --   We translate type-checked code into this form
@@ -83,12 +68,14 @@ data Term' i
   -- ^ A variable resolved with de bruijn index
   | Ref NameType i Definition
   -- ^ Named reference, might be external definitions
+{-
   | Bind i !(BinderInfo (Term' i)) (Term' i)
   -- ^ Name binding
+-}
   | TType ULevel
   -- ^ Type of Type, including type omega
   | Const ConstInfo
-  deriving (Eq, Functor, Generic, Ord, Show)
+  deriving (Eq, Functor, Ord, Show)
 
 -- TODO
 
@@ -100,7 +87,7 @@ type Type = Term
 data Definition
   = SimpleDefinition !Type !Term
   -- ^ No pattern matching, just an expression with (optional) type specified
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 definitionType :: Definition -> Type
 definitionType (SimpleDefinition t _) = t

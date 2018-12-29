@@ -19,6 +19,8 @@ module OwO.Syntax.Abstract
   , AstBinderInfo'(..)
   , AstBinderInfo
   , inventBinder
+  , AstBinderKind'(..)
+  , AstBinderKind
   -- Free variable info
 
   , AstImplInfo'(..)
@@ -73,7 +75,20 @@ data AstTerm' c
 data AstBinderInfo' t c = AstBinderInfo
   { binderName :: c
   , binderType :: t c
+  , binderKind :: AstBinderKind' (t c)
   } deriving (Eq, Ord, Show)
+
+-- | i should be something like a @Term@
+data AstBinderKind' t
+  = LambdaBinder
+  -- ^ Lambda abstraction, type
+  | TelescopeBinder
+  -- ^ Pi type's binding, type and value
+  | LetBinder t
+  -- ^ Let binding, type and value
+  | GeneratedBinder t
+  -- ^ Intermediate value used for reduction
+  deriving (Eq, Ord, Show)
 
 -- | Type constructors, data constructors
 --   construct expressions under normal form
@@ -103,6 +118,7 @@ data AstDeclaration' t c
 type AstDeclaration = AstDeclaration' AstTerm' Name
 type AstTerm        = AstTerm' Name
 type AstBinderInfo  = AstBinderInfo' AstTerm' Name
+type AstBinderKind  = AstBinderKind' AstTerm
 type AstConsInfo    = AstConsInfo' AstTerm' Name
 type AstImplInfo    = AstImplInfo' AstTerm' Name
 
@@ -126,10 +142,11 @@ inventMetaVar :: Name -> AstTerm
 inventMetaVar = AstMetaVar . hideName
 
 -- | Generate a binder with a name only
-inventBinder :: Name -> AstBinderInfo
-inventBinder name = AstBinderInfo
+inventBinder :: Name -> AstBinderKind -> AstBinderInfo
+inventBinder name kind = AstBinderInfo
   { binderName = name
   , binderType = inventMetaVar name
+  , binderKind = kind
   }
 
 concreteToAbstractDecl :: Either DesugarError AstContext
@@ -167,8 +184,8 @@ concreteToAbstractDecl' env sigs (d : ds) = do
         (a : b : _,_) -> Left $ DuplicateTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
-        desugarFunction ty rest = __TODO__
-    desugar decl = __TODO__
+        desugarFunction ty rest = return __TODO__
+    desugar decl = return __TODO__
 
 concreteToAbstractTerm'
   :: AstContext
@@ -185,17 +202,23 @@ concreteToAbstractTerm' env localEnv =
         Just ref -> Right $ AstRef name ref
         Nothing  -> Left $ UnresolvedReference name
     (PsiLambda var body) ->
-      let binder   = inventBinder var
+      let binder   = inventBinder var LambdaBinder
           newLocal = Map.insert var binder localEnv
-      in $(each [|
-        AstBind binder
-        (~! recurEnv newLocal body) |])
+      in AstBind binder <$> recurEnv newLocal body
     (PsiApplication f a) -> $(each [| AstApp (~! recur f) (~! recur a) |])
     (PsiConstant  loc t) -> Right $ AstConst loc t
     (PsiImpossible  loc) -> __TODO__
     (PsiInaccessible  t) -> __TODO__
     (PsiMetaVar    name) -> Right $ AstMetaVar name
-    (PsiTelescope var vis ty val) -> __TODO__
+    (PsiTelescope var vis ty val) -> do
+      type' <- recur ty
+      let binder   = AstBinderInfo
+            { binderName = var
+            , binderType = type'
+            , binderKind = TelescopeBinder
+            }
+          newLocal = Map.insert var binder localEnv
+      AstBind binder <$> recurEnv newLocal val
   where
     recur = concreteToAbstractTerm' env localEnv
     recurEnv = concreteToAbstractTerm' env
