@@ -31,9 +31,6 @@ jobs:
             perl --version
             perl test_runner.pl
             cd ../..
-      - run:
-          name: Install hlint
-          command: stack install hlint
       - save_cache:
           name: Cache Dependencies
           key: cci-demo-haskell-v1-{{ checksum "OwO.cabal" }}
@@ -41,6 +38,3 @@ jobs:
             - ".stack-work"
             - "~/.cabal"
             - "~/.stack"
-      - run:
-          name: Run hlint, ignoring errors
-          command: hlint src || true
