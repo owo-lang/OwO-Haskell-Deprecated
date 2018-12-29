@@ -71,6 +71,8 @@ data AstTerm' c
   -- ^ A resolved reference, to a locally bound free variable.
   | AstMetaVar c
   -- ^ Goals? Holes?
+  | AstPostulate c (AstTerm' c)
+  -- ^ Functions with types but no implementations
   deriving (Eq, Ord, Show)
 
 data AstBinderInfo' t c = AstBinderInfo
@@ -177,6 +179,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
     checkRest newEnv newSigs
   where
     checkRest env sig = concreteToAbstractDecl' env sig ds
+    checkTerm = concreteToAbstractTerm' env Map.empty
     desugar (PsiTypeSignature name pgms sig) = $(each [|
       ( ( name
         , pgms
@@ -193,7 +196,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
         -- TODO deal with pragmas
         desugarFunction ty rest = return __TODO__
     -- TODO deal with pragmas
-    desugar (PsiPostulate name pgms ty) = return __TODO__
+    desugar (PsiPostulate name pgms ty) = checkTerm ty >>= AstPostulate name
     desugar decl = return __TODO__
 
 concreteToAbstractTerm'
