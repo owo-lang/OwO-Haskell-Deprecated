@@ -60,7 +60,7 @@ printName locate n = (' ' :) $
 
 printExpr :: Int -> Bool -> PsiTerm -> IO ()
 printExpr indent hideLocation = \case
-    PsiConstant l info -> do
+    PsiLiteral l info -> do
       puts $ "constant" ++ locate l
       succ indent `put` show info
     PsiReference n -> puts $ "named reference" ++ name n

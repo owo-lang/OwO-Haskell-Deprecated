@@ -102,7 +102,7 @@ integerP' = satisfyMap $ \tok -> case tokenType tok of
   _              -> Nothing
 
 integerP :: Parser PsiTerm
-integerP = uncurry ((. IntegerConst) . PsiConstant) <$> integerP'
+integerP = uncurry ((. IntegerLit) . PsiLiteral) <$> integerP'
 
 stringP' :: Parser (Loc, T.Text)
 stringP' = satisfyMap $ \tok -> case tokenType tok of
@@ -110,7 +110,7 @@ stringP' = satisfyMap $ \tok -> case tokenType tok of
   _             -> Nothing
 
 stringP :: Parser PsiTerm
-stringP = uncurry ((. StringConst) . PsiConstant) <$> stringP'
+stringP = uncurry ((. StringLit) . PsiLiteral) <$> stringP'
 
 charP' :: Parser (Loc, Char)
 charP' = satisfyMap $ \tok -> case tokenType tok of
@@ -118,7 +118,7 @@ charP' = satisfyMap $ \tok -> case tokenType tok of
   _           -> Nothing
 
 charP :: Parser PsiTerm
-charP = uncurry ((. CharConst) . PsiConstant) <$> charP'
+charP = uncurry ((. CharLit) . PsiLiteral) <$> charP'
 
 atomP :: FixityInfo -> Parser PsiTerm
 atomP fix = identifierP

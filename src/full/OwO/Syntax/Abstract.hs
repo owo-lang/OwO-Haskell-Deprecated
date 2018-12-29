@@ -49,7 +49,7 @@ import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.Position
-import           OwO.Syntax.TokenType (hideName, Name (..))
+import           OwO.Syntax.TokenType (Name (..), hideName)
 import qualified OwO.Util.StrictMaybe as Strict
 import           OwO.Util.Three
 
@@ -59,7 +59,7 @@ import           GHC.Generics         (Generic)
 
 -- | @a@ is @Name@ or something
 data AstTerm' c
-  = AstConst Loc ConstInfo
+  = AstLiteral Loc LiteralInfo
   -- ^ Constants, same as in Psi
   | AstApp (AstTerm' c) (AstTerm' c)
   -- ^ Application
@@ -188,10 +188,12 @@ concreteToAbstractDecl' env sigs (d : ds) = do
       case partition ((== name) . fst3) sigs of
         ([sig], rest) -> desugarFunction sig rest
         ([   ], rest) -> desugarFunction (inventMetaVar name) rest
-        (a : b : _,_) -> Left $ DuplicateTypeSignatureError (a, b)
+        (a : b : _,_) -> Left $ DuplicatedTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
         desugarFunction ty rest = return __TODO__
+    -- TODO deal with pragmas
+    desugar (PsiPostulate name pgms ty) = return __TODO__
     desugar decl = return __TODO__
 
 concreteToAbstractTerm'
@@ -203,26 +205,26 @@ concreteToAbstractTerm'
   -> Either DesugarError AstTerm
 concreteToAbstractTerm' env localEnv =
   \case
-    (PsiReference  name) -> case Map.lookup name localEnv of
-      Just ref -> Right $ AstLocalRef name ref
-      Nothing  -> case lookupCtxCurrent name env of
-        Just ref -> Right $ AstRef name ref
-        Nothing  -> Left $ UnresolvedReference name
-    (PsiLambda var body) ->
-      let binder   = inventBinder var LambdaBinder
-          newLocal = Map.insert var binder localEnv
-      in AstBind binder <$> recurEnv newLocal body
-    (PsiApplication f a) -> $(each [| AstApp (~! recur f) (~! recur a) |])
-    (PsiConstant  loc t) -> Right $ AstConst loc t
-    (PsiImpossible  loc) -> __TODO__
-    (PsiInaccessible  t) -> __TODO__
-    (PsiMetaVar    name) -> Right $ AstMetaVar name
-    (PsiTelescope var vis ty val) -> do
+    PsiReference  name -> case Map.lookup name localEnv of
+     Just ref -> Right $ AstLocalRef name ref
+     Nothing  -> case lookupCtxCurrent name env of
+       Just ref -> Right $ AstRef name ref
+       Nothing  -> Left $ UnresolvedReference name
+    PsiLambda var body ->
+     let binder   = inventBinder var LambdaBinder
+         newLocal = Map.insert var binder localEnv
+     in AstBind binder <$> recurEnv newLocal body
+    PsiApplication f a -> $(each [| AstApp (~! recur f) (~! recur a) |])
+    PsiLiteral   loc t -> Right $ AstLiteral loc t
+    PsiImpossible  loc -> __TODO__
+    PsiInaccessible  t -> __TODO__
+    PsiMetaVar    name -> Right $ AstMetaVar name
+    PsiTelescope var vis ty val -> do
       type' <- recur ty
       let binder   = AstBinderInfo
             { binderName = var
             , binderType = type'
-            , binderKind = TelescopeBinder
+            , binderKind = TelescopeBinder vis
             }
           newLocal = Map.insert var binder localEnv
       AstBind binder <$> recurEnv newLocal val

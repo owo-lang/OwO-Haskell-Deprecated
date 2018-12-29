@@ -10,7 +10,6 @@ module OwO.TypeChecking.Core
   ( NameType(..)
   , ULevel(..)
   -- , BinderInfo(..)
-  , ConstInfo(..)
 
   , Term'(..)
   , Term
@@ -74,7 +73,7 @@ data Term' i
 -}
   | TType ULevel
   -- ^ Type of Type, including type omega
-  | Const ConstInfo
+  | Const LiteralInfo
   deriving (Eq, Functor, Ord, Show)
 
 -- TODO

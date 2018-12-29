@@ -10,7 +10,7 @@ module OwO.Syntax.Concrete
   , PsiTerm'(..)
   , PsiTerm
   , locationOfTerm
-  , ConstInfo(..)
+  , LiteralInfo(..)
 
   , PsiDataCons'(..)
   , PsiDataCons
@@ -54,7 +54,7 @@ import           System.FilePath      (isExtensionOf)
 import           OwO.Syntax.Common
 import           OwO.Syntax.Module
 import           OwO.Syntax.Position
-import           OwO.Syntax.TokenType (locationOfName, Name (..))
+import           OwO.Syntax.TokenType (Name (..), locationOfName)
 
 #include <impossible.h>
 
@@ -78,7 +78,7 @@ data PsiTerm' c
   -- ^ Lambda abstraction, which has a name and a body
   | PsiApplication (PsiTerm' c) (PsiTerm' c)
   -- ^ Function application
-  | PsiConstant Loc ConstInfo
+  | PsiLiteral Loc LiteralInfo
   -- ^ constant
   | PsiImpossible Loc
   -- ^ Absurd pattern, impossible pattern
@@ -97,7 +97,7 @@ locationOfTerm :: PsiTerm -> Loc
 locationOfTerm (PsiReference     n) = locationOfName n
 locationOfTerm (PsiLambda      n t) = mergeLocations (locationOfName n) (locationOfTerm t)
 locationOfTerm (PsiApplication f a) = mergeLocations (locationOfTerm f) (locationOfTerm a)
-locationOfTerm (PsiConstant  loc _) = loc
+locationOfTerm (PsiLiteral   loc _) = loc
 locationOfTerm (PsiImpossible  loc) = loc
 locationOfTerm (PsiInaccessible  t) = locationOfTerm t
 locationOfTerm (PsiMetaVar       n) = locationOfName n
