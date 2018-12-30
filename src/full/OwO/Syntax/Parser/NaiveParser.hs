@@ -130,6 +130,13 @@ atomP fix = identifierP
 applicationP :: FixityInfo -> Parser PsiTerm
 applicationP fix = chainl1 (atomP fix) $ pure PsiApplication
 
+lambdaP :: Parser PsiTerm -> Parser PsiTerm
+lambdaP exprP = exprP <~> do
+  exactly BackslashToken
+  name <- identifierP'
+  exactly RightArrowToken
+  $(each [| PsiLambda name (~! lambdaP exprP) |])
+
 telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
 telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
   where
@@ -155,11 +162,12 @@ telescopeP exprP = exprP <~> do
   exactly RightArrowToken
   $(each [| PsiTelescope name vis term (~! telescopeP exprP) |])
 
+binaryExpressionP :: FixityInfo -> Parser PsiTerm
+binaryExpressionP fix = operatorsP (regularizeFixity fix) $
+  applicationP fix <|> atomP fix
+
 expressionP :: FixityInfo -> Parser PsiTerm
-expressionP fix = telescopeP exprP
-  where
-    exprP = operatorsP (regularizeFixity fix) unitP
-    unitP = applicationP fix <|> atomP fix
+expressionP = telescopeP . lambdaP . binaryExpressionP
 
 --------------------------------------------------------------------------------
 ---------------------------------- Operators -----------------------------------
@@ -212,7 +220,7 @@ patternMatchingClauseP ::
   (Name -> Bool) ->
   Parser PsiImplInfo
 patternMatchingClauseP fix f = do
-  e <- expressionP fix
+  e <- binaryExpressionP fix
   n <- tryExtractingName e
   mkImplInfo n e
   where
@@ -284,6 +292,7 @@ declarationP fix = foldr1 (<|>) $ ($ fix) <$>
   [ moduleP
   , postulateP
   , typeSignatureP
+  , implementationP
   , implementationP
   , infixDeclarationP
   ]

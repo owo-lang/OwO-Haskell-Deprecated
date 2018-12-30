@@ -124,6 +124,8 @@ data TokenType
   -- ^ =
   | DotToken
   -- ^ ., proof irrelevance, operators
+  | BackslashToken
+  -- ^ \, for lambdas
 
   | IdentifierToken Name
   -- ^ identifier

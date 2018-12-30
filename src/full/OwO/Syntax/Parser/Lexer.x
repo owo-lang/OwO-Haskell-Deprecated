@@ -17,8 +17,8 @@ import           OwO.Util.Applicative
 $digit       = [0-9]
 $white_no_nl = $white # \n
 $escape      = [ r n b t a \\ \" \' ]
-$operator_c  = [ \+ \- \/ \\ \< \> \~ @ \# \$ \% \* \^ \? \, ]
-$operator_s  = [ \[ \] \| \= \: \. ]
+$operator_c  = [ \+ \- \/ \< \> \~ @ \# \$ \% \* \^ \? \, ]
+$operator_s  = [ \[ \] \| \\ \= \: \. ]
 $comment_c   = [^ \n \- \{ ]
 
 @integer     = $digit+
@@ -66,6 +66,7 @@ $white_no_nl  ;
   \-\>        { simple RightArrowToken }
   @colon_op   { simpleName OperatorToken }
   \:          { simple ColonToken }
+  \\          { simple BackslashToken }
   \;          { simple SemicolonToken }
   \(\|        { simple IdiomBracketLToken }
   \|\)        { simple IdiomBracketRToken }

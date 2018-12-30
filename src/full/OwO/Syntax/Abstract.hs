@@ -158,8 +158,8 @@ inventBinder name kind = AstBinderInfo
   , binderKind = kind
   }
 
-concreteToAbstractDecl :: Either DesugarError AstContext
-concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx [] []
+concreteToAbstractDecl :: [PsiDeclaration] -> Either DesugarError AstContext
+concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx []
 
 concreteToAbstractTerm :: PsiTerm -> Either DesugarError AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx Map.empty
@@ -194,6 +194,7 @@ concreteToAbstractDecl' env sigs (d : ds) = do
         (a : b : _,_) -> Left $ DuplicatedTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
+        -- Type signature, clauses
         desugarFunction ty rest = return __TODO__
     -- TODO deal with pragmas
     desugar (PsiPostulate name pgms ty) = $(each [|
