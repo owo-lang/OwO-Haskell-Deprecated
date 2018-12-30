@@ -13,9 +13,9 @@ Top module name: .SimpleOp
      named reference + (43 3 9) (44 3 10)
     value applied to the function
      constant (41 3 7) (42 3 8)
-      IntegerConst 1
+      IntegerLit 1
    value applied to the function
     constant (45 3 11) (46 3 12)
-     IntegerConst 1
+     IntegerLit 1
   no with abstraction
   no where clause

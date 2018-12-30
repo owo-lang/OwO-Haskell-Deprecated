@@ -13,7 +13,7 @@ Top module name: .Priority
      named reference + (63 5 11) (64 5 12)
     value applied to the function
      constant (61 5 9) (62 5 10)
-      IntegerConst 1
+      IntegerLit 1
    value applied to the function
     function application
     function being applied
@@ -28,7 +28,7 @@ Top module name: .Priority
         named reference * (67 5 15) (68 5 16)
        value applied to the function
         constant (65 5 13) (66 5 14)
-         IntegerConst 1
+         IntegerLit 1
       value applied to the function
        function application
        function being applied
@@ -37,12 +37,12 @@ Top module name: .Priority
          named reference / (71 5 19) (72 5 20)
         value applied to the function
          constant (69 5 17) (70 5 18)
-          IntegerConst 1
+          IntegerLit 1
        value applied to the function
         constant (73 5 21) (74 5 22)
-         IntegerConst 1
+         IntegerLit 1
     value applied to the function
      constant (77 5 25) (78 5 26)
-      IntegerConst 1
+      IntegerLit 1
   no with abstraction
   no where clause

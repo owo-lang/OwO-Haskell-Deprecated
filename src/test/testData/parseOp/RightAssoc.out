@@ -19,10 +19,10 @@ Top module name: .RightAssoc
        named reference :: (49 4 11) (51 4 13)
       value applied to the function
        constant (47 4 9) (48 4 10)
-        IntegerConst 0
+        IntegerLit 0
      value applied to the function
       constant (52 4 14) (53 4 15)
-       IntegerConst 1
+       IntegerLit 1
    value applied to the function
     function application
     function being applied

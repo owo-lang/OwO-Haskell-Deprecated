@@ -11,7 +11,7 @@ Top module name: .SimpleApplication
     named reference g (37 3 6) (38 3 7)
    value applied to the function
     constant (39 3 8) (42 3 11)
-     IntegerConst 233
+     IntegerLit 233
   no with abstraction
   where clause
    implementation of function  g (54 5 4) (55 5 5)
@@ -34,7 +34,7 @@ Top module name: .SimpleApplication
        named reference x (78 7 6) (79 7 7)
       function body
        constant (82 7 10) (85 7 13)
-        IntegerConst 666
+        IntegerLit 666
       no with abstraction
       no where clause
    implementation of function  g' (89 8 4) (91 8 6)
@@ -57,7 +57,7 @@ Top module name: .SimpleApplication
        named reference x (113 10 6) (114 10 7)
       function body
        constant (117 10 10) (120 10 13)
-        IntegerConst 666
+        IntegerLit 666
       no with abstraction
       where clause
        implementation of function  x (140 12 8) (141 12 9)
@@ -67,7 +67,7 @@ Top module name: .SimpleApplication
          named reference x (140 12 8) (141 12 9)
         function body
          constant (144 12 12) (147 12 15)
-          IntegerConst 666
+          IntegerLit 666
         no with abstraction
         no where clause
   clause for  f (150 14 2) (151 14 3)
@@ -79,7 +79,7 @@ Top module name: .SimpleApplication
     named reference g (154 14 6) (155 14 7)
    value applied to the function
     constant (156 14 8) (159 14 11)
-     IntegerConst 233
+     IntegerLit 233
   no with abstraction
   where clause
    implementation of function  g (168 15 3) (169 15 4)
@@ -104,7 +104,7 @@ Top module name: .SimpleApplication
     named reference g (182 17 6) (183 17 7)
    value applied to the function
     constant (184 17 8) (187 17 11)
-     IntegerConst 233
+     IntegerLit 233
   no with abstraction
   where clause
    implementation of function  g (194 17 18) (195 17 19)
@@ -129,7 +129,7 @@ Top module name: .SimpleApplication
     named reference g (208 19 6) (209 19 7)
    value applied to the function
     constant (210 19 8) (213 19 11)
-     IntegerConst 233
+     IntegerLit 233
   no with abstraction
   where clause
    implementation of function  g (222 20 9) (223 20 10)
