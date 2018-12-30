@@ -71,8 +71,6 @@ data AstTerm' c
   -- ^ A resolved reference, to a locally bound free variable.
   | AstMetaVar c
   -- ^ Goals? Holes?
-  | AstPostulate c (AstTerm' c)
-  -- ^ Functions with types but no implementations
   deriving (Eq, Ord, Show)
 
 data AstBinderInfo' t c = AstBinderInfo
@@ -122,6 +120,8 @@ data AstDeclaration' t c
   -- ^ Data Constructors must be declared within a Type Constructor
   | AstImplementation (AstImplInfo' t c)
   -- ^ Function implementation, type, implementation
+  | AstPostulate c (t c)
+  -- ^ Functions with types but no implementations
   deriving (Eq, Ord, Show)
 
 type AstDeclaration = AstDeclaration' AstTerm' Name
@@ -196,7 +196,10 @@ concreteToAbstractDecl' env sigs (d : ds) = do
         -- TODO deal with pragmas
         desugarFunction ty rest = return __TODO__
     -- TODO deal with pragmas
-    desugar (PsiPostulate name pgms ty) = checkTerm ty >>= AstPostulate name
+    desugar (PsiPostulate name pgms ty) = $(each [|
+        ( sigs
+        , addDefinition name (AstPostulate name (~! checkTerm ty)) env
+        ) |])
     desugar decl = return __TODO__
 
 concreteToAbstractTerm'
