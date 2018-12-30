@@ -1,8 +1,8 @@
 File type: owo
 Top module name: .SimpleApplication
- implementation of function  f (33 3 2) (34 3 3)
+ implementation of function f (33 3 2) (34 3 3)
   no pragmas
-  clause for  f (33 3 2) (34 3 3)
+  clause for f (33 3 2) (34 3 3)
   patterns matching parsed as expression
    named reference f (33 3 2) (34 3 3)
   function body
@@ -14,9 +14,9 @@ Top module name: .SimpleApplication
      IntegerLit 233
   no with abstraction
   where clause
-   implementation of function  g (54 5 4) (55 5 5)
+   implementation of function g (54 5 4) (55 5 5)
     no pragmas
-    clause for  g (54 5 4) (55 5 5)
+    clause for g (54 5 4) (55 5 5)
     patterns matching parsed as expression
      function application
      function being applied
@@ -27,9 +27,9 @@ Top module name: .SimpleApplication
      named reference a (61 5 11) (62 5 12)
     no with abstraction
     where clause
-     implementation of function  x (78 7 6) (79 7 7)
+     implementation of function x (78 7 6) (79 7 7)
       no pragmas
-      clause for  x (78 7 6) (79 7 7)
+      clause for x (78 7 6) (79 7 7)
       patterns matching parsed as expression
        named reference x (78 7 6) (79 7 7)
       function body
@@ -37,9 +37,9 @@ Top module name: .SimpleApplication
         IntegerLit 666
       no with abstraction
       no where clause
-   implementation of function  g' (89 8 4) (91 8 6)
+   implementation of function g' (89 8 4) (91 8 6)
     no pragmas
-    clause for  g' (89 8 4) (91 8 6)
+    clause for g' (89 8 4) (91 8 6)
     patterns matching parsed as expression
      function application
      function being applied
@@ -50,9 +50,9 @@ Top module name: .SimpleApplication
      named reference a (96 8 11) (97 8 12)
     no with abstraction
     where clause
-     implementation of function  x (113 10 6) (114 10 7)
+     implementation of function x (113 10 6) (114 10 7)
       no pragmas
-      clause for  x (113 10 6) (114 10 7)
+      clause for x (113 10 6) (114 10 7)
       patterns matching parsed as expression
        named reference x (113 10 6) (114 10 7)
       function body
@@ -60,9 +60,9 @@ Top module name: .SimpleApplication
         IntegerLit 666
       no with abstraction
       where clause
-       implementation of function  x (140 12 8) (141 12 9)
+       implementation of function x (140 12 8) (141 12 9)
         no pragmas
-        clause for  x (140 12 8) (141 12 9)
+        clause for x (140 12 8) (141 12 9)
         patterns matching parsed as expression
          named reference x (140 12 8) (141 12 9)
         function body
@@ -70,7 +70,7 @@ Top module name: .SimpleApplication
           IntegerLit 666
         no with abstraction
         no where clause
-  clause for  f (150 14 2) (151 14 3)
+  clause for f (150 14 2) (151 14 3)
   patterns matching parsed as expression
    named reference f (150 14 2) (151 14 3)
   function body
@@ -82,9 +82,9 @@ Top module name: .SimpleApplication
      IntegerLit 233
   no with abstraction
   where clause
-   implementation of function  g (168 15 3) (169 15 4)
+   implementation of function g (168 15 3) (169 15 4)
     no pragmas
-    clause for  g (168 15 3) (169 15 4)
+    clause for g (168 15 3) (169 15 4)
     patterns matching parsed as expression
      function application
      function being applied
@@ -95,7 +95,7 @@ Top module name: .SimpleApplication
      named reference a (174 15 9) (175 15 10)
     no with abstraction
     no where clause
-  clause for  f (178 17 2) (179 17 3)
+  clause for f (178 17 2) (179 17 3)
   patterns matching parsed as expression
    named reference f (178 17 2) (179 17 3)
   function body
@@ -107,9 +107,9 @@ Top module name: .SimpleApplication
      IntegerLit 233
   no with abstraction
   where clause
-   implementation of function  g (194 17 18) (195 17 19)
+   implementation of function g (194 17 18) (195 17 19)
     no pragmas
-    clause for  g (194 17 18) (195 17 19)
+    clause for g (194 17 18) (195 17 19)
     patterns matching parsed as expression
      function application
      function being applied
@@ -120,7 +120,7 @@ Top module name: .SimpleApplication
      named reference a (200 17 24) (201 17 25)
     no with abstraction
     no where clause
-  clause for  f (204 19 2) (205 19 3)
+  clause for f (204 19 2) (205 19 3)
   patterns matching parsed as expression
    named reference f (204 19 2) (205 19 3)
   function body
@@ -132,9 +132,9 @@ Top module name: .SimpleApplication
      IntegerLit 233
   no with abstraction
   where clause
-   implementation of function  g (222 20 9) (223 20 10)
+   implementation of function g (222 20 9) (223 20 10)
     no pragmas
-    clause for  g (222 20 9) (223 20 10)
+    clause for g (222 20 9) (223 20 10)
     patterns matching parsed as expression
      function application
      function being applied

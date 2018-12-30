@@ -77,6 +77,10 @@ printExpr indent hideLocation = \case
       recur f
       puts "value applied to the function"
       recur a
+    PsiLambda n t -> do
+      puts $ "lambda abstraction" ++ name n
+      puts "body"
+      recur t
     _ -> __TODO__
   where
     puts   = put indent
@@ -88,7 +92,7 @@ printExpr indent hideLocation = \case
 printImplementation :: Int -> Bool -> PsiImplInfo -> IO ()
 printImplementation indent hideLocation = \case
   PsiImplSimple n app ws expr whereClause -> do
-    puts $ "clause for " ++ name n
+    puts $ "clause for" ++ name n
     puts "patterns matching parsed as expression"
     pExpr app
     puts "function body"
@@ -117,7 +121,7 @@ printDeclaration indent hideLocation = \case
       puts $ if null ps then " no pragmas" else pure __TODO__
       pExpr t
     PsiImplementation n ps impls -> do
-      puts $ "implementation of function " ++ name n
+      puts $ "implementation of function" ++ name n
       puts $ if null ps then " no pragmas" else pure __TODO__
       mapM_ pImpl impls
     PsiSubmodule n fs ds -> do

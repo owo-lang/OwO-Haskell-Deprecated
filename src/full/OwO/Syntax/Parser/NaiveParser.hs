@@ -138,7 +138,9 @@ lambdaP exprP = exprP <~> do
   $(each [| PsiLambda name (~! lambdaP exprP) |])
 
 telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
-telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
+telescopeBindingP exprP = explicitP
+                      <|> implicitP
+                      <|> instanceP
   where
     anonymousP :: a -> Parser (Name, a, PsiTerm)
     anonymousP vis = do
@@ -158,9 +160,9 @@ telescopeBindingP exprP = explicitP <|> implicitP <|> instanceP
 
 telescopeP :: Parser PsiTerm -> Parser PsiTerm
 telescopeP exprP = exprP <~> do
-  (name, vis, term) <- telescopeBindingP exprP
+  tele <- telescopeBindingP exprP
   exactly RightArrowToken
-  $(each [| PsiTelescope name vis term (~! telescopeP exprP) |])
+  $(each [| uncurry3 PsiTelescope tele (~! telescopeP exprP) |])
 
 binaryExpressionP :: FixityInfo -> Parser PsiTerm
 binaryExpressionP fix = operatorsP (regularizeFixity fix) $

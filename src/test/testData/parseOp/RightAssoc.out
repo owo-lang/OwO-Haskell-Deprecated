@@ -1,8 +1,8 @@
 File type: owo
 Top module name: .RightAssoc
- implementation of function  fib (41 4 3) (44 4 6)
+ implementation of function fib (41 4 3) (44 4 6)
   no pragmas
-  clause for  fib (41 4 3) (44 4 6)
+  clause for fib (41 4 3) (44 4 6)
   patterns matching parsed as expression
    named reference fib (41 4 3) (44 4 6)
   function body

@@ -3,9 +3,9 @@ Top module name: .SimplePatternMatching
  type signature onlyVariables (38 3 3) (51 3 16)
   no pragmas
   named reference SomeFunctionType (54 3 19) (70 3 35)
- implementation of function  onlyVariables (73 4 3) (86 4 16)
+ implementation of function onlyVariables (73 4 3) (86 4 16)
   no pragmas
-  clause for  onlyVariables (73 4 3) (86 4 16)
+  clause for onlyVariables (73 4 3) (86 4 16)
   patterns matching parsed as expression
    function application
    function being applied
@@ -39,9 +39,9 @@ Top module name: .SimplePatternMatching
  type signature destructed (106 6 3) (116 6 13)
   no pragmas
   named reference SomeFunctionType (119 6 16) (135 6 32)
- implementation of function  destructed (138 7 3) (148 7 13)
+ implementation of function destructed (138 7 3) (148 7 13)
   no pragmas
-  clause for  destructed (138 7 3) (148 7 13)
+  clause for destructed (138 7 3) (148 7 13)
   patterns matching parsed as expression
    function application
    function being applied
@@ -83,9 +83,9 @@ Top module name: .SimplePatternMatching
  type signature noParenthesis (189 9 3) (202 9 16)
   no pragmas
   named reference SomeFunctionType (205 9 19) (221 9 35)
- implementation of function  noParenthesis (224 10 3) (237 10 16)
+ implementation of function noParenthesis (224 10 3) (237 10 16)
   no pragmas
-  clause for  noParenthesis (224 10 3) (237 10 16)
+  clause for noParenthesis (224 10 3) (237 10 16)
   patterns matching parsed as expression
    function application
    function being applied

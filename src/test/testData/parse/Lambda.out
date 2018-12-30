@@ -1,0 +1,77 @@
+File type: owo
+Top module name: .Lambda
+ implementation of function id (22 2 3) (24 2 5)
+  no pragmas
+  clause for id (22 2 3) (24 2 5)
+  patterns matching parsed as expression
+   named reference id (22 2 3) (24 2 5)
+  function body
+   lambda abstraction x (28 2 9) (29 2 10)
+   body
+    named reference x (33 2 14) (34 2 15)
+  no with abstraction
+  no where clause
+ implementation of function tele (37 3 3) (41 3 7)
+  no pragmas
+  clause for tele (37 3 3) (41 3 7)
+  patterns matching parsed as expression
+   named reference tele (37 3 3) (41 3 7)
+  function body
+   telescope binding _ (45 3 11) (51 3 17)
+   ( )
+   binding type
+    lambda abstraction x (45 3 11) (46 3 12)
+    body
+     named reference x (50 3 16) (51 3 17)
+   return type
+    named reference x (55 3 21) (56 3 22)
+  no with abstraction
+  no where clause
+ implementation of function tele' (59 4 3) (64 4 8)
+  no pragmas
+  clause for tele' (59 4 3) (64 4 8)
+  patterns matching parsed as expression
+   named reference tele' (59 4 3) (64 4 8)
+  function body
+   telescope binding _ (67 4 11) (68 4 12)
+   ( )
+   binding type
+    named reference x (67 4 11) (68 4 12)
+   return type
+    lambda abstraction x (73 4 17) (74 4 18)
+    body
+     named reference x (78 4 22) (79 4 23)
+  no with abstraction
+  no where clause
+ implementation of function tele'' (82 5 3) (88 5 9)
+  no pragmas
+  clause for tele'' (82 5 3) (88 5 9)
+  patterns matching parsed as expression
+   named reference tele'' (82 5 3) (88 5 9)
+  function body
+   lambda abstraction x (92 5 13) (93 5 14)
+   body
+    telescope binding _ (98 5 19) (99 5 20)
+    ( )
+    binding type
+     named reference x (98 5 19) (99 5 20)
+    return type
+     named reference x (103 5 24) (104 5 25)
+  no with abstraction
+  no where clause
+ implementation of function app (108 6 3) (111 6 6)
+  no pragmas
+  clause for app (108 6 3) (111 6 6)
+  patterns matching parsed as expression
+   named reference app (108 6 3) (111 6 6)
+  function body
+   function application
+   function being applied
+    lambda abstraction x (116 6 11) (117 6 12)
+    body
+     named reference x (121 6 16) (122 6 17)
+   value applied to the function
+    constant (124 6 19) (125 6 20)
+     IntegerLit 1
+  no with abstraction
+  no where clause

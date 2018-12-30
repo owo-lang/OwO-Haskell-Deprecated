@@ -3,9 +3,9 @@ Top module name: .MultipleClause
  type signature f (30 3 2) (31 3 3)
   no pragmas
   named reference Type (34 3 6) (38 3 10)
- implementation of function  f (40 4 2) (41 4 3)
+ implementation of function f (40 4 2) (41 4 3)
   no pragmas
-  clause for  f (40 4 2) (41 4 3)
+  clause for f (40 4 2) (41 4 3)
   patterns matching parsed as expression
    function application
    function being applied
@@ -16,7 +16,7 @@ Top module name: .MultipleClause
    named reference Nothing (53 4 15) (60 4 22)
   no with abstraction
   no where clause
-  clause for  f (62 5 2) (63 5 3)
+  clause for f (62 5 2) (63 5 3)
   patterns matching parsed as expression
    function application
    function being applied

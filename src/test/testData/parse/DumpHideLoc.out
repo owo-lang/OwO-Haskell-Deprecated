@@ -11,9 +11,9 @@ Top module name: .A
     named reference Type
    value applied to the function
     named reference level
- implementation of function  f
+ implementation of function f
   no pragmas
-  clause for  f
+  clause for f
   patterns matching parsed as expression
    named reference f
   function body

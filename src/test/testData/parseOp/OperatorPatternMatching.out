@@ -1,8 +1,8 @@
 File type: owo
 Top module name: .OperatorPatternMatching
- implementation of function  + (58 5 8) (59 5 9)
+ implementation of function + (58 5 8) (59 5 9)
   no pragmas
-  clause for  + (58 5 8) (59 5 9)
+  clause for + (58 5 8) (59 5 9)
   patterns matching parsed as expression
    function application
    function being applied
@@ -17,7 +17,7 @@ Top module name: .OperatorPatternMatching
    named reference b (64 5 14) (65 5 15)
   no with abstraction
   no where clause
-  clause for  + (76 6 11) (77 6 12)
+  clause for + (76 6 11) (77 6 12)
   patterns matching parsed as expression
    function application
    function being applied

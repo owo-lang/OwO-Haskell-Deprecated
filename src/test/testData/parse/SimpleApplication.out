@@ -1,8 +1,8 @@
 File type: owo
 Top module name: .SimpleApplication
- implementation of function  a (32 2 2) (33 2 3)
+ implementation of function a (32 2 2) (33 2 3)
   no pragmas
-  clause for  a (32 2 2) (33 2 3)
+  clause for a (32 2 2) (33 2 3)
   patterns matching parsed as expression
    named reference a (32 2 2) (33 2 3)
   function body
@@ -17,7 +17,7 @@ Top module name: .SimpleApplication
     named reference b (40 2 10) (41 2 11)
   no with abstraction
   no where clause
-  clause for  a (43 3 2) (44 3 3)
+  clause for a (43 3 2) (44 3 3)
   patterns matching parsed as expression
    named reference a (43 3 2) (44 3 3)
   function body
@@ -32,7 +32,7 @@ Top module name: .SimpleApplication
      named reference b (52 3 11) (53 3 12)
   no with abstraction
   no where clause
-  clause for  a (56 4 2) (57 4 3)
+  clause for a (56 4 2) (57 4 3)
   patterns matching parsed as expression
    named reference a (56 4 2) (57 4 3)
   function body
@@ -47,9 +47,9 @@ Top module name: .SimpleApplication
     named reference b (66 4 12) (67 4 13)
   no with abstraction
   no where clause
- implementation of function  undefined (69 5 2) (78 5 11)
+ implementation of function undefined (69 5 2) (78 5 11)
   no pragmas
-  clause for  undefined (69 5 2) (78 5 11)
+  clause for undefined (69 5 2) (78 5 11)
   patterns matching parsed as expression
    named reference undefined (69 5 2) (78 5 11)
   function body

@@ -1,8 +1,8 @@
 File type: owo
 Top module name: .SimpleOp
- implementation of function  f (37 3 3) (38 3 4)
+ implementation of function f (37 3 3) (38 3 4)
   no pragmas
-  clause for  f (37 3 3) (38 3 4)
+  clause for f (37 3 3) (38 3 4)
   patterns matching parsed as expression
    named reference f (37 3 3) (38 3 4)
   function body
