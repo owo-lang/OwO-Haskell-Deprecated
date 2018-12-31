@@ -28,9 +28,14 @@ main = hspec $ do
 
     it "Should resolve built-in definitions" $ do
       p "{ a = Type }" `shouldSatisfy` isRight
+      p "{ id = Type -> Type }" `shouldSatisfy` isRight
+      p "{ id = Type1 -> Type2 }" `shouldSatisfy` isRight
+      p "{ id = TypeInf -> Type0 }" `shouldSatisfy` isRight
+
+    it "Should resolve contextual definitions" $ do
       p "{ a = Type; b = a }" `shouldSatisfy` isRight
+      p "{ postulate { a : Type } ; id = a -> a }" `shouldSatisfy` isRight
       p "{ id = \\x -> x }" `shouldSatisfy` isRight
-      p "{ idType = Type -> Type }" `shouldSatisfy` isRight
 
     it "Should give unresolved-reference" $ do
       let notOk (Right (Left (UnresolvedReferenceError _))) = True
