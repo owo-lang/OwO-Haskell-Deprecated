@@ -39,6 +39,7 @@ showPos p = "(" ++ show (posPos  p) ++
 simpleToken :: PsiToken -> String
 simpleToken token = case tokenType token of
   OperatorToken   n -> "Operator "   ++ T.unpack (textOfName n)
+  MetaVarToken    n -> "MetaVar "    ++ T.unpack (textOfName n)
   IdentifierToken n -> "Identifier " ++ T.unpack (textOfName n)
   others            -> show others
 
@@ -64,6 +65,7 @@ printExpr indent hideLocation = \case
       puts $ "constant" ++ locate l
       succ indent `put` show info
     PsiReference n -> puts $ "named reference" ++ name n
+    PsiMetaVar n -> puts $ "named metavar" ++ name n
     PsiTelescope n vis l r -> do
       puts $ "telescope binding" ++ name n
       puts $ show vis

@@ -32,7 +32,7 @@ main = do
   let toDumpPsi = compilerDumpPsi opts
   ifM toDumpTok $ dumpTokens file hideLocation
   ifM toDumpPsi $ dumpPsi file hideLocation
-  unlessM (toDumpTok || toDumpAst) . runOwO $ CompilerOptions
+  unlessM (toDumpTok || toDumpPsi) . runOwO $ CompilerOptions
     { optInputFile     = file
     , optIncludePaths  = compilerIncludePaths opts
     , optPragmaOptions = PragmaOptions
