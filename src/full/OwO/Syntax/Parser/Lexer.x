@@ -23,6 +23,7 @@ $comment_c   = [^ \n \- \{ ]
 
 @integer     = $digit+
 @identifier  = [A-Za-z][0-9A-Za-z'_]*
+@meta_var    = _[0-9A-Za-z'_]*
 @string      = \"([^ \\ \"]|\\$escape)*\"
 @character   = \'([^ \\ \']|\\$escape)\'
 @operator    = $operator_c ($operator_c | $operator_s)*
@@ -58,6 +59,7 @@ $white_no_nl  ;
   infixl      { simple InfixLToken }
   infixr      { simple InfixRToken }
   infix       { simple InfixToken }
+  @meta_var   { simpleName MetaVarToken }
   @integer    { simpleString (IntegerToken . read) }
   @identifier { simpleName IdentifierToken }
   @string     { simpleString (StringToken . T.pack . read) }

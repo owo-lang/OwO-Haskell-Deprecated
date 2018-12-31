@@ -129,6 +129,8 @@ data TokenType
 
   | IdentifierToken Name
   -- ^ identifier
+  | MetaVarToken Name
+  -- ^ _, for (named) meta vars and ignoring patterns
   | OperatorToken Name
   -- ^ binary operators
   | StringToken T.Text

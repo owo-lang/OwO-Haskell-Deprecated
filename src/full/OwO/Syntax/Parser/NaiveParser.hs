@@ -82,6 +82,11 @@ identifierP' = satisfyMap $ \tok -> case tokenType tok of
   IdentifierToken t -> Just t
   _                 -> Nothing
 
+metaVarP' :: Parser Name
+metaVarP' = satisfyMap $ \tok -> case tokenType tok of
+  MetaVarToken t -> Just t
+  _              -> Nothing
+
 operatorP' :: Parser Name
 operatorP' = satisfyMap $ \tok -> case tokenType tok of
   OperatorToken t -> Just t
@@ -120,9 +125,13 @@ charP' = satisfyMap $ \tok -> case tokenType tok of
 charP :: Parser PsiTerm
 charP = uncurry ((. CharLit) . PsiLiteral) <$> charP'
 
+metaVarP :: Parser PsiTerm
+metaVarP = PsiMetaVar <$> metaVarP'
+
 atomP :: FixityInfo -> Parser PsiTerm
 atomP fix = identifierP
   <|> integerP
+  <|> metaVarP
   <|> stringP
   <|> charP
   <|> insideParen (expressionP fix)
