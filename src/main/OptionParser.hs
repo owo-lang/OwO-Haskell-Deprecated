@@ -11,6 +11,7 @@ data CmdOptions = CmdOptions
   { compilerInputFile           :: Maybe FilePath
   , compilerIncludePaths        :: [FilePath]
   , compilerDumpToken           :: Bool
+  , compilerDumpPsi             :: Bool
   , compilerDumpAst             :: Bool
   , compilerDumpHideLoc         :: Bool
   , showVersion                 :: Bool
@@ -47,7 +48,11 @@ options = customExecParser pref information
                    )
       <*> switch
           (  long "dump-tokens"
-          <> help "Scan the file and dump tokens"
+          <> help "Scan the file and print tokens"
+          )
+      <*> switch
+          (  long "dump-psi"
+          <> help "Parse the file and print the concrete syntax tree"
           )
       <*> switch
           (  long "dump-ast"

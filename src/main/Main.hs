@@ -29,9 +29,9 @@ main = do
   file <- maybe (noInputFile opts) pure $ compilerInputFile opts
   let hideLocation = compilerDumpHideLoc opts
   let toDumpTok = compilerDumpToken opts
-  let toDumpAst = compilerDumpAst opts
+  let toDumpPsi = compilerDumpPsi opts
   ifM toDumpTok $ dumpTokens file hideLocation
-  ifM toDumpAst $ dumpAst file hideLocation
+  ifM toDumpPsi $ dumpPsi file hideLocation
   unlessM (toDumpTok || toDumpAst) . runOwO $ CompilerOptions
     { optInputFile     = file
     , optIncludePaths  = compilerIncludePaths opts

@@ -5,7 +5,6 @@
 -- | Core language
 module OwO.TypeChecking.Core
   ( NameType(..)
-  , ULevel(..)
   -- , BinderInfo(..)
 
   , Term'(..)
@@ -49,6 +48,17 @@ data Term' i
   deriving (Eq, Functor, Ord, Show)
 
 -- TODO
+
+data NameType
+  = BoundName
+  -- ^ Local name
+  | FunctionName
+  -- ^ Global name
+  | TypeConstructor
+  -- ^ Type constructor
+  | DataConstructor
+  -- ^ Data constructor
+  deriving (Eq, Ord, Show)
 
 -- | Term should have a @Name@ coming from the parser
 type Term = Term' Name

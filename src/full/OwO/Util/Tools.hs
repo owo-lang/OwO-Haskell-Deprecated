@@ -3,7 +3,7 @@
 
 module OwO.Util.Tools
   ( dumpTokens
-  , dumpAst
+  , dumpPsi
   , parseNaiveSimple
   , printExpr
   ) where
@@ -140,8 +140,8 @@ printDeclaration indent hideLocation = \case
     locate | hideLocation = const []
            | otherwise    = (' ' :) . showLoc
 
-dumpAst :: FilePath -> Bool -> IO ()
-dumpAst file hideLocation = parseNaive ft <$> readFile file >>= \case
+dumpPsi :: FilePath -> Bool -> IO ()
+dumpPsi file hideLocation = parseNaive ft <$> readFile file >>= \case
     Left errMsg -> hPutStrLn stderr errMsg >> exitFailure
     Right pFile -> do
       putStrLn $ "File type: "       ++ show (fileType pFile)

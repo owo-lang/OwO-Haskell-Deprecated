@@ -31,7 +31,6 @@ module OwO.Syntax.Abstract
   , AstDeclaration
   -- Declarations
 
-  , NameType(..)
   , ULevel(..)
   ) where
 
@@ -54,6 +53,7 @@ data AstTerm' c
   = AstLiteral Loc LiteralInfo
   -- ^ Constants, same as in Psi
   | AstTypeLit c ULevel
+  -- ^ Type literal
   | AstApp (AstTerm' c) (AstTerm' c)
   -- ^ Application
   | AstBind (AstBinderInfo' AstTerm' c) (AstTerm' c)
@@ -113,17 +113,6 @@ data AstDeclaration' t c
   -- ^ Function implementation, type, implementation
   | AstPostulate c (t c)
   -- ^ Functions with types but no implementations
-  deriving (Eq, Ord, Show)
-
-data NameType
-  = BoundName
-  -- ^ Local name
-  | FunctionName
-  -- ^ Global name
-  | TypeConstructor
-  -- ^ Type constructor
-  | DataConstructor
-  -- ^ Data constructor
   deriving (Eq, Ord, Show)
 
 data ULevel
