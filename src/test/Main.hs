@@ -1,5 +1,6 @@
 module Main where
 
+-- import           Control.Monad.IO.Class        (liftIO)
 import           Data.Either                   (isLeft, isRight)
 import qualified Data.Text                     as T
 
@@ -11,6 +12,7 @@ import           OwO.Syntax.Concrete
 import           OwO.Syntax.Module
 import           OwO.Syntax.Parser             (parseNaiveWith)
 import           OwO.Syntax.Parser.NaiveParser as NP
+import           OwO.TypeChecking.Desugar
 import           OwO.Util.Tools
 
 checkExit :: ExitCode -> IO ()
@@ -19,6 +21,29 @@ checkExit n           = exitWith n
 
 main :: IO ()
 main = hspec $ do
+
+  describe "Simple reference resolving" $ do
+    let pre = parseNaiveWith $ snd <$> NP.declarationsP []
+        p   = (concreteToAbstractDecl <$>) . pre
+
+    it "Should resolve built-in definitions" $ do
+      p "{ a = Type }" `shouldSatisfy` isRight
+      p "{ a = Type; b = a }" `shouldSatisfy` isRight
+      p "{ id = \\x -> x }" `shouldSatisfy` isRight
+      p "{ idType = Type -> Type }" `shouldSatisfy` isRight
+
+    it "Should give unresolved-reference" $ do
+      let notOk (Right (Left (UnresolvedReferenceError _))) = True
+          notOk _ = False
+      p "{ a = b }" `shouldSatisfy` notOk
+      p "{ a : b }" `shouldSatisfy` notOk
+      p "{ id = \\x -> y }" `shouldSatisfy` notOk
+
+    it "Should give unimplemented errors" $ do
+      let notOk (Right (Left (NoImplementationError _))) = True
+          notOk _ = False
+      p "{ a : Type }" `shouldSatisfy` notOk
+      p "{ id : Type -> Type }" `shouldSatisfy` notOk
 
   describe "Infix declaration parsing" $ do
 

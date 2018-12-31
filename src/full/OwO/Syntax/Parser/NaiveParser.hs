@@ -10,6 +10,7 @@ module OwO.Syntax.Parser.NaiveParser
   ( parseTokens
   , fixityP
   , expressionP
+  , declarationsP
   ) where
 
 import           Control.Applicative

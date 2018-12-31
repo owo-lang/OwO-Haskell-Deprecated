@@ -15,18 +15,19 @@ module OwO.TypeChecking.Desugar
   , DesugarError(..)
   ) where
 
-import           Data.Functor         ((<&>))
-import           Data.List            (partition)
-import           Data.List.NonEmpty   (NonEmpty (..))
-import qualified Data.List.NonEmpty   as NE
-import qualified Data.Map             as Map
-import qualified Data.Tuple           as Pair
+import           Data.Functor             ((<&>))
+import           Data.List                (partition)
+import           Data.List.NonEmpty       (NonEmpty (..))
+import qualified Data.List.NonEmpty       as NE
+import qualified Data.Map                 as Map
+import qualified Data.Tuple               as Pair
 import           Each
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.TokenType
+import           OwO.TypeChecking.Builtin
 import           OwO.Util.Three
 
 #include <impossible.h>
@@ -39,7 +40,7 @@ data DesugarError
   -- ^ Only type signature, not implementation
   | DuplicatedTypeSignatureError (TypeSignature, TypeSignature)
   -- ^ Two type signatures, with same name
-  | UnresolvedReference Name
+  | UnresolvedReferenceError Name
   -- ^ Usage of undefined names
   | DesugarSyntaxError String
   -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
@@ -111,7 +112,9 @@ concreteToAbstractTerm' env localEnv =
      Just ref -> Right $ AstLocalRef name ref
      Nothing  -> case lookupCtxCurrent name env of
        Just ref -> Right $ AstRef name ref
-       Nothing  -> Left $ UnresolvedReference name
+       Nothing  -> case builtinDefinition name of
+        Just term -> Right term
+        Nothing   -> Left $ UnresolvedReferenceError name
     PsiLambda var body ->
      let binder   = inventBinder var LambdaBinder
          newLocal = Map.insert var binder localEnv
