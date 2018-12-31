@@ -15,8 +15,12 @@ module OwO.TypeChecking.Desugar
   , DesugarError(..)
   ) where
 
+import           Data.Functor         ((<&>))
 import           Data.List            (partition)
+import           Data.List.NonEmpty   (NonEmpty (..))
+import qualified Data.List.NonEmpty   as NE
 import qualified Data.Map             as Map
+import qualified Data.Tuple           as Pair
 import           Each
 
 import           OwO.Syntax.Abstract
@@ -57,9 +61,8 @@ concreteToAbstractDecl'
   -> Either DesugarError AstContext
 concreteToAbstractDecl' env [] [      ] = Right env
 concreteToAbstractDecl' env sb [      ] = Left $ NoImplementationError sb
-concreteToAbstractDecl' env sigs (d : ds) = do
-    (newSigs, newEnv) <- desugar d
-    checkRest newEnv newSigs
+concreteToAbstractDecl' env sigs (d : ds) =
+    desugar d >>= uncurry checkRest . Pair.swap
   where
     checkRest env sig = concreteToAbstractDecl' env sig ds
     checkTerm = concreteToAbstractTerm' env Map.empty
@@ -73,12 +76,21 @@ concreteToAbstractDecl' env sigs (d : ds) = do
     desugar (PsiImplementation name pgms clauses) =
       case partition ((== name) . fst3) sigs of
         ([sig], rest) -> desugarFunction sig rest
-        ([   ], rest) -> desugarFunction (inventMetaVar name) rest
+        ([   ], rest) -> desugarFunction (name, [], inventMetaVar name) rest
         (a : b : _,_) -> Left $ DuplicatedTypeSignatureError (a, b)
       where
         -- TODO deal with pragmas
         -- Type signature, clauses
-        desugarFunction ty rest = return __TODO__
+        desugarFunction (_, tyPgms, ty) rest = case clauses of
+          ((PsiImplSimple name pattern [] rhs whereBlock) :| []) -> do
+            body <- checkTerm rhs
+            let new = AstImplementation AstImplInfo
+                  { implName = name
+                  , implType = ty
+                  , implBody = body
+                  }
+            return (sigs, addDefinition name new env)
+          _ -> __TODO__
     -- TODO deal with pragmas
     desugar (PsiPostulate name pgms ty) = $(each [|
         ( sigs

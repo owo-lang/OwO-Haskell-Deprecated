@@ -100,7 +100,7 @@ data AstConsInfo' t c = AstConsInfo
 data AstImplInfo' t c = AstImplInfo
   { implName :: c
   , implType :: t c
-  , implBody :: Strict.Maybe (t c)
+  , implBody :: t c
   } deriving (Eq, Ord, Show)
 
 -- | @a@ is @C.Name@ or something
