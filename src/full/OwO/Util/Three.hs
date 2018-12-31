@@ -20,3 +20,9 @@ flattenSnd (a, (b, c)) = (a, b, c)
 
 dropFst :: (a, b, c) -> (b, c)
 dropFst (_, b, c) = (b, c)
+
+dropSnd :: (a, b, c) -> (a, c)
+dropSnd (a, _, c) = (a, c)
+
+dropTrd :: (a, b, c) -> (a, b)
+dropTrd (a, b, _) = (a, b)

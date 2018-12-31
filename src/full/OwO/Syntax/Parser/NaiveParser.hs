@@ -246,7 +246,7 @@ implementationP :: DeclarationP
 implementationP fix = do
   ps <- many $ fnPragmaP fix <* semicolon
   hd <- patternMatchingClauseP fix $ const True
-  let functionName = functionNameOfImplementation hd
+  let functionName = nameOfImpl hd
   tl <- many $ semicolon *>
      patternMatchingClauseP fix (functionName ==)
   return $ (fix,) [PsiImplementation functionName ps $ hd :| tl]

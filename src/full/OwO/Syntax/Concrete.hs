@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE LambdaCase            #-}
 {-# LANGUAGE TypeOperators         #-}
 
 -- | Concrete syntax tree
@@ -20,7 +21,7 @@ module OwO.Syntax.Concrete
 
   , PsiImplInfo'(..)
   , PsiImplInfo
-  , functionNameOfImplementation
+  , nameOfImpl
 
   , FnPragma(..)
   , FnPragmas
@@ -94,14 +95,15 @@ data PsiTerm' c
 type PsiTerm = PsiTerm' Name
 
 locationOfTerm :: PsiTerm -> Loc
-locationOfTerm (PsiReference     n) = locationOfName n
-locationOfTerm (PsiLambda      n t) = mergeLocations (locationOfName n) (locationOfTerm t)
-locationOfTerm (PsiApplication f a) = mergeLocations (locationOfTerm f) (locationOfTerm a)
-locationOfTerm (PsiLiteral   loc _) = loc
-locationOfTerm (PsiImpossible  loc) = loc
-locationOfTerm (PsiInaccessible  t) = locationOfTerm t
-locationOfTerm (PsiMetaVar       n) = locationOfName n
-locationOfTerm (PsiTelescope n _ _ r) = mergeLocations (locationOfName n) (locationOfTerm r)
+locationOfTerm = \case
+  PsiReference     n -> locationOfName n
+  PsiLambda      n t -> locationOfName n `mergeLocations` locationOfTerm t
+  PsiApplication f a -> locationOfTerm f `mergeLocations` locationOfTerm a
+  PsiLiteral   loc _ -> loc
+  PsiImpossible  loc -> loc
+  PsiInaccessible  t -> locationOfTerm t
+  PsiMetaVar       n -> locationOfName n
+  PsiTelescope n _ _ r -> locationOfName n `mergeLocations` locationOfTerm r
 
 -- | Program Structure Item: File Type
 data PsiFileType
@@ -142,7 +144,7 @@ data PsiFixityInfo' c
   deriving (Eq, Ord, Show)
 
 fixityInfo :: PsiFixityInfo' c -> (String, Int, [c])
-fixityInfo (PsiInfix  a b) = ("infix", a, b)
+fixityInfo (PsiInfix  a b) = ("infix",  a, b)
 fixityInfo (PsiInfixL a b) = ("infixl", a, b)
 fixityInfo (PsiInfixR a b) = ("infixr", a, b)
 
@@ -204,8 +206,8 @@ data PsiImplInfo' t c
   -}
   deriving (Eq, Ord, Show)
 
-functionNameOfImplementation :: PsiImplInfo -> Name
-functionNameOfImplementation (PsiImplSimple n _ _ _ _) = n
+nameOfImpl :: PsiImplInfo -> Name
+nameOfImpl (PsiImplSimple n _ _ _ _) = n
 -- Impossible for PsiImplSimpleR, PsiImplWithR
 
 data DataPragma

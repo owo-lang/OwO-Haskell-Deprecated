@@ -73,7 +73,9 @@ library
                   , OwO.Syntax.Parser.NaiveCombinators
                   , OwO.Syntax.Parser.NaiveParser
 
+                  , OwO.TypeChecking.Builtin
                   , OwO.TypeChecking.Core
+                  , OwO.TypeChecking.Desugar
                   , OwO.TypeChecking.Match
                   , OwO.TypeChecking.Monad
                   , OwO.TypeChecking.Reduce
