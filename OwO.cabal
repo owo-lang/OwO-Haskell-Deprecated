@@ -82,6 +82,7 @@ library
                   , OwO.TypeChecking
 
                   , OwO.Util.Applicative
+                  , OwO.Util.Dump
                   , OwO.Util.Impossible
                   , OwO.Util.List
                   , OwO.Util.StrictMaybe
