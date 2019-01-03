@@ -20,8 +20,7 @@ module OwO.TypeChecking.Core
 import qualified Data.Text            as T
 
 import           OwO.Syntax.Abstract
-import           OwO.Syntax.Common
-import           OwO.Syntax.Concrete  (QModuleName (..))
+import           OwO.Syntax.Concrete  (QModuleName (..), LiteralInfo (..))
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType (Name (..))
 

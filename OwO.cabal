@@ -61,7 +61,6 @@ library
                   , OwO.Version
 
                   , OwO.Syntax.Abstract
-                  , OwO.Syntax.Common
                   , OwO.Syntax.Concrete
                   , OwO.Syntax.Context
                   , OwO.Syntax.Module

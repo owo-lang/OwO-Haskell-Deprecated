@@ -37,7 +37,6 @@ module OwO.Syntax.Abstract
 import           Control.Applicative
 import           Control.Monad
 
-import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Context
 import           OwO.Syntax.Position

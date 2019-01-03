@@ -15,7 +15,6 @@ import qualified Data.Map                   as Map
 import qualified Data.Text                  as T
 
 import           OwO.Options
-import           OwO.Syntax.Common
 import           OwO.Syntax.Concrete        (PsiTerm, PsiTerm' (..))
 import           OwO.Syntax.Context         (Context (..), emptyCtx)
 import           OwO.Syntax.Module

@@ -52,7 +52,6 @@ import           Data.List.NonEmpty   (NonEmpty)
 import qualified Data.Text            as T
 import           System.FilePath      (isExtensionOf)
 
-import           OwO.Syntax.Common
 import           OwO.Syntax.Module
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType (Name (..), locationOfName)
@@ -104,6 +103,13 @@ locationOfTerm = \case
   PsiInaccessible  t -> locationOfTerm t
   PsiMetaVar       n -> locationOfName n
   PsiTelescope n _ _ r -> locationOfName n `mergeLocations` locationOfTerm r
+
+data LiteralInfo
+  = IntLit Int
+  | IntegerLit Integer
+  | StringLit T.Text
+  | CharLit Char
+  deriving (Eq, Ord, Show)
 
 -- | Program Structure Item: File Type
 data PsiFileType
