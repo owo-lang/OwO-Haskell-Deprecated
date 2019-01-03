@@ -30,9 +30,12 @@ main = do
   let hideLocation = compilerDumpHideLoc opts
   let toDumpTok = compilerDumpToken opts
   let toDumpPsi = compilerDumpPsi opts
+  let toDumpAst = compilerDumpAst opts
+  let weAreDone = toDumpTok || toDumpPsi || toDumpAst
   ifM toDumpTok $ dumpTokens file hideLocation
   ifM toDumpPsi $ dumpPsi file hideLocation
-  unlessM (toDumpTok || toDumpPsi) . runOwO $ CompilerOptions
+  ifM toDumpAst $ dumpAst file hideLocation
+  unlessM weAreDone . runOwO $ CompilerOptions
     { optInputFile     = file
     , optIncludePaths  = compilerIncludePaths opts
     , optPragmaOptions = PragmaOptions

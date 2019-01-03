@@ -6,7 +6,6 @@ module OwO.Syntax.Context where
 import           Control.Applicative
 import           Data.Functor         ((<&>))
 import qualified Data.Map             as Map
-import           Data.Maybe           (fromMaybe)
 import qualified Data.Text            as T
 
 import           OwO.Syntax.Module
@@ -69,9 +68,9 @@ lookupCtxCurrent name = Map.lookup name . localCtx
 --   clean up local context
 finishModule :: QModuleName -> Context a -> Context a
 finishModule currentModule (Context external local) = Context
-  { externalCtx = fromMaybe (insertCurrent local external) $
-    flip insertCurrent external . Map.union local <$>
-    lookupCurrent external
+  { externalCtx = maybe (insertCurrent local external)
+    (flip insertCurrent external . Map.union local)
+    (lookupCurrent external)
   , localCtx    = Map.empty
   } where
     insertCurrent = Map.insert currentModule
