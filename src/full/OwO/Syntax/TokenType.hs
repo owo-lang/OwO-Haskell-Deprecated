@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
-
 module OwO.Syntax.TokenType
  ( LayoutContext(..)
 
@@ -23,8 +21,6 @@ import           Data.Text            as T
 
 import           OwO.Syntax.Position
 import qualified OwO.Util.StrictMaybe as Strict
-
-import           GHC.Generics         (Generic)
 
 -- | A name is a non-empty list of alternating 'Id's and 'Hole's. A normal name
 --   is represented by a singleton list, and operators are represented by a list
@@ -149,7 +145,7 @@ data TokenType
 
   | EndOfFileToken
   -- ^ finishes a file. This will not present in the output token sequence.
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 isStartingNewLayout :: TokenType -> Bool
 isStartingNewLayout WhereToken     = True
@@ -163,19 +159,19 @@ isStartingNewLayout _              = False
 data PsiToken = PsiToken
   { tokenType :: TokenType
   , location  :: Loc
-  } deriving (Eq, Generic, Ord, Show)
+  } deriving (Eq, Ord, Show)
 
 data LayoutContext
   = NoLayout
   | Layout !Int
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 -- | See @OwO.Syntax.Position@
 data AlexUserState = AlexUserState
   { layoutStack    :: [LayoutContext]
   , currentFile    :: SrcFile
   , alexStartCodes :: [Int]
-  } deriving (Eq, Generic, Show)
+  } deriving (Eq, Show)
 
 -- | See @OwO.Syntax.Position@
 alexInitUserState :: AlexUserState

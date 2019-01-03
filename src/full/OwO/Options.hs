@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
-
 module OwO.Options
   ( CompilerOptions(..)
   , PragmaOptions(..)
@@ -8,16 +6,14 @@ module OwO.Options
 import           Data.Function
 import           Data.List
 
-import           GHC.Generics  (Generic)
-
 data CompilerOptions = CompilerOptions
   { optInputFile     :: FilePath
   , optIncludePaths  :: [FilePath]
   , optPragmaOptions :: PragmaOptions
-  } deriving (Generic, Show)
+  } deriving Show
 
 data PragmaOptions = PragmaOptions
   { optNoPositivityCheck     :: Bool
   , optNoTerminationCheck    :: Bool
   , optNoExhaustivenessCheck :: Bool
-  } deriving (Eq, Generic, Show)
+  } deriving (Eq, Show)

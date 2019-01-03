@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP               #-}
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module OwO.Syntax.Common where
@@ -8,8 +7,6 @@ import qualified Data.Text            as T
 import           Data.Word
 
 import qualified OwO.Util.StrictMaybe as Strict
-
-import           GHC.Generics         (Generic)
 
 #include <impossible.h>
 
@@ -21,8 +18,8 @@ import           GHC.Generics         (Generic)
 --   It can have a name, as in Idris.
 data MetaId = MetaId
   { metaId   :: !Word64
-  , metaName :: Strict.Maybe String
-  } deriving (Eq, Generic, Ord)
+  , metaName :: Strict.Maybe T.Text
+  } deriving (Eq, Ord)
 
 -- | Show non-record version of this newtype.
 instance Show MetaId where
@@ -34,4 +31,4 @@ data LiteralInfo
   | IntegerLit Integer
   | StringLit T.Text
   | CharLit Char
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Ord, Show)

@@ -44,8 +44,6 @@ import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType (Name (..), hideName)
 import qualified OwO.Util.StrictMaybe as Strict
 
-import           GHC.Generics         (Generic)
-
 #include <impossible.h>
 
 -- | @a@ is @Name@ or something

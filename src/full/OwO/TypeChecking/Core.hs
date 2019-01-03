@@ -25,8 +25,6 @@ import           OwO.Syntax.Concrete  (QModuleName (..))
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType (Name (..))
 
-import           GHC.Generics         (Generic)
-
 #include <impossible.h>
 
 -- | Core language term, @i@ refers to the identifier.
