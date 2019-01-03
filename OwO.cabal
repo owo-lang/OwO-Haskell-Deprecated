@@ -69,6 +69,7 @@ library
                   , OwO.Syntax.TokenType
 
                   , OwO.Syntax.Parser.Lexer
+                  , OwO.Syntax.Parser.Alex
                   , OwO.Syntax.Parser.NaiveCombinators
                   , OwO.Syntax.Parser.NaiveParser
 

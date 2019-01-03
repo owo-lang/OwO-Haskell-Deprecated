@@ -2,9 +2,7 @@
 {-# LANGUAGE OverloadedStrings    #-}
 
 module OwO.Syntax.TokenType
- ( LayoutContext(..)
-
- , TokenType(..)
+ ( TokenType(..)
  , PsiToken(..)
  , isStartingNewLayout
  -- Tokens
@@ -14,16 +12,11 @@ module OwO.Syntax.TokenType
  , textOfName
  , hideName
  -- Names
-
- , AlexUserState(..)
- , alexInitUserState
- -- Alex
  ) where
 
-import           Data.Text            as T
+import           Data.Text           as T
 
 import           OwO.Syntax.Position
-import qualified OwO.Util.StrictMaybe as Strict
 
 -- | Identifier representation, with a text and the source location
 data Name
@@ -41,7 +34,7 @@ textOfName (NoName _)   = "_"
 
 hideName :: Name -> Name
 hideName (Name loc _) = NoName loc
-hideName a = a
+hideName a            = a
 
 instance Eq Name where
   Name _ a == Name _ b = a == b
@@ -156,23 +149,3 @@ data PsiToken = PsiToken
   { tokenType :: TokenType
   , location  :: Loc
   } deriving (Eq, Ord, Show)
-
-data LayoutContext
-  = NoLayout
-  | Layout !Int
-  deriving (Eq, Ord, Show)
-
--- | See @OwO.Syntax.Position@
-data AlexUserState = AlexUserState
-  { layoutStack    :: [LayoutContext]
-  , currentFile    :: SrcFile
-  , alexStartCodes :: [Int]
-  } deriving (Eq, Show)
-
--- | See @OwO.Syntax.Position@
-alexInitUserState :: AlexUserState
-alexInitUserState = AlexUserState
-  { layoutStack    = []
-  , currentFile    = Strict.Nothing
-  , alexStartCodes = []
-  }

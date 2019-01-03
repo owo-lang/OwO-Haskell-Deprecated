@@ -3,12 +3,13 @@
 
 module OwO.Syntax.Parser.Lexer where
 
+import           Data.Maybe             (listToMaybe)
+import qualified Data.Text              as T
+
 import           OwO.Syntax.TokenType
 import           OwO.Syntax.Position
-
-import           Data.Maybe           (listToMaybe)
-import qualified Data.Text            as T
-import qualified OwO.Util.StrictMaybe as Strict
+import           OwO.Syntax.Parser.Alex
+import qualified OwO.Util.StrictMaybe   as Strict
 import           OwO.Util.Applicative
 }
 
@@ -220,5 +221,4 @@ popLexState = do
       alexSetUserState st { alexStartCodes = ss }
       alexSetStartCode s
       pure csc
-
 }

@@ -291,12 +291,14 @@ layoutP :: Parser a -> Parser [a]
 layoutP p =
   exactly BraceLToken *>
     option0 [] (semicolon \|/ p)
+  <* many semicolon
   <* exactly BraceRToken
 
 layoutStatedP :: st -> (st -> Parser (st, a)) -> Parser (st, [a])
 layoutStatedP st p =
   exactly BraceLToken *>
     option0 (st, []) (separatedStateful p semicolon st)
+  <* many semicolon
   <* exactly BraceRToken
 
 postulateP :: DeclarationP
