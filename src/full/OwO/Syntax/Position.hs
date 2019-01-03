@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP                #-}
-{-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
 module OwO.Syntax.Position
@@ -29,19 +28,13 @@ module OwO.Syntax.Position
   , mergeLocations
   ) where
 
-import           Data.Foldable        (Foldable)
-import qualified Data.Foldable        as Fold
 import           Data.Function
 import           Data.Int
-import           Data.Sequence        (Seq)
-import qualified Data.Sequence        as Seq
 import           Data.Text            (Text)
 import qualified Data.Text            as T
 
 import           OwO.Util.List
 import qualified OwO.Util.StrictMaybe as Strict
-
-import           GHC.Generics         (Generic)
 
 -- | Represents a point in the input.
 --
@@ -57,7 +50,7 @@ data Position' a = Position
   , posPos  :: !Int -- ^ Absolute position, counting from 0.
   , posLine :: !Int -- ^ Line number, counting from 1.
   , posCol  :: !Int -- ^ Column number, counting from 1.
-  } deriving (Generic, Show)
+  }
 
 positionInvariant :: Position' a -> Bool
 positionInvariant p = posPos p > 0 && posLine p > 0 && posCol p > 0
@@ -101,6 +94,17 @@ instance Eq a => Eq (Position' a) where
 instance Ord a => Ord (Position' a) where
   compare = compare `on` importantPart
 
+instance Show a => Show (Position' a) where
+  show (Position src pos line col) = "("
+    ++ show pos
+    ++ " "
+    ++ show line
+    ++ " "
+    ++ show col
+    ++ " in "
+    ++ show src
+    ++ ")"
+
 -- | Absolute path
 type SrcFile = Strict.Maybe Text
 
@@ -113,11 +117,11 @@ type PositionNoFile = Position' ()
 data Loc' a = Loc
   { iStart
   , iEnd :: !(Position' a)
-  } deriving (Generic)
+  } deriving (Eq, Ord)
 
-deriving instance Show a => Show (Loc' a)
-deriving instance Eq a => Eq (Loc' a)
-deriving instance Ord a => Ord (Loc' a)
+instance Show a => Show (Loc' a) where
+  show (Loc start end) = "(" ++ show start ++ ", " ++ show end ++ ")"
+
 type Loc       = Loc' SrcFile
 type LocNoFile = Loc' ()
 

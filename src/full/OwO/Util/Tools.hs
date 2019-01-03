@@ -6,17 +6,19 @@ module OwO.Util.Tools
   , dumpAst
   , parseNaiveSimple
   , printExpr
+  , getDecls
   ) where
 
 import           Data.Maybe           (fromMaybe)
-import qualified Data.Map             as Map
+import qualified Data.Map.Strict      as Map
 import           Prelude              hiding (lex)
 import           System.Exit          (exitFailure)
 import           System.IO
 
 import           OwO.Syntax.Context   (Context (..))
 import           OwO.Syntax.Concrete
-    ( PsiFile (..)
+    ( PsiDeclaration (..)
+    , PsiFile (..)
     , PsiFileType (..)
     , decideFileType
     )
@@ -30,10 +32,10 @@ parseNaiveSimple = parseNaive CodeFileType
 
 dumpTokens :: FilePath -> Bool -> IO ()
 dumpTokens file hideLocation = lex <$> readFile file >>= \case
-    Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
-    Right tokens ->
-      let f = if hideLocation then simpleToken else prettyToken
-      in mapM_ putStrLn $ f <$> tokens
+  Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
+  Right tokens ->
+    let f = if hideLocation then simpleToken else prettyToken
+    in mapM_ putStrLn $ f <$> tokens
 
 getPsiFileOrDie :: FilePath -> Bool -> IO PsiFile
 getPsiFileOrDie file hideLocation = parseNaive ft <$> readFile file >>= \case
@@ -42,19 +44,21 @@ getPsiFileOrDie file hideLocation = parseNaive ft <$> readFile file >>= \case
   where
     ft = fromMaybe CodeFileType $ decideFileType file
 
-dumpPsi :: FilePath -> Bool -> IO ()
-dumpPsi file hideLocation = do
+getDecls :: FilePath -> Bool -> IO [PsiDeclaration]
+getDecls file hideLocation = do
   pFile <- getPsiFileOrDie file hideLocation
   putStrLn $ "File type: "       ++ show (fileType pFile)
   putStrLn $ "Top module name: " ++ show (topLevelModuleName pFile)
-  mapM_ (printDeclaration 1 hideLocation) $ declarations pFile
+  return $ declarations pFile
+
+dumpPsi :: FilePath -> Bool -> IO ()
+dumpPsi file hideLocation = getDecls file hideLocation >>=
+  mapM_ (printDeclaration 1 hideLocation)
 
 dumpAst :: FilePath -> Bool -> IO ()
 dumpAst file hideLocation = do
-  pFile <- getPsiFileOrDie file hideLocation
-  putStrLn $ "File type: "       ++ show (fileType pFile)
-  putStrLn $ "Top module name: " ++ show (topLevelModuleName pFile)
-  case concreteToAbstractDecl $ declarations pFile of
+  decls <- getDecls file hideLocation
+  case concreteToAbstractDecl decls of
     Left errMsg -> print errMsg
-    Right decls -> mapM_ (printDeclarationAst 1 hideLocation) $
+    Right decls -> mapM_ (printDeclarationAst 1 hideLocation) .
       Map.elems $ localCtx decls

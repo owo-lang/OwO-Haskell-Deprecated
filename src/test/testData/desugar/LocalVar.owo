@@ -1,0 +1,4 @@
+module LocalVar where
+
+ id = \x -> x
+ flip = \f -> \x -> \y -> f y x

@@ -26,16 +26,19 @@ main = hspec $ do
     let pre = parseNaiveWith $ snd <$> NP.declarationsP []
         p   = (concreteToAbstractDecl <$>) . pre
 
+    let ok (Right (Right _)) = True
+        ok _ = False
+
     it "Should resolve built-in definitions" $ do
-      p "{ a = Type }" `shouldSatisfy` isRight
-      p "{ id = Type -> Type }" `shouldSatisfy` isRight
-      p "{ id = Type1 -> Type2 }" `shouldSatisfy` isRight
-      p "{ id = TypeInf -> Type0 }" `shouldSatisfy` isRight
+      p "{ a = Type }" `shouldSatisfy` ok
+      p "{ id = Type -> Type }" `shouldSatisfy` ok
+      p "{ id = Type1 -> Type2 }" `shouldSatisfy` ok
+      p "{ id = TypeInf -> Type0 }" `shouldSatisfy` ok
 
     it "Should resolve contextual definitions" $ do
-      p "{ a = Type; b = a }" `shouldSatisfy` isRight
-      p "{ postulate { a : Type } ; id = a -> a }" `shouldSatisfy` isRight
-      p "{ id = \\x -> x }" `shouldSatisfy` isRight
+      p "{ a = Type; b = a }" `shouldSatisfy` ok
+      p "{ postulate { a : Type } ; id = a -> a }" `shouldSatisfy` ok
+      p "{ id = \\x -> x }" `shouldSatisfy` ok
 
     it "Should give unresolved-reference" $ do
       let notOk (Right (Left (UnresolvedReferenceError _))) = True

@@ -5,7 +5,7 @@ module OwO.Syntax.Context where
 
 import           Control.Applicative
 import           Data.Functor         ((<&>))
-import qualified Data.Map             as Map
+import qualified Data.Map.Strict      as Map
 import qualified Data.Text            as T
 
 import           OwO.Syntax.Module

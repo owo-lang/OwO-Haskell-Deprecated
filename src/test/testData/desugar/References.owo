@@ -1,0 +1,6 @@
+module References where
+
+ A = Type
+
+ B : Type1
+ B = A

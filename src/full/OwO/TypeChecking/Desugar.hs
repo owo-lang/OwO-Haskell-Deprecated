@@ -90,7 +90,7 @@ concreteToAbstractDecl' env sigs (d : ds) =
                   , implType = ty
                   , implBody = body
                   }
-            return (sigs, addDefinition name new env)
+            return (rest, addDefinition name new env)
           _ -> __TODO__
     -- TODO deal with pragmas
     desugar (PsiPostulate name pgms ty) = $(each [|
