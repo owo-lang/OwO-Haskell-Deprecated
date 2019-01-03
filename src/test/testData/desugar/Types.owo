@@ -1,0 +1,5 @@
+module Types where
+ A = Type
+ B = Type0
+ C = Type1
+ D = TypeInf

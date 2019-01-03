@@ -127,6 +127,9 @@ printExprAst indent hideLocation = \case
     AstLiteral loc info -> do
       puts $ "constant" ++ locate loc
       succ indent `put` show info
+    AstTypeLit c level -> do
+      puts $ "type universe" ++ name c
+      puts $ "level: " ++ show level
     AstApp f a -> do
       puts "function application"
       puts "function being applied"
@@ -141,6 +144,7 @@ printExprAst indent hideLocation = \case
     AstLocalRef c bind -> do
       puts $ "local reference" ++ name c
       puts $ "referring to a binding" ++ name (binderName bind)
+    _ -> __TODO__
   where
     puts   = put indent
     name   = printName locate
@@ -155,7 +159,7 @@ printDeclarationAst indent hideLocation = \case
       puts "type"
       pExpr $ implType info
       puts "value"
-      pExpr $ implType info
+      pExpr $ implBody info
     AstPostulate n t -> do
       puts $ "postulate" ++ name n
       puts "type"
