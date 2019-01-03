@@ -187,8 +187,9 @@ data PsiDataInfo' t c
     { dataName     :: c
     , dataNameLoc  :: Loc
     , dataTypeCons :: t c
-    } deriving (Eq, Ord, Show)
+    }
   -- ^ A data type signature, for mutual recursion
+  deriving (Eq, Ord, Show)
 
 -- | One clause of a top-level definition. Term arguments to constructors are:
 --

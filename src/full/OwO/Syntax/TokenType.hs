@@ -1,3 +1,6 @@
+{-# LANGUAGE ExtendedDefaultRules #-}
+{-# LANGUAGE OverloadedStrings    #-}
+
 module OwO.Syntax.TokenType
  ( LayoutContext(..)
 
@@ -41,7 +44,7 @@ locationOfName (NoName l)   = l
 
 textOfName :: Name -> T.Text
 textOfName (Name   _ n) = n
-textOfName (NoName _)   = T.pack "_"
+textOfName (NoName _)   = "_"
 
 hideName :: Name -> Name
 hideName (Name loc _) = NoName loc
