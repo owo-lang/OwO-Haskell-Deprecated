@@ -1,0 +1,14 @@
+File type: owo
+Top module name: .LocalVar
+ implementation of function flip (38 4 2) (42 4 6)
+ type
+  meta variable _ (38 4 2) (42 4 6)
+ value
+  name binding
+  it's a lambda binding
+ implementation of function id (24 3 2) (26 3 4)
+ type
+  meta variable _ (24 3 2) (26 3 4)
+ value
+  name binding
+  it's a lambda binding
