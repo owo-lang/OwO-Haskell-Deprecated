@@ -37,7 +37,7 @@ import           GHC.Generics         (Generic)
 data Name
   = Name   Loc T.Text -- ^ A identifier.
   | NoName Loc        -- ^ @_@.
-  deriving (Ord, Show)
+  deriving Show
 
 locationOfName :: Name -> Loc
 locationOfName (Name   l _) = l
@@ -54,6 +54,10 @@ hideName a = a
 instance Eq Name where
   Name _ a == Name _ b = a == b
   _ == _ = False
+
+instance Ord Name where
+  Name _ a `compare` Name _ b = a `compare` b
+  _ `compare` _ = EQ
 
 data TokenType
   = ModuleToken
