@@ -75,3 +75,26 @@ Top module name: .Lambda
      IntegerLit 1
   no with abstraction
   no where clause
+ implementation of function flip (128 7 3) (132 7 7)
+  no pragmas
+  clause for flip (128 7 3) (132 7 7)
+  patterns matching parsed as expression
+   named reference flip (128 7 3) (132 7 7)
+  function body
+   lambda abstraction f (136 7 11) (137 7 12)
+   body
+    lambda abstraction x (142 7 17) (143 7 18)
+    body
+     lambda abstraction y (148 7 23) (149 7 24)
+     body
+      function application
+      function being applied
+       function application
+       function being applied
+        named reference f (153 7 28) (154 7 29)
+       value applied to the function
+        named reference y (155 7 30) (156 7 31)
+      value applied to the function
+       named reference x (157 7 32) (158 7 33)
+  no with abstraction
+  no where clause

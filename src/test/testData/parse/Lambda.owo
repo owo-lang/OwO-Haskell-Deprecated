@@ -4,3 +4,4 @@ module Lambda where
   tele' = x -> \x -> x
   tele'' = \x -> (x -> x)
   app = (\x -> x) 1
+  flip = \f -> \x -> \y -> f y x

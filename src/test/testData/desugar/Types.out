@@ -1,0 +1,26 @@
+File type: owo
+Top module name: .Types
+ implementation of function A (20 2 2) (21 2 3)
+ type
+  meta variable _ (20 2 2) (21 2 3)
+ value
+  type universe Type (24 2 6) (28 2 10)
+  level: ULevelLit 0
+ implementation of function B (30 3 2) (31 3 3)
+ type
+  meta variable _ (30 3 2) (31 3 3)
+ value
+  type universe Type0 (34 3 6) (39 3 11)
+  level: ULevelLit 0
+ implementation of function C (41 4 2) (42 4 3)
+ type
+  meta variable _ (41 4 2) (42 4 3)
+ value
+  type universe Type1 (45 4 6) (50 4 11)
+  level: ULevelLit 1
+ implementation of function D (52 5 2) (53 5 3)
+ type
+  meta variable _ (52 5 2) (53 5 3)
+ value
+  type universe TypeInf (56 5 6) (63 5 13)
+  level: ULevelMax
