@@ -1,0 +1,27 @@
+File type: owo
+Top module name: .ImplicitPi
+ postulate Monad (38 4 3) (43 4 8)
+ type
+  name binding
+  it's a pi type binding
+  bound scope
+   local reference Type (64 4 29) (68 4 33)
+   referring to a binding _ (47 4 12) (59 4 24)
+ postulate mapM (71 5 3) (75 5 7)
+ type
+  name binding
+  it's a implicit argument binding
+  bound scope
+   name binding
+   it's a implicit argument binding
+   bound scope
+    name binding
+    it's a instance argument binding
+    bound scope
+     function application
+     function being applied
+      local reference m (131 5 63) (132 5 64)
+      referring to a binding _ (117 5 49) (124 5 56)
+     value applied to the function
+      local reference a (133 5 65) (134 5 66)
+      referring to a binding _ (117 5 49) (124 5 56)

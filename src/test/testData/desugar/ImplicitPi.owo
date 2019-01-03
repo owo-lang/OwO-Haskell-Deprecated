@@ -1,0 +1,5 @@
+module ImplicitPi where
+
+ postulate
+  Monad : (Type -> Type) -> Type
+  mapM : {m : Type -> Type} -> {a : Type} -> {| Monad m |} -> m a

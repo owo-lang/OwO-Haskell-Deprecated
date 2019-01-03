@@ -151,22 +151,26 @@ telescopeBindingP :: Parser PsiTerm -> Parser (Name, Visibility, PsiTerm)
 telescopeBindingP exprP = explicitP
                       <|> implicitP
                       <|> instanceP
+                      <|> anonymousExplicitP
   where
-    anonymousP :: a -> Parser (Name, a, PsiTerm)
-    anonymousP vis = do
+    anonymousP :: a -> TokenType -> TokenType -> Parser (Name, a, PsiTerm)
+    anonymousP vis l r = do
+      exactly l
       e <- exprP
+      exactly r
       return (NoName $ locationOfTerm e, vis, e)
     bindingP :: a -> TokenType -> TokenType -> Parser (Name, a, PsiTerm)
-    bindingP vis l r = anonymousP vis <~> do
+    bindingP vis l r = anonymousP vis l r <~> do
       exactly l
       name <- identifierP'
       exactly ColonToken
-      expr <- exprP
+      expr <- telescopeP exprP
       exactly r
       return (name, vis, expr)
     explicitP = bindingP Explicit ParenthesisLToken ParenthesisRToken
     implicitP = bindingP Implicit BraceLToken BraceRToken
     instanceP = bindingP Instance InstanceArgumentLToken InstanceArgumentRToken
+    anonymousExplicitP = exprP <&> \e -> (NoName $ locationOfTerm e, Explicit, e)
 
 telescopeP :: Parser PsiTerm -> Parser PsiTerm
 telescopeP exprP = exprP <~> do
