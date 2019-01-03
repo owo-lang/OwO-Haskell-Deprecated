@@ -31,7 +31,8 @@ printName locate n = (' ' :) $
   T.unpack (textOfName n) ++ locate (locationOfName n)
 
 printExpr :: Int -> Bool -> PsiTerm -> IO ()
-printExpr indent hideLocation = \case
+printExpr indent hideLocation =
+  \case
     PsiLiteral l info -> do
       puts $ "constant" ++ locate l
       succ indent `put` show info
@@ -63,17 +64,18 @@ printExpr indent hideLocation = \case
            | otherwise    = (' ' :) . showLoc
 
 printImplementation :: Int -> Bool -> PsiImplInfo -> IO ()
-printImplementation indent hideLocation = \case
-  PsiImplSimple n app ws expr whereClause -> do
-    puts $ "clause for" ++ name n
-    puts "patterns matching parsed as expression"
-    pExpr app
-    puts "function body"
-    pExpr expr
-    puts $ if null ws then "no with abstraction" else pure __TODO__
-    if null whereClause then puts "no where clause" else do
-      puts "where clause"
-      mapM_ pDecl whereClause
+printImplementation indent hideLocation =
+  \case
+    PsiImplSimple n app ws expr whereClause -> do
+      puts $ "clause for" ++ name n
+      puts "patterns matching parsed as expression"
+      pExpr app
+      puts "function body"
+      pExpr expr
+      puts $ if null ws then "no with abstraction" else pure __TODO__
+      if null whereClause then puts "no where clause" else do
+        puts "where clause"
+        mapM_ pDecl whereClause
   where
     puts   = put indent
     recur  = flip printImplementation hideLocation $ succ indent
@@ -84,7 +86,8 @@ printImplementation indent hideLocation = \case
            | otherwise    = (' ' :) . showLoc
 
 printDeclaration :: Int -> Bool -> PsiDeclaration -> IO ()
-printDeclaration indent hideLocation = \case
+printDeclaration indent hideLocation =
+  \case
     PsiPostulate n ps t -> do
       puts $ "postulate" ++ name n
       puts $ if null ps then " no pragmas" else pure __TODO__
@@ -114,7 +117,8 @@ printDeclaration indent hideLocation = \case
            | otherwise    = (' ' :) . showLoc
 
 printExprAst :: Int -> Bool -> AstTerm -> IO ()
-printExprAst indent hideLocation = \case
+printExprAst indent hideLocation =
+  \case
     AstBind bind t -> do
       puts "name binding"
       puts $ "it's a " ++ case binderKind bind of
@@ -155,7 +159,8 @@ printExprAst indent hideLocation = \case
            | otherwise    = (' ' :) . showLoc
 
 printDeclarationAst :: Int -> Bool -> AstDeclaration -> IO ()
-printDeclarationAst indent hideLocation = \case
+printDeclarationAst indent hideLocation =
+  \case
     AstImplementation info -> do
       puts $ "implementation of function" ++ name (implName info)
       puts "type"
@@ -182,10 +187,10 @@ showLoc :: Loc' a -> String
 showLoc loc = showPos (iStart loc) ++ " " ++ showPos (iEnd loc)
 
 showPos :: Position' a -> String
-showPos p = "(" ++ show (posPos  p) ++
-            " " ++ show (posLine p) ++
-            " " ++ show (posCol  p) ++
-            ")"
+showPos p = "(" ++ show (posPos  p)
+         ++ " " ++ show (posLine p)
+         ++ " " ++ show (posCol  p)
+         ++ ")"
 
 simpleToken :: PsiToken -> String
 simpleToken token = case tokenType token of

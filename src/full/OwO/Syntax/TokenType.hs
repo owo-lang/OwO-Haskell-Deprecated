@@ -25,17 +25,10 @@ import           Data.Text            as T
 import           OwO.Syntax.Position
 import qualified OwO.Util.StrictMaybe as Strict
 
--- | A name is a non-empty list of alternating 'Id's and 'Hole's. A normal name
---   is represented by a singleton list, and operators are represented by a list
---   with 'Hole's where the arguments should go. For instance:
---   @[Hole,Id "+",Hole]@
---   is infix addition.
---
---   Equality and ordering on @Name@s are defined to ignore interval so same
---   names in different locations are equal.
+-- | Identifier representation, with a text and the source location
 data Name
   = Name   Loc T.Text -- ^ A identifier.
-  | NoName Loc        -- ^ @_@.
+  | NoName Loc        -- ^ Anonymous identifier, like compiler-generated.
   deriving Show
 
 locationOfName :: Name -> Loc
@@ -60,34 +53,34 @@ instance Ord Name where
 
 data TokenType
   = ModuleToken
-  -- ^ module
+  -- ^ @module@
   | OpenToken
-  -- ^ open
+  -- ^ @open@
   | ImportToken
-  -- ^ import
+  -- ^ @import@
   | DataToken
-  -- ^ data
+  -- ^ @data@
   | CodataToken
-  -- ^ codata
+  -- ^ @codata@
   | CaseToken
-  -- ^ case (with abstraction)
+  -- ^ @case@ (with abstraction)
   | CocaseToken
-  -- ^ cocase (record constructor, coinductive)
+  -- ^ @cocase@ (record constructor, coinductive)
 
   | InfixToken
   | InfixLToken
   | InfixRToken
 
   | WhereToken
-  -- ^ where, starting a new layout
+  -- ^ @where@, starting a new layout
   | InstanceToken
-  -- ^ instance, starting a new layout
+  -- ^ @instance@, starting a new layout
   | PostulateToken
-  -- ^ postulate, starting a new layout
+  -- ^ @postulate@, starting a new layout
   | OfToken
-  -- ^ of (case), starting a new layout
+  -- ^ @of@ (@case@), starting a new layout
   | DoToken
-  -- ^ do, starting a new layout
+  -- ^ @do@, starting a new layout
 
   | BracketLToken
   -- ^ ], for `List` literal
@@ -131,23 +124,23 @@ data TokenType
   -- ^ \, for lambdas
 
   | IdentifierToken Name
-  -- ^ identifier
+  -- ^ Identifiers
   | MetaVarToken Name
   -- ^ _, for (named) meta vars and ignoring patterns
   | OperatorToken Name
-  -- ^ binary operators
+  -- ^ Binary operators
   | StringToken T.Text
-  -- ^ string literal
+  -- ^ String literals
   | CharToken Char
-  -- ^ character literal
+  -- ^ Character literals
   | IntegerToken Integer
-  -- ^ integer numbers
+  -- ^ Integer number literals
   | CommentToken T.Text
-  -- ^ comments. We reserve them to provide better tooling.
-  -- ^ this shouldn't present in AST, only in token sequence.
+  -- ^ Comments. We reserve them to provide better tooling.
+  -- ^ This shouldn't present in AST, only in token sequence.
 
   | EndOfFileToken
-  -- ^ finishes a file. This will not present in the output token sequence.
+  -- ^ Finishes a file. This will not present in the output token sequence.
   deriving (Eq, Ord, Show)
 
 isStartingNewLayout :: TokenType -> Bool
