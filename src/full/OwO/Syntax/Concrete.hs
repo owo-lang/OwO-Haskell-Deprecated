@@ -69,7 +69,7 @@ instance Show Visibility where
   show Implicit = "{ }"
   show Instance = "{| |}"
 
--- | The type parameter c is the name representation, which is probably Name
+-- | The type parameter c is the name representation, which is probably @Name@
 --   this is the AST for expressions (rhs) and pattern matching (lhs)
 data PsiTerm' c
   = PsiReference c

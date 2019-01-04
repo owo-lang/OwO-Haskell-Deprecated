@@ -1,0 +1,12 @@
+File type: owo
+Top module name: .SimpleLayout
+ implementation of function topDef (27 3 1) (33 3 7)
+  no pragmas
+  clause for topDef (27 3 1) (33 3 7)
+  patterns matching parsed as expression
+   named reference topDef (27 3 1) (33 3 7)
+  function body
+   constant (36 3 10) (39 3 13)
+    IntegerLit 233
+  no with abstraction
+  no where clause

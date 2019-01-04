@@ -9,40 +9,46 @@ module OwO.Util.Tools
   , getDecls
   ) where
 
-import           Data.Maybe           (fromMaybe)
-import qualified Data.Map.Strict      as Map
-import           Prelude              hiding (lex)
-import           System.Exit          (exitFailure)
+import qualified Data.Map.Strict          as Map
+import           Data.Maybe               (fromMaybe)
+import qualified Data.Text                as T
+import           Prelude                  hiding (lex)
+import           System.Exit              (exitFailure)
 import           System.IO
 
-import           OwO.Syntax.Context   (Context (..))
 import           OwO.Syntax.Concrete
     ( PsiDeclaration (..)
     , PsiFile (..)
     , PsiFileType (..)
     , decideFileType
     )
+import           OwO.Syntax.Context       (Context (..))
 import           OwO.Syntax.Parser
 import           OwO.Syntax.TokenType
 import           OwO.TypeChecking.Desugar
 import           OwO.Util.Dump
+import qualified OwO.Util.StrictMaybe     as Strict
 
 parseNaiveSimple :: String -> Either String PsiFile
 parseNaiveSimple = parseNaive CodeFileType
 
 dumpTokens :: FilePath -> Bool -> IO ()
-dumpTokens file hideLocation = lex <$> readFile file >>= \case
+dumpTokens file hideLocation = lexFile src <$> readFile file >>= \case
   Left  errMsg -> hPutStrLn stderr errMsg >> exitFailure
   Right tokens ->
     let f = if hideLocation then simpleToken else prettyToken
     in mapM_ putStrLn $ f <$> tokens
+  where
+    src = Strict.Just $ T.pack file
 
 getPsiFileOrDie :: FilePath -> Bool -> IO PsiFile
-getPsiFileOrDie file hideLocation = parseNaive ft <$> readFile file >>= \case
+getPsiFileOrDie file hideLocation =
+  parseFileNaive src ft <$> readFile file >>= \case
     Left errMsg -> hPutStrLn stderr errMsg >> exitFailure
     Right pFile -> return pFile
   where
     ft = fromMaybe CodeFileType $ decideFileType file
+    src = Strict.Just $ T.pack file
 
 getDecls :: FilePath -> Bool -> IO [PsiDeclaration]
 getDecls file hideLocation = do
