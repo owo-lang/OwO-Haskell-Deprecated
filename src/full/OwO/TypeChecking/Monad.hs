@@ -1,6 +1,4 @@
 {-# LANGUAGE CPP                   #-}
-{-# LANGUAGE DeriveFunctor         #-}
-{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
 -- | OwO's type checking state is a state monad transformer.
@@ -34,7 +32,7 @@ data TCState = TypeCheckingState
   -- ^ This is passed all around
   , stateDefinitions :: Context Definition
   -- ^ A symbol table containing all type-checked definitions
-  } deriving (Generic, Show)
+  } deriving Show
 
 emptyTCState :: CompilerOptions -> TCState
 emptyTCState opts = TypeCheckingState
@@ -50,15 +48,13 @@ data TCEnv = TypeCheckingEnv
   -- ^ Local definitions
   , envModuleName  :: QModuleName
   -- ^ Current module name
-  } deriving (Generic, Show)
-
-data TCErr' t
-  = OtherErr t
-  | DesugarErr DesugarError
-  deriving (Eq, Functor, Show)
+  } deriving Show
 
 -- | TypeChecking Error
-type TCErr = TCErr' PsiTerm
+data TCErr
+  = DesugarErr DesugarError
+  | OtherErr
+  deriving (Eq, Show)
 
 -- | TypeChecking Monad Transformer
 type TCMT m = StateT TCState (ExceptT TCErr m)
