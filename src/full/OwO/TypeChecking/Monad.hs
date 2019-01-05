@@ -21,6 +21,7 @@ import           OwO.Syntax.Module
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType       (Name (..))
 import           OwO.TypeChecking.Core
+import           OwO.TypeChecking.Desugar   (DesugarError (..))
 
 import           GHC.Generics               (Generic)
 
@@ -53,7 +54,7 @@ data TCEnv = TypeCheckingEnv
 
 data TCErr' t
   = OtherErr t
-  | UnresolvedReferenceErr Name
+  | DesugarErr DesugarError
   deriving (Eq, Functor, Show)
 
 -- | TypeChecking Error

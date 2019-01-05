@@ -45,7 +45,7 @@ import qualified OwO.Util.StrictMaybe as Strict
 
 #include <impossible.h>
 
--- | @a@ is @Name@ or something
+-- | @c@ is @Name@ or something
 data AstTerm' c
   = AstLiteral Loc LiteralInfo
   -- ^ Constants, same as in Psi
@@ -69,7 +69,7 @@ data AstBinderInfo' t c = AstBinderInfo
   , binderKind :: AstBinderKind' (t c)
   } deriving (Eq, Ord, Show)
 
--- | i should be something like a @Term@
+-- | @t@ should be something like a @Term@
 data AstBinderKind' t
   = LambdaBinder
   -- ^ Lambda abstraction
@@ -100,7 +100,7 @@ data AstImplInfo' t c = AstImplInfo
   , implBody :: t c
   } deriving (Eq, Ord, Show)
 
--- | @a@ is @C.Name@ or something
+-- | @a@ is @Name@ or something
 data AstDeclaration' t c
   = AstTypeCons c (t c) [AstConsInfo' t c]
   -- ^ Type Constructors must be declared with a list of Data Constructors

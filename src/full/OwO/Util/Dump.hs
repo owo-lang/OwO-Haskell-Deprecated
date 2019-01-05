@@ -6,20 +6,23 @@ module OwO.Util.Dump
   , printImplementation
   , printDeclaration
   , printDeclarationAst
+  , printDesugarError
   , simpleToken
   , prettyToken
   ) where
 
-import           Control.Monad        (join)
-import           Data.List.NonEmpty   (NonEmpty (..))
-import           Data.Maybe           (fromMaybe)
-import qualified Data.Text            as T
-import           System.Exit          (exitFailure)
+import           Control.Monad            (join)
+import           Data.List.NonEmpty       (NonEmpty (..))
+import           Data.Maybe               (fromMaybe)
+import qualified Data.Text                as T
+import           System.Exit              (exitFailure)
 
 import           OwO.Syntax.Abstract
 import           OwO.Syntax.Concrete
 import           OwO.Syntax.Position
 import           OwO.Syntax.TokenType
+
+import           OwO.TypeChecking.Desugar (DesugarError (..))
 
 #include <impossible.h>
 
@@ -29,6 +32,9 @@ put indent = putStrLn . (replicate indent ' ' ++)
 printName :: (Loc -> String) -> Name -> String
 printName locate n = (' ' :) $
   T.unpack (textOfName n) ++ locate (locationOfName n)
+
+printDesugarError :: DesugarError -> IO ()
+printDesugarError = print
 
 printExpr :: Int -> Bool -> PsiTerm -> IO ()
 printExpr indent hideLocation =

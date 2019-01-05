@@ -1,3 +1,7 @@
 File type: owo
 Top module name: .MissingImpl
-NoImplementationError [(Name ((26 2 2 in Just "testData/desugarFail/MissingImpl.owo"), (27 2 3 in Just "testData/desugarFail/MissingImpl.owo")) "a",[],AstTypeLit (Name ((30 2 6 in Just "testData/desugarFail/MissingImpl.owo"), (34 2 10 in Just "testData/desugarFail/MissingImpl.owo")) "Type") (ULevelLit 0))]
+ postulate a (26 2 2) (27 2 3)
+ type
+  type universe Type (30 2 6) (34 2 10)
+  level: ULevelLit 0
+NoImplementationError (Name ((26 2 2 in Just "testData/desugarFail/MissingImpl.owo"), (27 2 3 in Just "testData/desugarFail/MissingImpl.owo")) "a",[],AstTypeLit (Name ((30 2 6 in Just "testData/desugarFail/MissingImpl.owo"), (34 2 10 in Just "testData/desugarFail/MissingImpl.owo")) "Type") (ULevelLit 0))

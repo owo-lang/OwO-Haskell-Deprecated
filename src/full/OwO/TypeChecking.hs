@@ -3,9 +3,9 @@
 
 module OwO.TypeChecking where
 
-import           Control.Applicative     (Alternative (..))
-import           Data.Functor            ((<&>))
-import           Data.Maybe              (catMaybes)
+import           Control.Applicative      (Alternative (..))
+import           Data.Functor             ((<&>))
+import           Data.Maybe               (catMaybes)
 
 import           OwO.Syntax.Concrete
     ( LiteralInfo
@@ -14,8 +14,9 @@ import           OwO.Syntax.Concrete
     , PsiTerm' (..)
     )
 import           OwO.Syntax.Context
-import           OwO.Syntax.TokenType    (textOfName)
+import           OwO.Syntax.TokenType     (textOfName)
 import           OwO.TypeChecking.Core
+import           OwO.TypeChecking.Desugar
 import           OwO.TypeChecking.Match
 import           OwO.TypeChecking.Monad
 import           OwO.TypeChecking.Reduce
@@ -27,7 +28,7 @@ literalType = __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()
 typeCheckFile state file = do
-  let decls      = declarations file
+  let context    = concreteToAbstractDecl $ declarations file
   let moduleName = topLevelModuleName file
   -- TODO:
   --  Invoke `Abstract.concreteToAbstract*`

@@ -36,7 +36,7 @@ type AstContext     = Context AstDeclaration
 type TypeSignature  = (Name, FnPragmas, AstTerm)
 
 data DesugarError
-  = NoImplementationError [TypeSignature]
+  = NoImplementationError TypeSignature
   -- ^ Only type signature, not implementation
   | DuplicatedTypeSignatureError (TypeSignature, TypeSignature)
   -- ^ Two type signatures, with same name
@@ -46,8 +46,8 @@ data DesugarError
   -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
   deriving (Eq, Ord, Show)
 
-concreteToAbstractDecl :: [PsiDeclaration] -> Either DesugarError AstContext
-concreteToAbstractDecl = concreteToAbstractDecl' emptyCtx []
+concreteToAbstractDecl :: [PsiDeclaration] -> Either DesugarError (AstContext, [DesugarError])
+concreteToAbstractDecl = flip (concreteToAbstractDecl' emptyCtx []) []
 
 concreteToAbstractTerm :: PsiTerm -> Either DesugarError AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' emptyCtx Map.empty
@@ -59,13 +59,20 @@ concreteToAbstractDecl'
   -- Unimplemented declarations
   -> [PsiDeclaration]
   -- Unchecked declarations
-  -> Either DesugarError AstContext
-concreteToAbstractDecl' env [] [      ] = Right env
-concreteToAbstractDecl' env sb [      ] = Left $ NoImplementationError sb
-concreteToAbstractDecl' env sigs (d : ds) =
+  -> [DesugarError]
+  -- Warnings (non-fatal errors)
+  -> Either DesugarError (AstContext, [DesugarError])
+  -- Errors, or typechecking result with warnings
+concreteToAbstractDecl' env [] [      ] err = Right (env, err)
+concreteToAbstractDecl' env sb [      ] err = Right (newEnv, err ++ newErr)
+  where
+    newDecls = sb <&> \(name, _, term) -> (name, AstPostulate name term)
+    newEnv   = foldr (uncurry addDefinition) env newDecls
+    newErr   = NoImplementationError <$> sb
+concreteToAbstractDecl' env sigs (d : ds) err =
     desugar d >>= uncurry checkRest . Pair.swap
   where
-    checkRest env sig = concreteToAbstractDecl' env sig ds
+    checkRest env sig = concreteToAbstractDecl' env sig ds err
     checkTerm = concreteToAbstractTerm' env Map.empty
     desugar (PsiTypeSignature name pgms sig) = $(each [|
       ( ( name
@@ -106,6 +113,7 @@ concreteToAbstractTerm'
   -> PsiTerm
   -- Input term
   -> Either DesugarError AstTerm
+  -- Errors, or typechecking result (with warnings?)
 concreteToAbstractTerm' env localEnv =
   \case
     PsiReference  name -> case Map.lookup name localEnv of

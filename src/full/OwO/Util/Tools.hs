@@ -5,8 +5,6 @@ module OwO.Util.Tools
   , dumpPsi
   , dumpAst
   , parseNaiveSimple
-  , printExpr
-  , getDecls
   ) where
 
 import qualified Data.Map.Strict          as Map
@@ -65,6 +63,8 @@ dumpAst :: FilePath -> Bool -> IO ()
 dumpAst file hideLocation = do
   decls <- getDecls file hideLocation
   case concreteToAbstractDecl decls of
-    Left errMsg -> print errMsg
-    Right decls -> mapM_ (printDeclarationAst 1 hideLocation) .
-      Map.elems $ localCtx decls
+    Left   errorMessages    -> print errorMessages
+    Right (decls, warnings) -> do
+      mapM_ (printDeclarationAst 1 hideLocation) .
+        Map.elems $ localCtx decls
+      mapM_ printDesugarError warnings
