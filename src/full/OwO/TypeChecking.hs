@@ -30,7 +30,8 @@ literalType _ = Var __TODO__
 typeCheckFile :: TCState -> PsiFile -> TCM ()
 typeCheckFile state file = do
   let decls        = declarations file
-  --     (ctx, warns) = runState (concreteToAbstractDecl decls) emptyCtx
+    --   (ctx, warns) = runExceptT $ runStateT
+    --     (concreteToAbstractDecl decls) emptyCtx
       moduleName   = topLevelModuleName file
   -- TODO:
   --  Invoke `Abstract.concreteToAbstract*`

@@ -143,10 +143,10 @@ printExprAst indent hideLocation =
       puts $ "type universe" ++ name c
       puts $ "level: " ++ show level
     AstApp f a -> do
-      puts "function application"
-      puts "function being applied"
+      puts "application"
+      puts "applying to"
       recur f
-      puts "value applied to the function"
+      puts "value applied"
       recur a
     AstRef c decl -> do
       puts $ "global reference" ++ name c

@@ -18,10 +18,10 @@ Top module name: .ImplicitPi
     name binding
     it's a instance argument binding
     bound scope
-     function application
-     function being applied
+     application
+     applying to
       local reference m (131 5 63) (132 5 64)
       referring to a binding _ (117 5 49) (124 5 56)
-     value applied to the function
+     value applied
       local reference a (133 5 65) (134 5 66)
       referring to a binding _ (117 5 49) (124 5 56)
