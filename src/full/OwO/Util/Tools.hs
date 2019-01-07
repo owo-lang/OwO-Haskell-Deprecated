@@ -7,6 +7,8 @@ module OwO.Util.Tools
   , parseNaiveSimple
   ) where
 
+import           Control.Monad.Except     (catchError, runExceptT)
+import           Control.Monad.State      (runStateT, state)
 import qualified Data.Map.Strict          as Map
 import           Data.Maybe               (fromMaybe)
 import qualified Data.Text                as T
@@ -20,7 +22,7 @@ import           OwO.Syntax.Concrete
     , PsiFileType (..)
     , decideFileType
     )
-import           OwO.Syntax.Context       (Context (..))
+import           OwO.Syntax.Context       (Context (..), emptyCtx)
 import           OwO.Syntax.Parser
 import           OwO.Syntax.TokenType
 import           OwO.TypeChecking.Desugar
@@ -62,9 +64,10 @@ dumpPsi file hideLocation = getDecls file hideLocation >>=
 dumpAst :: FilePath -> Bool -> IO ()
 dumpAst file hideLocation = do
   decls <- getDecls file hideLocation
-  case concreteToAbstractDecl decls of
-    Left   errorMessages    -> print errorMessages
-    Right (decls, warnings) -> do
-      mapM_ (printDeclarationAst 1 hideLocation) .
-        Map.elems $ localCtx decls
+  let tcMonad = concreteToAbstractDecl decls
+  tcResult <- runExceptT $ runStateT tcMonad emptyCtx
+  case tcResult of
+    Left errors -> print errors
+    Right (warnings, decls) -> do
+      mapM_ (printDeclarationAst 1 hideLocation) $ localCtx decls
       mapM_ printDesugarError warnings

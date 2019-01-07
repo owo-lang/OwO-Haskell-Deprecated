@@ -4,6 +4,7 @@
 module OwO.TypeChecking where
 
 import           Control.Applicative      (Alternative (..))
+import           Control.Monad.State      (runState)
 import           Data.Functor             ((<&>))
 import           Data.Maybe               (catMaybes)
 
@@ -24,12 +25,13 @@ import           OwO.TypeChecking.Reduce
 #include <impossible.h>
 
 literalType :: LiteralInfo -> Type
-literalType = __TODO__
+literalType _ = Var __TODO__
 
 typeCheckFile :: TCState -> PsiFile -> TCM ()
 typeCheckFile state file = do
-  let context    = concreteToAbstractDecl $ declarations file
-  let moduleName = topLevelModuleName file
+  let decls        = declarations file
+  --     (ctx, warns) = runState (concreteToAbstractDecl decls) emptyCtx
+      moduleName   = topLevelModuleName file
   -- TODO:
   --  Invoke `Abstract.concreteToAbstract*`
   --  Then type check the implemented functions

@@ -151,12 +151,10 @@ printExprAst indent hideLocation =
     AstRef c decl -> do
       puts $ "global reference" ++ name c
       -- puts $ "referring to a decl" ++ name (implName decl)
-    AstMetaVar c -> do
-      puts $ "meta variable" ++ name c
+    AstMetaVar c -> puts $ "meta variable" ++ name c
     AstLocalRef c bind -> do
       puts $ "local reference" ++ name c
       puts $ "referring to a binding" ++ name (binderName bind)
-    _ -> __TODO__
   where
     puts   = put indent
     name   = printName locate
