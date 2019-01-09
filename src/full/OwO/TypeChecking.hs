@@ -1,10 +1,19 @@
-{-# LANGUAGE CPP        #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE CPP              #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase       #-}
 
 module OwO.TypeChecking where
 
 import           Control.Applicative      (Alternative (..))
-import           Control.Monad.State      (runState)
+import           Control.Monad.Except     (MonadError (..), runExceptT)
+import           Control.Monad.IO.Class   (MonadIO (..))
+import           Control.Monad.State
+    ( MonadState (..)
+    , get
+    , modify
+    , put
+    , runStateT
+    )
 import           Data.Functor             ((<&>))
 import           Data.Maybe               (catMaybes)
 
@@ -27,13 +36,20 @@ import           OwO.TypeChecking.Reduce
 literalType :: LiteralInfo -> Type
 literalType _ = Var __TODO__
 
-typeCheckFile :: TCState -> PsiFile -> TCM ()
-typeCheckFile state file = do
-  let decls        = declarations file
-    --   (ctx, warns) = runExceptT $ runStateT
-    --     (concreteToAbstractDecl decls) emptyCtx
-      moduleName   = topLevelModuleName file
+typeCheckFile
+  :: ( MonadState TCState m
+     , MonadError TCError m
+     )
+  => PsiFile
+  -> m ()
+typeCheckFile file = do
+  let decls       = declarations file
+      moduleName  = topLevelModuleName file
+  desugarResult <- runExceptT . flip runStateT emptyCtx $
+    concreteToAbstractDecl decls
+  (ctx, warns) <- case desugarResult of
+    Left err -> throwError $ DesugarErr err
+    Right ok -> pure ok
   -- TODO:
-  --  Invoke `Abstract.concreteToAbstract*`
-  --  Then type check the implemented functions
+  --  Type check the implemented functions
   return __TODO__

@@ -16,8 +16,8 @@ module OwO.TypeChecking.Desugar
   , DesugarError(..)
   ) where
 
-import           Control.Monad.Except
-import           Control.Monad.State
+import           Control.Monad.Except     (MonadError (..))
+import           Control.Monad.State      (MonadState (..), get, modify, put)
 import           Data.Functor             ((<&>))
 import           Data.List                (partition)
 import           Data.List.NonEmpty       (NonEmpty (..))
@@ -48,25 +48,28 @@ data DesugarError
   -- ^ Usage of undefined names
   | DesugarSyntaxError String
   -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
 
 concreteToAbstractDecl
   :: ( MonadState AstContext   m
-     , MonadError DesugarError m)
+     , MonadError DesugarError m
+     )
   => [PsiDeclaration]
   -> m [DesugarError]
 concreteToAbstractDecl = concreteToAbstractDecl' []
 
 concreteToAbstractTerm
   :: ( MonadState AstContext   m
-     , MonadError DesugarError m)
+     , MonadError DesugarError m
+     )
   => PsiTerm
   -> m AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' Map.empty
 
 concreteToAbstractDecl'
   :: ( MonadState AstContext   m
-     , MonadError DesugarError m)
+     , MonadError DesugarError m
+     )
   => [TypeSignature]
   -- Unimplemented declarations
   -> [PsiDeclaration]
@@ -119,7 +122,8 @@ concreteToAbstractDecl' sigs (d : ds) =
 
 concreteToAbstractTerm'
   :: ( MonadState AstContext   m
-     , MonadError DesugarError m)
+     , MonadError DesugarError m
+     )
   => Binding AstBinderInfo
   -- Local variables
   -> PsiTerm
@@ -129,14 +133,14 @@ concreteToAbstractTerm'
 concreteToAbstractTerm' localEnv =
   \case
     PsiReference  name -> case Map.lookup name localEnv of
-     Just ref -> pure $ AstLocalRef name ref
-     Nothing  -> do
-       env <- get
-       case lookupCtxCurrent name env of
-         Just ref -> pure $ AstRef name ref
-         Nothing  -> case builtinDefinition name of
-          Just term -> pure term
-          Nothing   -> throwError $ UnresolvedReferenceError name
+      Just ref -> pure $ AstLocalRef name ref
+      Nothing  -> do
+        env <- get
+        case lookupCtxCurrent name env of
+          Just ref -> pure $ AstRef name ref
+          Nothing  -> case builtinDefinition name of
+            Just term -> pure term
+            Nothing   -> throwError $ UnresolvedReferenceError name
     PsiLambda var body ->
      let binder   = inventBinder var LambdaBinder
          newLocal = Map.insert var binder localEnv
