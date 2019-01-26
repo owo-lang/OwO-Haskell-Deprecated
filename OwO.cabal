@@ -114,6 +114,7 @@ Test-Suite tests
   main-is:          Main.hs
   build-depends:    OwO
                   , base >= 4.8 && < 5
+                  , containers >= 0.5.10 && < 0.7
                   , hspec
                   , process
                   , mtl >= 2.2.1 && < 2.3

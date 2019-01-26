@@ -1,3 +1,4 @@
+{-# LANGUAGE ConstraintKinds  #-}
 {-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase       #-}
@@ -50,26 +51,22 @@ data DesugarError
   -- ^ Invalid syntax, but allowed by parser, disallowed by desugarer
   deriving (Eq, Show)
 
+type DesugarMonad m = (MonadState AstContext m, MonadError DesugarError m)
+
 concreteToAbstractDecl
-  :: ( MonadState AstContext   m
-     , MonadError DesugarError m
-     )
+  :: DesugarMonad m
   => [PsiDeclaration]
   -> m [DesugarError]
 concreteToAbstractDecl = concreteToAbstractDecl' []
 
 concreteToAbstractTerm
-  :: ( MonadState AstContext   m
-     , MonadError DesugarError m
-     )
+  :: DesugarMonad m
   => PsiTerm
   -> m AstTerm
 concreteToAbstractTerm = concreteToAbstractTerm' []
 
 concreteToAbstractDecl'
-  :: ( MonadState AstContext   m
-     , MonadError DesugarError m
-     )
+  :: DesugarMonad m
   => [TypeSignature]
   -- Unimplemented declarations
   -> [PsiDeclaration]
@@ -121,9 +118,7 @@ concreteToAbstractDecl' sigs (d : ds) =
     checkTerm = concreteToAbstractTerm' []
 
 concreteToAbstractTerm'
-  :: ( MonadState AstContext   m
-     , MonadError DesugarError m
-     )
+  :: DesugarMonad m
   => [AstBinderInfo]
   -- Local variables
   -> PsiTerm

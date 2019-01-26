@@ -1,3 +1,4 @@
+{-# LANGUAGE ConstraintKinds  #-}
 {-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase       #-}
@@ -36,14 +37,7 @@ import           OwO.TypeChecking.Reduce
 literalType :: LiteralInfo -> Type
 literalType _ = Var __TODO__
 
---checkDecl ::
-
-typeCheckFile
-  :: ( MonadState TCState m
-     , MonadError TCError m
-     )
-  => PsiFile
-  -> m ()
+typeCheckFile :: TCM m => PsiFile -> m ()
 typeCheckFile file = do
   let decls       = declarations file
       moduleName  = topLevelModuleName file

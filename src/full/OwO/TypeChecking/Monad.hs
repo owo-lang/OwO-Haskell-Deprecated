@@ -1,9 +1,14 @@
+{-# LANGUAGE ConstraintKinds       #-}
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE FlexibleContexts      #-}
 
 -- | OwO's type checking state is a state monad transformer.
 --   We call it TypeCheckingMonad, in short TCM, as Agda does.
 module OwO.TypeChecking.Monad where
+
+import           Control.Monad.Except     (MonadError (..))
+import           Control.Monad.State      (MonadState (..))
 
 import qualified Data.Text                as T
 
@@ -48,3 +53,5 @@ data TCError
   = DesugarErr DesugarError
   | OtherErr String
   deriving (Eq, Show)
+
+type TCM m = (MonadState TCState m, MonadError TCError m)
