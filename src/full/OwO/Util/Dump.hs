@@ -154,7 +154,7 @@ printExprAst indent hideLocation =
     AstMetaVar c -> puts $ "meta variable" ++ name c
     AstLocalRef c bind -> do
       puts $ "local reference" ++ name c
-      puts $ "referring to a binding" ++ name (binderName bind)
+      puts $ "referring to a binding whose index is " ++ show bind
   where
     puts   = put indent
     name   = printName locate

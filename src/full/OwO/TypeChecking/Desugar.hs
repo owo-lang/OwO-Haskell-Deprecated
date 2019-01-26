@@ -19,7 +19,7 @@ module OwO.TypeChecking.Desugar
 import           Control.Monad.Except     (MonadError (..))
 import           Control.Monad.State      (MonadState (..), get, modify, put)
 import           Data.Functor             ((<&>))
-import           Data.List                (partition)
+import           Data.List                (findIndex, partition)
 import           Data.List.NonEmpty       (NonEmpty (..))
 import qualified Data.List.NonEmpty       as NE
 import qualified Data.Map                 as Map
@@ -64,7 +64,7 @@ concreteToAbstractTerm
      )
   => PsiTerm
   -> m AstTerm
-concreteToAbstractTerm = concreteToAbstractTerm' Map.empty
+concreteToAbstractTerm = concreteToAbstractTerm' []
 
 concreteToAbstractDecl'
   :: ( MonadState AstContext   m
@@ -118,13 +118,13 @@ concreteToAbstractDecl' sigs (d : ds) =
     _ -> return __TODO__
   where
     checkRest sig = concreteToAbstractDecl' sig ds
-    checkTerm = concreteToAbstractTerm' Map.empty
+    checkTerm = concreteToAbstractTerm' []
 
 concreteToAbstractTerm'
   :: ( MonadState AstContext   m
      , MonadError DesugarError m
      )
-  => Binding AstBinderInfo
+  => [AstBinderInfo]
   -- Local variables
   -> PsiTerm
   -- Input term
@@ -132,8 +132,8 @@ concreteToAbstractTerm'
   -- Errors, or type-checking result (with warnings?)
 concreteToAbstractTerm' localEnv =
   \case
-    PsiReference  name -> case Map.lookup name localEnv of
-      Just ref -> pure $ AstLocalRef name ref
+    PsiReference  name -> case findIndex ((name ==) . binderName) localEnv of
+      Just index -> pure $ AstLocalRef name index
       Nothing  -> do
         env <- get
         case lookupCtxCurrent name env of
@@ -143,8 +143,7 @@ concreteToAbstractTerm' localEnv =
             Nothing   -> throwError $ UnresolvedReferenceError name
     PsiLambda var body ->
      let binder   = inventBinder var LambdaBinder
-         newLocal = Map.insert var binder localEnv
-     in AstBind binder <$> recurEnv newLocal body
+     in AstBind binder <$> recurEnv (binder : localEnv) body
     PsiApplication f a -> $(each [| AstApp (~! recur f) (~! recur a) |])
     PsiLiteral   loc t -> pure $ AstLiteral loc t
     PsiImpossible  loc -> __TODO__
@@ -157,8 +156,7 @@ concreteToAbstractTerm' localEnv =
             , binderType = type'
             , binderKind = TelescopeBinder vis
             }
-          newLocal = Map.insert var binder localEnv
-      AstBind binder <$> recurEnv newLocal val
+      AstBind binder <$> recurEnv (binder : localEnv) val
   where
     recur = concreteToAbstractTerm' localEnv
     recurEnv = concreteToAbstractTerm'

@@ -57,8 +57,8 @@ data AstTerm' c
   -- ^ Name binding
   | AstRef c (AstDeclaration' AstTerm' c)
   -- ^ A resolved reference, to a global declaration
-  | AstLocalRef c (AstBinderInfo' AstTerm' c)
-  -- ^ A resolved reference, to a locally bound free variable.
+  | AstLocalRef c Int
+  -- ^ A resolved reference (in de Bruijn index), to a locally bound variable.
   | AstMetaVar c
   -- ^ Goals? Holes?
   deriving (Eq, Ord, Show)
