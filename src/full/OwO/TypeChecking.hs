@@ -36,6 +36,8 @@ import           OwO.TypeChecking.Reduce
 literalType :: LiteralInfo -> Type
 literalType _ = Var __TODO__
 
+--checkDecl ::
+
 typeCheckFile
   :: ( MonadState TCState m
      , MonadError TCError m
