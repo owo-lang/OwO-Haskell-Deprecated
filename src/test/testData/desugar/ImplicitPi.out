@@ -4,24 +4,52 @@ Top module name: .ImplicitPi
  type
   name binding
   it's a pi type binding
+  binder type
+   name binding
+   it's a pi type binding
+   binder type
+    type universe Type (47 4 12) (51 4 16)
+    level: ULevelLit 0
+   bound scope
+    type universe Type (55 4 20) (59 4 24)
+    level: ULevelLit 0
   bound scope
-   local reference Type (64 4 29) (68 4 33)
-   referring to a binding _ (47 4 12) (59 4 24)
+   type universe Type (64 4 29) (68 4 33)
+   level: ULevelLit 0
  postulate mapM (71 5 3) (75 5 7)
  type
   name binding
   it's a implicit argument binding
+  binder type
+   name binding
+   it's a pi type binding
+   binder type
+    type universe Type (83 5 15) (87 5 19)
+    level: ULevelLit 0
+   bound scope
+    type universe Type (91 5 23) (95 5 27)
+    level: ULevelLit 0
   bound scope
    name binding
    it's a implicit argument binding
+   binder type
+    type universe Type (105 5 37) (109 5 41)
+    level: ULevelLit 0
    bound scope
     name binding
     it's a instance argument binding
+    binder type
+     application
+     applying to
+      global reference Monad (117 5 49) (122 5 54)
+     value applied
+      local reference m (123 5 55) (124 5 56)
+      referring to a binding whose index is 1
     bound scope
      application
      applying to
       local reference m (131 5 63) (132 5 64)
-      referring to a binding _ (117 5 49) (124 5 56)
+      referring to a binding whose index is 2
      value applied
       local reference a (133 5 65) (134 5 66)
-      referring to a binding _ (117 5 49) (124 5 56)
+      referring to a binding whose index is 1

@@ -6,31 +6,39 @@ Top module name: .LocalVar
  value
   name binding
   it's a lambda binding
+  binder type
+   meta variable _ (46 4 10) (47 4 11)
   bound scope
    name binding
    it's a lambda binding
+   binder type
+    meta variable _ (52 4 16) (53 4 17)
    bound scope
     name binding
     it's a lambda binding
+    binder type
+     meta variable _ (58 4 22) (59 4 23)
     bound scope
      application
      applying to
       application
       applying to
        local reference f (63 4 27) (64 4 28)
-       referring to a binding f (46 4 10) (47 4 11)
+       referring to a binding whose index is 2
       value applied
        local reference y (65 4 29) (66 4 30)
-       referring to a binding y (58 4 22) (59 4 23)
+       referring to a binding whose index is 0
      value applied
       local reference x (67 4 31) (68 4 32)
-      referring to a binding x (52 4 16) (53 4 17)
+      referring to a binding whose index is 1
  implementation of function id (24 3 2) (26 3 4)
  type
   meta variable _ (24 3 2) (26 3 4)
  value
   name binding
   it's a lambda binding
+  binder type
+   meta variable _ (30 3 8) (31 3 9)
   bound scope
    local reference x (35 3 13) (36 3 14)
-   referring to a binding x (30 3 8) (31 3 9)
+   referring to a binding whose index is 0
