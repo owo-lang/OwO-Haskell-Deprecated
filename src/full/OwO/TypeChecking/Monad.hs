@@ -51,6 +51,7 @@ data TCEnv = TypeCheckingEnv
 -- | TypeChecking Error
 data TCError
   = DesugarErr DesugarError
+  | TypeMismatch String
   | OtherErr String
   deriving (Eq, Show)
 

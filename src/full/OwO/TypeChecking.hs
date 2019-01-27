@@ -18,6 +18,7 @@ import           Control.Monad.State
 import           Data.Functor             ((<&>))
 import           Data.Maybe               (catMaybes)
 
+import           OwO.Syntax.Abstract
 import           OwO.Syntax.Concrete
     ( LiteralInfo
     , PsiFile (..)
@@ -36,6 +37,33 @@ import           OwO.TypeChecking.Reduce
 
 literalType :: LiteralInfo -> Type
 literalType _ = Var __TODO__
+
+-- | Check if some @AstTerm@ is a type-correct term of type @Type@
+checkExpr :: TCM m => AstTerm -> Type -> m Term
+checkExpr term ty = case term of
+  AstTypeLit name level -> do
+    typeLevel <- case ty of
+      TType l -> pure l
+      _       -> throwError $ TypeMismatch "Type mismatch"
+    termLevel <- case level of
+      ULevelLit i -> pure $ ULevelLit i
+      ULevelVar v -> ULevelVar <$> checkInfer v
+      ULevelMax   -> pure ULevelMax
+    case typeLevel of
+      ULevelLit _ | succ termLevel == typeLevel -> pure $ TType termLevel
+      ULevelVar var -> pure __TODO__
+      ULevelMax     -> pure $ TType termLevel
+  _ -> throwError __TODO__
+
+-- | Infer the type of an @AstTerm@
+checkInfer :: TCM m => AstTerm -> m Term
+checkInfer = \case
+  AstTypeLit name level -> case level of
+    ULevelLit lit -> pure . TType $ ULevelLit lit
+    ULevelVar var -> TType . ULevelVar <$> checkInfer var
+    ULevelMax     -> pure $ TType ULevelMax
+  AstLocalRef name index -> pure $ Var index
+  _ -> pure __TODO__
 
 typeCheckFile :: TCM m => PsiFile -> m ()
 typeCheckFile file = do

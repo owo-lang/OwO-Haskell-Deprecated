@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE MultiWayIf            #-}
 {-# LANGUAGE TypeOperators         #-}
@@ -31,7 +32,7 @@ module OwO.Syntax.Abstract
   , AstDeclaration
   -- Declarations
 
-  , ULevel(..)
+  , ULevel'(..)
   ) where
 
 import           Control.Applicative
@@ -49,7 +50,7 @@ import qualified OwO.Util.StrictMaybe as Strict
 data AstTerm' c
   = AstLiteral Loc LiteralInfo
   -- ^ Constants, same as in Psi
-  | AstTypeLit c ULevel
+  | AstTypeLit c (ULevel' (AstTerm' c))
   -- ^ Type literal
   | AstApp (AstTerm' c) (AstTerm' c)
   -- ^ Application
@@ -112,14 +113,26 @@ data AstDeclaration' t c
   -- ^ Functions with types but no implementations
   deriving (Eq, Ord, Show)
 
-data ULevel
+data ULevel' c
   = ULevelLit Int
   -- ^ Like Type0, Type1
-  | ULevelVar String Int
-  -- ^ Level variables. Should be already computed.
+  | ULevelVar c
+  -- ^ Level variables
   | ULevelMax
   -- ^ TypeInf, TypeOmega
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Functor, Ord, Show)
+
+instance Enum (ULevel' c) where
+  succ (ULevelLit i) = ULevelLit $ succ i
+  succ ULevelMax = ULevelMax
+  succ _ = error __TODO__
+  pred (ULevelLit i) = ULevelLit $ pred i
+  pred ULevelMax = ULevelMax
+  pred _ = error __TODO__
+  toEnum = ULevelLit
+  fromEnum (ULevelLit i) = i
+  fromEnum ULevelMax = -1
+  fromEnum _ = -2
 
 type AstDeclaration = AstDeclaration' AstTerm' Name
 type AstTerm        = AstTerm' Name

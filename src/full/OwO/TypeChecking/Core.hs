@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP                   #-}
-{-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
 -- | Core language
@@ -12,6 +11,7 @@ module OwO.TypeChecking.Core
   , Type
   , typeUniverseOfLevel
   , typeUniverseOfLevel'
+  , typeOfLevel
   , definitionType
 
   , Definition(..)
@@ -39,10 +39,10 @@ data Term' i
   | Bind i !(BinderInfo (Term' i)) (Term' i)
   -- ^ Name binding
 -}
-  | TType ULevel
+  | TType (ULevel' (Term' i))
   -- ^ Type of Type, including type omega
   | Const LiteralInfo
-  deriving (Eq, Functor, Ord, Show)
+  deriving (Eq, Ord, Show)
 
 -- TODO
 
@@ -75,4 +75,7 @@ typeUniverseOfLevel :: Int -> Definition
 typeUniverseOfLevel = uncurry SimpleDefinition . typeUniverseOfLevel'
 
 typeUniverseOfLevel' :: Int -> (Term, Type)
-typeUniverseOfLevel' i = (TType . ULevelLit $ succ i, TType $ ULevelLit i)
+typeUniverseOfLevel' i = (typeOfLevel $ succ i, typeOfLevel i)
+
+typeOfLevel :: Int -> Term
+typeOfLevel = TType . ULevelLit
