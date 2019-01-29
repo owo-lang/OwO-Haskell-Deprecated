@@ -3,8 +3,7 @@
 
 -- | Core language
 module OwO.TypeChecking.Core
-  ( NameType(..)
-  -- , BinderInfo(..)
+  ( BinderInfo'(..)
 
   , Term'(..)
   , Term
@@ -33,28 +32,23 @@ data Term' i
   -- ^ Application, function being applied and value applied
   | Var !Int
   -- ^ A variable resolved with de bruijn index
-  | Ref NameType i Definition
+  | Ref i Definition
   -- ^ Named reference, might be external definitions
-{-
-  | Bind i !(BinderInfo (Term' i)) (Term' i)
+  | Bind i !(BinderInfo' Term' i) (Term' i)
   -- ^ Name binding
--}
   | TType (ULevel' (Term' i))
   -- ^ Type of Type, including type omega
+  | Meta i
+  -- ^ Meta variable
   | Const LiteralInfo
   deriving (Eq, Ord, Show)
 
 -- TODO
-
-data NameType
-  = BoundName
-  -- ^ Local name
-  | FunctionName
-  -- ^ Global name
-  | TypeConstructor
-  -- ^ Type constructor
-  | DataConstructor
-  -- ^ Data constructor
+data BinderInfo' t c
+  = Telescope c (t c)
+  -- ^ Pi type binding, with a name and a type
+  | Lambda c
+  -- ^ Lambda abstraction, with a name (do we need a type expression?)
   deriving (Eq, Ord, Show)
 
 -- | Term should have a @Name@ coming from the parser

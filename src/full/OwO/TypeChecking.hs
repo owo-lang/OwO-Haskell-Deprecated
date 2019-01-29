@@ -44,18 +44,23 @@ checkExpr term ty = case term of
   AstTypeLit name level -> do
     typeLevel <- case ty of
       TType l -> pure l
-      _       -> throwError $ TypeMismatch "Type mismatch"
+      _       -> throwError $ TypeMismatch "Types' types should universes"
     termLevel <- case level of
-      ULevelLit i -> pure $ ULevelLit i
-      ULevelVar v -> ULevelVar <$> checkInfer v
       ULevelMax   -> pure ULevelMax
+      ULevelVar v -> ULevelVar <$> checkInfer v
+      ULevelLit i -> pure $ ULevelLit i
     case typeLevel of
-      ULevelLit _ | succ termLevel == typeLevel -> pure $ TType termLevel
-      ULevelVar var -> pure __TODO__
       ULevelMax     -> pure $ TType termLevel
+      ULevelVar var -> pure __TODO__
+      ULevelLit _   -> if succ termLevel == typeLevel
+        then pure $ TType termLevel
+        else throwError $ TypeMismatch "Universe Level doesn't match"
+  AstMetaVar _ -> throwError __TODO__
+  AstBind binder body -> do
+    __TODO__
   _ -> throwError __TODO__
 
--- | Infer the type of an @AstTerm@
+-- | Convert an @AstTerm@ into a @Term@ without type restriction
 checkInfer :: TCM m => AstTerm -> m Term
 checkInfer = \case
   AstTypeLit name level -> case level of
@@ -63,6 +68,13 @@ checkInfer = \case
     ULevelVar var -> TType . ULevelVar <$> checkInfer var
     ULevelMax     -> pure $ TType ULevelMax
   AstLocalRef name index -> pure $ Var index
+  AstMetaVar name -> pure $ Meta name
+  AstBind binder body -> do
+    let mapBinderKind = __TODO__
+    ty <- checkInfer $ binderType binder
+    kd <- mapBinderKind $ binderKind binder
+    bd <- checkInfer body
+    pure $ Bind (binderName binder) kd bd
   _ -> pure __TODO__
 
 typeCheckFile :: TCM m => PsiFile -> m ()
