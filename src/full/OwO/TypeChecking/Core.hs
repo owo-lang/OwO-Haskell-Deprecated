@@ -45,10 +45,10 @@ data Term' i
 
 -- TODO
 data BinderInfo' t c
-  = Telescope c (t c)
-  -- ^ Pi type binding, with a name and a type
-  | Lambda c
-  -- ^ Lambda abstraction, with a name (do we need a type expression?)
+  = Telescope (t c)
+  -- ^ Pi type binding, with a type
+  | Lambda
+  -- ^ Lambda abstraction (do we need a type expression?)
   deriving (Eq, Ord, Show)
 
 -- | Term should have a @Name@ coming from the parser

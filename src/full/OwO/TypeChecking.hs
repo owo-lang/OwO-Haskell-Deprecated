@@ -56,8 +56,7 @@ checkExpr term ty = case term of
         then pure $ TType termLevel
         else throwError $ TypeMismatch "Universe Level doesn't match"
   AstMetaVar _ -> throwError __TODO__
-  AstBind binder body -> do
-    __TODO__
+  AstBind binder body -> throwError __TODO__
   _ -> throwError __TODO__
 
 -- | Convert an @AstTerm@ into a @Term@ without type restriction
@@ -70,11 +69,18 @@ checkInfer = \case
   AstLocalRef name index -> pure $ Var index
   AstMetaVar name -> pure $ Meta name
   AstBind binder body -> do
-    let mapBinderKind = __TODO__
+    let name = binderName binder
     ty <- checkInfer $ binderType binder
-    kd <- mapBinderKind $ binderKind binder
+    kd <- case binderKind binder of
+      LambdaBinder      -> pure Lambda
+      -- TODO: assignment
+      LetBinder       t -> pure $ Telescope ty
+      -- TODO: assignment
+      GeneratedBinder t -> pure $ Telescope ty
+      TelescopeBinder _ -> throwError __TODO__
+    -- TODO: add telescope item to context
     bd <- checkInfer body
-    pure $ Bind (binderName binder) kd bd
+    pure $ Bind name kd bd
   _ -> pure __TODO__
 
 typeCheckFile :: TCM m => PsiFile -> m ()

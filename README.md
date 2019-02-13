@@ -1,4 +1,6 @@
-# OwO
+# This project is deprecated, please head to the Rust implementation.
+
+## OwO
 
 [![CircleCI][Circle]][CircleIMG]
 [![AppVeyor][AV]][AVIMG]

@@ -62,11 +62,10 @@ dumpPsi file hideLocation = getDecls file hideLocation >>=
   mapM_ (printDeclaration 1 hideLocation)
 
 dumpAst :: FilePath -> Bool -> IO ()
-dumpAst file hideLocation = do
-  decls <- getDecls file hideLocation
-  let tcMonad = concreteToAbstractDecl decls
-  tcResult <- runExceptT $ runStateT tcMonad emptyCtx
-  case tcResult of
+dumpAst file hideLocation =
+      (concreteToAbstractDecl <$> getDecls file hideLocation)
+  >>= runExceptT . (`runStateT` emptyCtx)
+  >>= \case
     Left errors -> print errors
     Right (warnings, decls) -> do
       mapM_ (printDeclarationAst 1 hideLocation) $ localCtx decls
